@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">p2</string>
+    <string name="app_name">Mōtuka</string>
+    <string name="top_picks">Top Picks</string>
+    <string name="hybrid_cars">Hybrid Cars</string>
+    <string name="petrol_cars">Petrol Cars</string>
+    <string name="electric_cars">Electric Cars</string>
 </resources>

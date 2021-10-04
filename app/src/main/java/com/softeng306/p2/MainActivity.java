@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
-                OpenCatList(searchInput);
+                SearchEventHandler(searchInput);
                 return false;
             }
 
@@ -41,31 +40,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Set up the categories as buttons
-        vh.CatElectric.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                OpenCatList("electric");
-            }
-        });
-
-        vh.CatHybrid.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                OpenCatList("hybrid");
-            }
-        });
-
-        vh.CatPetrol.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                OpenCatList("petrol");
-            }
-        });
     }
 
-    // Open category list activity based on the category clicked on
-    public void OpenCatList(String category) {
-        Log.i("MainActivity", "Opening " + category);
+    // Open search activity with results of the phrase inputted by user
+    public void SearchEventHandler(String phrase) {
+        Log.i("MainActivity", "Searching for " + phrase);
+        /* TO DO */
+    }
+
+    // Open list activity based on the category clicked on
+    public void CategoryEvenHandler(View v) {
+        CardView category = (CardView) v;
+        Log.i("MainActivity", "Opening " + category.getContentDescription());
+        /* TO DO */
     }
 }

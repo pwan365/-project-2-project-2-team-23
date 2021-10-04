@@ -13,18 +13,19 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical">
 
+            <!-- Header Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:background="@color/yellow"
                 android:orientation="vertical"
+                android:gravity="center_horizontal"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -33,7 +34,6 @@
                 <ImageView
                     android:layout_width="200dp"
                     android:layout_height="100dp"
-                    android:layout_gravity="center"
                     android:layout_marginTop="30dp"
                     android:src="@drawable/home_image"
                     android:contentDescription="@string/app_name"/>
@@ -95,13 +95,15 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/CatElectric"
+                    android:contentDescription="@string/electric_cars"
+                    android:onClick="CategoryEvenHandler"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
                     android:layout_marginBottom="20dp"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="5dp"
-                    app:cardMaxElevation="10dp">
+                    app:cardMaxElevation="10dp" >
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -137,6 +139,8 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/CatHybrid"
+                    android:contentDescription="@string/hybrid_cars"
+                    android:onClick="CategoryEvenHandler"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
@@ -179,6 +183,8 @@
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/CatPetrol"
+                    android:contentDescription="@string/petrol_cars"
+                    android:onClick="CategoryEvenHandler"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"

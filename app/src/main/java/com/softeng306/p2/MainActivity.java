@@ -22,11 +22,10 @@ public class MainActivity extends AppCompatActivity {
     class ViewHolder {
         private CardView CatElectric, CatHybrid, CatPetrol;
         private SearchView SearchBar;
+        private RecyclerView recyclerView;
     }
 
     //Initialize variable
-    RecyclerView recyclerView;
-
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
 
@@ -35,8 +34,13 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //assign variable
-        recyclerView = findViewById(R.id.recycler_view);
+        // initialise views for future references
+        ViewHolder vh = new ViewHolder();
+        vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);
+        vh.CatElectric = (CardView) findViewById(R.id.CatElectric);
+        vh.CatHybrid = (CardView) findViewById(R.id.CatHybrid);
+        vh.CatPetrol = (CardView) findViewById(R.id.CatPetrol);
+        vh.recyclerView = findViewById(R.id.recycler_view);
 
         //create integer array
         Integer[] topImg = {R.drawable.hatchback,R.drawable.sedan,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck};
@@ -54,19 +58,12 @@ public class MainActivity extends AppCompatActivity {
         //Design Horizontal Layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL,false);
 
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        vh.recyclerView.setLayoutManager(layoutManager);
+        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         //Initialize top adapter
         topAdapter = new TopAdapter(MainActivity.this,topModels);
-        recyclerView.setAdapter(topAdapter);
-
-        // initialise views for future references
-        ViewHolder vh = new ViewHolder();
-        vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);
-        vh.CatElectric = (CardView) findViewById(R.id.CatElectric);
-        vh.CatHybrid = (CardView) findViewById(R.id.CatHybrid);
-        vh.CatPetrol = (CardView) findViewById(R.id.CatPetrol);
+        vh.recyclerView.setAdapter(topAdapter);
 
         // Set up the search bar
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

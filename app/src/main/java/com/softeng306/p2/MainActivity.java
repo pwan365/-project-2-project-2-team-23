@@ -6,22 +6,29 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private CardView CatElectric;
-    private CardView CatHybrid;
-    private CardView CatPetrol;
-    private SearchView SearchBar;
+    class ViewHolder {
+        private CardView CatElectric, CatHybrid, CatPetrol;
+        private SearchView SearchBar;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // initialise views for future references
+        ViewHolder vh = new ViewHolder();
+        vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);
+        vh.CatElectric = (CardView) findViewById(R.id.CatElectric);
+        vh.CatHybrid = (CardView) findViewById(R.id.CatHybrid);
+        vh.CatPetrol = (CardView) findViewById(R.id.CatPetrol);
+
         // Set up the search bar
-        SearchBar = (SearchView) findViewById(R.id.SearchBar);
-        SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
                 OpenCatList(searchInput);
@@ -35,24 +42,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Set up the categories as buttons
-        CatElectric = (CardView) findViewById(R.id.CatElectric);
-        CatElectric.setOnClickListener(new View.OnClickListener(){
+        vh.CatElectric.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 OpenCatList("electric");
             }
         });
 
-        CatHybrid = (CardView) findViewById(R.id.CatHybrid);
-        CatHybrid.setOnClickListener(new View.OnClickListener(){
+        vh.CatHybrid.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 OpenCatList("hybrid");
             }
         });
 
-        CatPetrol = (CardView) findViewById(R.id.CatPetrol);
-        CatPetrol.setOnClickListener(new View.OnClickListener(){
+        vh.CatPetrol.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
                 OpenCatList("petrol");

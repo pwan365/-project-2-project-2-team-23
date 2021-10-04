@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Mōtuka</string>
+    <string name="app_name">Motukā</string>
+    <string name="slogan">Let’s find the right vehicle for you!</string>
+    <string name="search_hint">What are you looking for?</string>
     <string name="top_picks">Top Picks</string>
-    <string name="hybrid_cars">Hybrid Cars</string>
-    <string name="petrol_cars">Petrol Cars</string>
-    <string name="electric_cars">Electric Cars</string>
+    <string name="categories">Categories</string>
+    <string name="hybrid_cars">Hybrid</string>
+    <string name="petrol_cars">Petrol</string>
+    <string name="electric_cars">Electric</string>
 </resources>

@@ -5,17 +5,34 @@ import androidx.cardview.widget.CardView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.SearchView;
 
 public class MainActivity extends AppCompatActivity {
 
     private CardView CatElectric;
     private CardView CatHybrid;
     private CardView CatPetrol;
+    private SearchView SearchBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set up the search bar
+        SearchBar = (SearchView) findViewById(R.id.SearchBar);
+        SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String searchInput) {
+                OpenCatList(searchInput);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String searchInput) {
+                return false;
+            }
+        });
 
         // Set up the categories as buttons
         CatElectric = (CardView) findViewById(R.id.CatElectric);
@@ -43,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    // Open category list activity based on the category clicked on
     public void OpenCatList(String category) {
         Log.i("MainActivity", "Opening " + category);
     }

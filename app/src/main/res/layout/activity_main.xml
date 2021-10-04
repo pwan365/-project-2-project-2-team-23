@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Wraps all content in order to scroll -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Header Section -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,9 +58,23 @@
                     android:textAlignment="center"
                     android:textColor="@color/white"
                     android:textSize="14sp" />
-
             </LinearLayout>
 
+            <!-- Search Bar -->
+            <SearchView
+                android:id="@+id/SearchBar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="50dp"
+                android:layout_marginRight="50dp"
+                android:layout_marginTop="-20dp"
+                android:background="@drawable/background"
+                android:queryHint="@string/search_hint"
+                android:iconifiedByDefault="false"
+                android:queryBackground="@android:color/transparent"
+                android:elevation="20dp"/>
+
+            <!-- Category Section -->
             <LinearLayout
                 android:layout_width="300dp"
                 android:layout_height="match_parent"
@@ -88,14 +104,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="5dp"
+                    app:cardMaxElevation="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:background="@drawable/electric_background"
+                        android:background="@drawable/background"
+                        android:backgroundTint="@color/blue"
                         android:gravity="center">
 
                         <TextView
@@ -107,7 +127,7 @@
                             android:text="@string/electric_cars"
                             android:textColor="@color/white"
                             android:textSize="20sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"/>
 
                         <ImageView
                             android:id="@+id/CatElectricImg"
@@ -127,14 +147,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="5dp"
+                    app:cardMaxElevation="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:background="@drawable/hybrid_background"
+                        android:background="@drawable/background"
+                        android:backgroundTint="@color/orange"
                         android:gravity="center">
 
                         <TextView
@@ -166,14 +190,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="4"
-                    android:layout_marginBottom="20dp">
+                    android:layout_marginBottom="20dp"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="5dp"
+                    app:cardMaxElevation="10dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:paddingTop="10dp"
                         android:paddingBottom="10dp"
-                        android:background="@drawable/petrol_background"
+                        android:background="@drawable/background"
+                        android:backgroundTint="@color/green"
                         android:gravity="center">
 
                         <TextView

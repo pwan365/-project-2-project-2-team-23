@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Motukā</string>
     <string name="slogan">Let’s find the right vehicle for you!</string>
+    <string name="search_hint">What are you looking for?</string>
     <string name="top_picks">Top Picks</string>
     <string name="categories">Categories</string>
     <string name="hybrid_cars">Hybrid</string>

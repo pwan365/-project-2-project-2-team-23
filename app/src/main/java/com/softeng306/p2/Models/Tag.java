@@ -11,6 +11,8 @@ public class Tag {
         tagType = newTagType;
     }
 
+    public Tag(){}
+
     public int getId(){
         return id;
     }

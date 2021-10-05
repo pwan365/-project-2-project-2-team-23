@@ -13,9 +13,13 @@ import android.widget.SearchView;
 import android.os.Bundle;
 
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Database.OnGetTagListener;
+import com.softeng306.p2.Database.VehicleDataAccess;
 import com.softeng306.p2.Model.TopModel;
+import com.softeng306.p2.Models.Tag;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,6 +38,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /*
+        VehicleDataAccess vda = new VehicleDataAccess();
+        vda.getAllTags(new OnGetTagListener() {
+            @Override
+            public void onCallBack(List<Tag> tagList) {
+                System.out.println(tagList);
+            }
+        });
+
+         */
 
         //assign variable
         recyclerView = findViewById(R.id.recycler_view);

@@ -13,8 +13,11 @@ import android.widget.SearchView;
 import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
 import com.softeng306.p2.Listeners.OnGetTagListener;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
+import com.softeng306.p2.Models.Petrol;
 import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +39,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*
+
         VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllTags(new OnGetTagListener() {
+        vda.getAllVehicles(new OnGetVehicleListener() {
             @Override
-            public void onCallBack(List<Tag> tagList) {
-                System.out.println(tagList);
+            public void onCallBack(List<Vehicle> vehicleListList) {
+                Petrol pcar = (Petrol) vehicleListList.get(0);
+                System.out.println(pcar.getTankCapacity());
             }
         });
 
-         */
+
 
 
 

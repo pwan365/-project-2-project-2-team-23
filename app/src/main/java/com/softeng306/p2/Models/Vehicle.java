@@ -21,6 +21,8 @@ public abstract class Vehicle {
         vehicleName = name;
     }
 
+    public Vehicle(){}
+
     public int getId(){
         return id;
     }

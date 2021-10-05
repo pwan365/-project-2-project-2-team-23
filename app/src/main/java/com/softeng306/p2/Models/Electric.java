@@ -9,6 +9,10 @@ public class Electric extends Vehicle{
         super(id, name);
     }
 
+    public Electric(){
+        super();
+    }
+
     public int getBatteryCapacity(){
         return batteryCapacity;
     }

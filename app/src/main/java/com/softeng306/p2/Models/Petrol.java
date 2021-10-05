@@ -1,17 +1,21 @@
 package com.softeng306.p2.Models;
 
 public class Petrol extends Vehicle{
-    private int tankCapacity;
+    private float tankCapacity;
 
     public Petrol(int id, String name) {
         super(id, name);
     }
 
-    public int getTankCapacity(){
+    public Petrol(){
+        super();
+    }
+
+    public float getTankCapacity(){
         return tankCapacity;
     }
 
-    public void setTankCapacity(int i){
+    public void setTankCapacity(float i){
         tankCapacity = i;
     }
 }

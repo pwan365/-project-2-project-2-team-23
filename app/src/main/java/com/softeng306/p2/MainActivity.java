@@ -4,23 +4,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
-import android.os.Bundle;
 
 import com.softeng306.p2.Adapter.TopAdapter;
-import com.softeng306.p2.Database.OnGetTagListener;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Tag;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class MainActivity extends AppCompatActivity {
     class ViewHolder {
@@ -49,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
         });
 
          */
+
+
 
         //assign variable
         recyclerView = findViewById(R.id.recycler_view);

@@ -19,6 +19,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ListActivity"
+            android:theme="@style/Theme.NoActionBar"
+            android:exported="true"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity android:name=".SearchActivity"
+            android:theme="@style/Theme.NoActionBar"
+            android:exported="true"
+            android:parentActivityName=".MainActivity">
+        </activity>
+        <activity android:name=".FavouritesActivity"
+            android:theme="@style/Theme.NoActionBar"
+            android:exported="true"
+            android:parentActivityName=".MainActivity">
+        </activity>
     </application>
 
 </manifest>

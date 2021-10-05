@@ -7,4 +7,7 @@
     <string name="hybrid_cars">Hybrid</string>
     <string name="petrol_cars">Petrol</string>
     <string name="electric_cars">Electric</string>
+    <string name="favourites">Favourites</string>
+    <string name="search">Search</string>
+    <string name="searchSlogan">Let\'s find your dream car</string>
 </resources>

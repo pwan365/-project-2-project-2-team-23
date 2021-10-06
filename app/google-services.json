@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "705172841041",
+    "project_id": "motuka-f7251",
+    "storage_bucket": "motuka-f7251.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:705172841041:android:0791d05793717700b44e70",
+        "android_client_info": {
+          "package_name": "com.softeng306.p2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "705172841041-ac4f0vs4ajo0c0nlk39j7srnrc1jaf26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIYbTmn5qJ5iUJIxN2x7BOWhm63kRlx7Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "705172841041-ac4f0vs4ajo0c0nlk39j7srnrc1jaf26.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

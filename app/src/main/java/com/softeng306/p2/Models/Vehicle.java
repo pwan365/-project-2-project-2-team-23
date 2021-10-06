@@ -21,6 +21,8 @@ public abstract class Vehicle {
         vehicleName = name;
     }
 
+    public Vehicle(){}
+
     public int getId(){
         return id;
     }
@@ -41,6 +43,13 @@ public abstract class Vehicle {
 
     public boolean hasTag(Tag tag){
         if (tags.get(tag.getTagName()) == null){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean hasTag(String tagName){
+        if (tags.get(tagName) == null){
             return false;
         }
         return true;

@@ -8,6 +8,10 @@ public class Hybrid extends Vehicle{
         super(id, name);
     }
 
+    public Hybrid(){
+        super();
+    }
+
     public boolean getIsPHEV(){
         return isPHEV;
     }

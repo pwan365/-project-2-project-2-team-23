@@ -1,35 +1,39 @@
 package com.softeng306.p2.Models;
 
 public class Electric extends Vehicle{
-    private int batteryCapacity;
-    private int chargingTime;
-    private int travelDistance;
+    private String batteryCapacity;
+    private String chargingTime;
+    private String travelDistance;
 
     public Electric(int id, String name) {
         super(id, name);
     }
 
-    public int getBatteryCapacity(){
+    public Electric(){
+        super();
+    }
+
+    public String getBatteryCapacity(){
         return batteryCapacity;
     }
 
-    public void setBatteryCapacity(int i){
+    public void setBatteryCapacity(String i){
         batteryCapacity = i;
     }
 
-    public int getChargingTime(){
+    public String getChargingTime(){
         return chargingTime;
     }
 
-    public void setChargingTime(int i){
+    public void setChargingTime(String i){
         chargingTime = i;
     }
 
-    public int getTravelDistance(){
+    public String getTravelDistance(){
         return travelDistance;
     }
 
-    public void setTravelDistance(int i){
+    public void setTravelDistance(String i){
         travelDistance = i;
     }
 }

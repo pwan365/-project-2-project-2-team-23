@@ -13,9 +13,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetTagListener;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
+import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.Models.Vehicle;
+
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     static class ViewHolder {
@@ -26,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Initialize variable
+    RecyclerView recyclerView;
+
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
 
@@ -34,6 +44,28 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        VehicleDataAccess vda = new VehicleDataAccess();
+        Tag tag = new Tag(1, "Toyota", "BRAND");
+        Tag tag2 = new Tag(2, "Blue", "APPEARANCE");
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
+        tags.add(tag2);
+        vda.getVehicleByTag(tags, new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    System.out.println(v.getClass());
+                }
+            }
+        });
+
+
+
+
+
+        //assign variable
+        recyclerView = findViewById(R.id.recycler_view);
         // Initialise views for future references
         ViewHolder vh = new ViewHolder();
         vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);

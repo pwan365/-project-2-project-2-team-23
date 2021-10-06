@@ -13,10 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
 import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
-import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Tag;

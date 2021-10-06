@@ -48,6 +48,13 @@ public abstract class Vehicle {
         return true;
     }
 
+    public boolean hasTag(String tagName){
+        if (tags.get(tagName) == null){
+            return false;
+        }
+        return true;
+    }
+
     public float getPrice(){
         return price;
     }

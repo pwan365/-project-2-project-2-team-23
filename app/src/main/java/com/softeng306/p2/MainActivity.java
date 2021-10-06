@@ -43,9 +43,10 @@ public class MainActivity extends AppCompatActivity {
         VehicleDataAccess vda = new VehicleDataAccess();
         vda.getAllVehicles(new OnGetVehicleListener() {
             @Override
-            public void onCallBack(List<Vehicle> vehicleListList) {
-                Petrol pcar = (Petrol) vehicleListList.get(0);
-                System.out.println(pcar.getTankCapacity());
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    System.out.println(v.getClass());
+                }
             }
         });
 

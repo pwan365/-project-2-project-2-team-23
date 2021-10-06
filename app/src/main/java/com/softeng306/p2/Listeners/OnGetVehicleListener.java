@@ -5,5 +5,5 @@ import com.softeng306.p2.Models.Vehicle;
 import java.util.List;
 
 public interface OnGetVehicleListener {
-    void onCallBack(List<Vehicle> vehicleListList);
+    void onCallBack(List<Vehicle> vehicleList);
 }

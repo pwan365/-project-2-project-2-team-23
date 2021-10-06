@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllVehicles(new OnGetVehicleListener() {
+        vda.getElectricVehicles(new OnGetVehicleListener() {
             @Override
             public void onCallBack(List<Vehicle> vehicleList) {
                 for (Vehicle v: vehicleList){

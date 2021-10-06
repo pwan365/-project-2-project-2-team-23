@@ -4,9 +4,9 @@ import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 
 public interface IVehicleDataAccess {
-    public void getAllTags(OnGetTagListener listener);
-    public void getAllVehicles(OnGetVehicleListener listener);
-    public void getElectricVehicles(OnGetVehicleListener listener);
-    public void getPetrolVehicles(OnGetVehicleListener listener);
-    public void getHybridVehicles(OnGetVehicleListener listener);
+    void getAllTags(OnGetTagListener listener);
+    void getAllVehicles(OnGetVehicleListener listener);
+    void getElectricVehicles(OnGetVehicleListener listener);
+    void getPetrolVehicles(OnGetVehicleListener listener);
+    void getHybridVehicles(OnGetVehicleListener listener);
 }

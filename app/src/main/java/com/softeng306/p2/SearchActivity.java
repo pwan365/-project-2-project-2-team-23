@@ -31,9 +31,9 @@ public class SearchActivity extends AppCompatActivity {
                 case R.id.searchIcon:
                     break;
                 case R.id.favourtiesIcon:
-                    Intent i3 = new Intent(SearchActivity.this, FavouritesActivity.class);
-                    i3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(i3);
+                    Intent favIntent = new Intent(SearchActivity.this, FavouritesActivity.class);
+                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(favIntent);
                     break;
             }
             return false;

@@ -94,14 +94,14 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.homeIcon:
                     break;
                 case R.id.searchIcon:
-                    Intent i2 = new Intent(MainActivity.this, SearchActivity.class);
-                    i2.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(i2);
+                    Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+                    searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(searchIntent);
                     break;
                 case R.id.favourtiesIcon:
-                    Intent i3 = new Intent(MainActivity.this, FavouritesActivity.class);
-                    i3.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(i3);
+                    Intent favIntent = new Intent(MainActivity.this, FavouritesActivity.class);
+                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(favIntent);
                     break;
             }
         return false;

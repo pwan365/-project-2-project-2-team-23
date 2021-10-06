@@ -128,4 +128,26 @@ public class VehicleDataAccess implements IVehicleDataAccess{
             }
         });
     }
+
+    @Override
+    public void getVehicleByTag(List<Tag> tagList, OnGetVehicleListener listener) {
+        List<Vehicle> vList = new ArrayList<>();
+        getAllVehicles(new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    boolean hasAllTags = true;
+                    for(Tag tag: tagList){
+                        if (!v.hasTag(tag)){
+                            hasAllTags = false;
+                        }
+                    }
+                    if (hasAllTags){
+                        vList.add(v);
+                    }
+                }
+                listener.onCallBack(vList);
+            }
+        });
+    }
 }

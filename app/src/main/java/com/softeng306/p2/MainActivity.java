@@ -4,19 +4,22 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.SearchView;
-import android.os.Bundle;
 
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetTagListener;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
+import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     class ViewHolder {
@@ -34,6 +37,26 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        VehicleDataAccess vda = new VehicleDataAccess();
+        Tag tag = new Tag(1, "Toyota", "BRAND");
+        Tag tag2 = new Tag(2, "Blue", "APPEARANCE");
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
+        tags.add(tag2);
+        vda.getVehicleByTag(tags, new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    System.out.println(v.getClass());
+                }
+            }
+        });
+
+
+
+
 
         //assign variable
         recyclerView = findViewById(R.id.recycler_view);

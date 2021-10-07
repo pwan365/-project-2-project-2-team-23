@@ -150,4 +150,20 @@ public class VehicleDataAccess implements IVehicleDataAccess{
             }
         });
     }
+
+    @Override
+    public void getVehicleByName(String str, OnGetVehicleListener listener) {
+        List<Vehicle> vList = new ArrayList<>();
+        getAllVehicles(new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    if (v.containsString(str)){
+                        vList.add(v);
+                    }
+                }
+                listener.onCallBack(vList);
+            }
+        });
+    }
 }

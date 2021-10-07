@@ -44,12 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
 
         VehicleDataAccess vda = new VehicleDataAccess();
-        Tag tag = new Tag(1, "Toyota", "BRAND");
-        Tag tag2 = new Tag(2, "Blue", "APPEARANCE");
-        List<Tag> tags = new ArrayList<>();
-        tags.add(tag);
-        tags.add(tag2);
-        vda.getVehicleByTag(tags, new OnGetVehicleListener() {
+        String str = "r";
+
+        vda.getVehicleByName(str, new OnGetVehicleListener() {
             @Override
             public void onCallBack(List<Vehicle> vehicleList) {
                 for (Vehicle v: vehicleList){

@@ -102,4 +102,8 @@ public abstract class Vehicle {
     public void setImages(List<String> imageNames){
         images = imageNames;
     }
+
+    public boolean containsString(String str){
+        return vehicleName.replaceAll("\\s", "").toLowerCase().contains(str.replaceAll("\\s", "").toLowerCase());
+    }
 }

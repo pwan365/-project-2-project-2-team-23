@@ -44,9 +44,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         VehicleDataAccess vda = new VehicleDataAccess();
-        String str = "r";
+        List<Integer> is = new ArrayList<>();
+        is.add(101);
+        is.add(301);
+        is.add(201);
 
-        vda.getVehicleByName(str, new OnGetVehicleListener() {
+        vda.getVehicleById(is, new OnGetVehicleListener() {
             @Override
             public void onCallBack(List<Vehicle> vehicleList) {
                 for (Vehicle v: vehicleList){

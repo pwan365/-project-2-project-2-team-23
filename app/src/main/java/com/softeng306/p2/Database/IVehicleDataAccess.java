@@ -14,4 +14,5 @@ public interface IVehicleDataAccess {
     void getHybridVehicles(OnGetVehicleListener listener);
     void getVehicleByTag(List<Tag> tagList, OnGetVehicleListener listener);
     void getVehicleByName(String str, OnGetVehicleListener listener);
+    void getVehicleById(List<Integer> ids, OnGetVehicleListener listener);
 }

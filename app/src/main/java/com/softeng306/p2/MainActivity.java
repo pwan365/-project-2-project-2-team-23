@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         //assign variable
-        recyclerView = findViewById(R.id.recycler_view);
+//        recyclerView = findViewById(R.id.recycler_view);
         // Initialise views for future references
         ViewHolder vh = new ViewHolder();
         vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);

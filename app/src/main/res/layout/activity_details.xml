@@ -22,12 +22,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <ImageView
-                    android:id="@+id/imageView"
+                <com.denzcoskun.imageslider.ImageSlider
+                    android:id="@+id/image_slider"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    app:srcCompat="@drawable/favourites_image" />
+                    android:layout_height="match_parent"
+                    app:iss_auto_cycle="true"
+                    app:iss_period="1000"
+                    app:iss_delay="0"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -36,19 +37,19 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/textView"
+                    android:id="@+id/carTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Car Title" />
 
                 <TextView
-                    android:id="@+id/textView2"
+                    android:id="@+id/carDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="car description" />
 
                 <TextView
-                    android:id="@+id/textView3"
+                    android:id="@+id/carPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="price" />
@@ -62,7 +63,7 @@
                         android:id="@+id/textView4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="TextView" />
+                        android:text="Details" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"

@@ -15,9 +15,11 @@ import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.Models.User;
 import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
@@ -44,19 +46,8 @@ public class MainActivity extends AppCompatActivity {
 
 
         VehicleDataAccess vda = new VehicleDataAccess();
-        List<Integer> is = new ArrayList<>();
-        is.add(101);
-        is.add(301);
-        is.add(201);
 
-        vda.getVehicleById(is, new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    System.out.println(v.getClass());
-                }
-            }
-        });
+        vda.addToFavourites(101);
 
 
 

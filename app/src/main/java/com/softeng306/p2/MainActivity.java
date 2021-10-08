@@ -14,7 +14,10 @@ import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Tag;
@@ -23,7 +26,7 @@ import com.softeng306.p2.Models.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CoreActivity {
     static class ViewHolder {
         private CardView CatElectric, CatHybrid, CatPetrol;
         private SearchView SearchBar;
@@ -37,13 +40,15 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
 
+    IVehicleDataAccess vda;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        VehicleService.getInstance().InjectService(this);
 
-        VehicleDataAccess vda = new VehicleDataAccess();
         List<Integer> is = new ArrayList<>();
         is.add(101);
         is.add(301);
@@ -150,5 +155,10 @@ public class MainActivity extends AppCompatActivity {
         CardView category = (CardView) v;
         Log.i("MainActivity", "Opening " + category.getContentDescription());
         /* TO DO */
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        vda = vehicleDataAccess;
     }
 }

@@ -96,7 +96,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getPetrolVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
-        _db.collection("petrols").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        _db.collection("petrol").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
@@ -116,7 +116,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getHybridVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
 
-        _db.collection("hybrids").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        _db.collection("hybrid").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){

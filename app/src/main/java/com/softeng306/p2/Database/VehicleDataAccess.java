@@ -16,6 +16,7 @@ import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class VehicleDataAccess implements IVehicleDataAccess{
     private FirebaseFirestore _db;
@@ -70,6 +71,42 @@ public class VehicleDataAccess implements IVehicleDataAccess{
 
     }
 
+    // Kayla added - not sure if I can do this but it works
+    @Override
+    public void getCategoryVehicles(String category, OnGetVehicleListener listener) {
+        List<Vehicle> vehicleList = new ArrayList<>();
+
+        _db.collection(category.toLowerCase(Locale.ROOT)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()){
+                    switch (category) {
+                    case "Electric":
+                        for (Vehicle vehicle: task.getResult().toObjects(Electric.class)){
+                            vehicleList.add(vehicle);
+                        }
+                        break;
+                    case "Hybrid":
+                        for (Vehicle vehicle: task.getResult().toObjects(Hybrid.class)){
+                            vehicleList.add(vehicle);
+                        }
+                        break;
+                    case "Petrol":
+                        for (Vehicle vehicle: task.getResult().toObjects(Petrol.class)){
+                            vehicleList.add(vehicle);
+                        }
+                        break;
+                    }
+                    listener.onCallBack(vehicleList);
+
+                }
+                else{
+                    System.out.println("Error retrieving vehicles");
+                }
+            }
+        });
+    }
+
     @Override
     public void getElectricVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
@@ -93,7 +130,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getPetrolVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
-        _db.collection("petrols").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        _db.collection("petrol").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){
@@ -113,7 +150,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getHybridVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
 
-        _db.collection("hybrids").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        _db.collection("hybrid").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()){

@@ -24,14 +24,14 @@ public class SearchActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.homeIcon:
-                    Intent i1 = new Intent(SearchActivity.this, MainActivity.class);
+                    Intent i1 = new Intent(this, MainActivity.class);
                     i1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(i1);
                     break;
                 case R.id.searchIcon:
                     break;
                 case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(SearchActivity.this, FavouritesActivity.class);
+                    Intent favIntent = new Intent(this, FavouritesActivity.class);
                     favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(favIntent);
                     break;

@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.cardview.widget.CardView;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity {
 
     //Initialize variable
     RecyclerView recyclerView;
-
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
 
@@ -41,7 +41,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         VehicleDataAccess vda = new VehicleDataAccess();
         Tag tag = new Tag(1, "Toyota", "BRAND");
@@ -58,23 +57,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
-
-
-        //assign variable
-        recyclerView = findViewById(R.id.recycler_view);
         // Initialise views for future references
         ViewHolder vh = new ViewHolder();
-        vh.SearchBar = (SearchView) findViewById(R.id.SearchBar);
-        vh.CatElectric = (CardView) findViewById(R.id.CatElectric);
-        vh.CatHybrid = (CardView) findViewById(R.id.CatHybrid);
-        vh.CatPetrol = (CardView) findViewById(R.id.CatPetrol);
+        vh.SearchBar = findViewById(R.id.SearchBar);
+        vh.CatElectric = findViewById(R.id.Electric);
+        vh.CatHybrid = findViewById(R.id.Hybrid);
+        vh.CatPetrol = findViewById(R.id.Petrol);
         vh.recyclerView = findViewById(R.id.recycler_view);
         vh.bottomNavigationView = findViewById(R.id.nav_bar);
 
+        // Assign variable
+        recyclerView = findViewById(R.id.recycler_view);
+
         // Create integer array
-        Integer[] topImg = {R.drawable.hatchback,R.drawable.sedan,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck};
+        Integer[] topImg = {R.drawable.hybrid,R.drawable.electric,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck};
 
         // Create string array
         String[] topName = {"Model 3","Model S","Roadster","Model Y","Model X","Cyber Truck"};
@@ -124,12 +120,12 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.homeIcon:
                     break;
                 case R.id.searchIcon:
-                    Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
+                    Intent searchIntent = new Intent(this, SearchActivity.class);
                     searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(searchIntent);
                     break;
                 case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(MainActivity.this, FavouritesActivity.class);
+                    Intent favIntent = new Intent(this, FavouritesActivity.class);
                     favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(favIntent);
                     break;
@@ -137,7 +133,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
         });
     }
-
 
     // Open search activity with results of the phrase inputted by user
     public void SearchEventHandler(String phrase) {
@@ -149,6 +144,15 @@ public class MainActivity extends AppCompatActivity {
     public void CategoryEventHandler(View v) {
         CardView category = (CardView) v;
         Log.i("MainActivity", "Opening " + category.getContentDescription());
-        /* TO DO */
+        Intent listIntent = new Intent(this, ListActivity.class);
+        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+
+        Bundle extras = new Bundle();
+        int intName= category.getId();
+        extras.putString("category", getResources().getResourceEntryName(intName));
+        extras.putString("categorySubtitle", (String) category.getContentDescription());
+        extras.putParcelable("categoryColour", (ColorStateList) category.getCardBackgroundColor());
+        listIntent.putExtras(extras);
+        startActivity(listIntent);
     }
 }

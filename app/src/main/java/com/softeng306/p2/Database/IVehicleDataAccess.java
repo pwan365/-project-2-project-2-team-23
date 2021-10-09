@@ -10,6 +10,7 @@ import java.util.List;
 public interface IVehicleDataAccess {
     void getAllTags(OnGetTagListener listener);
     void getAllVehicles(OnGetVehicleListener listener);
+    void getCategoryVehicles(String category, OnGetVehicleListener listener);
     void getElectricVehicles(OnGetVehicleListener listener);
     void getPetrolVehicles(OnGetVehicleListener listener);
     void getHybridVehicles(OnGetVehicleListener listener);

@@ -5,9 +5,15 @@
     <string name="top_picks">Top Picks</string>
     <string name="categories">Categories</string>
     <string name="hybrid_cars">Hybrid</string>
+    <string name="Hybrid_subtitle">Looking for a hybrid as your next car? Here is a list of the best.</string>
     <string name="petrol_cars">Petrol</string>
+    <string name="Petrol_subtitle">Looking for a petrol vehicle as your next car? Here is a list of the best.</string>
     <string name="electric_cars">Electric</string>
+    <string name="Electric_subtitle">Looking for an EV as your next car? Here is a list of the best.</string>
     <string name="favourites">Favourites</string>
     <string name="search">Search</string>
     <string name="searchSlogan">Let\'s find your dream car</string>
+    <string name="refine">Refine</string>
+    <string name="tagcategory1">TagCategory1</string>
+    <string name="apply_filters">Apply filters</string>
 </resources>

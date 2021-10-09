@@ -58,6 +58,7 @@
                 android:layout_marginTop="-20dp"
                 android:queryHint="@string/search_hint"
                 android:iconifiedByDefault="false"
+                android:elevation="20dp"
                 android:queryBackground="@android:color/transparent"
                 app:theme="@style/AppSearchView"
                 style="@style/RoundedBackground"/>
@@ -90,6 +91,7 @@
             <!-- Category Section -->
             <LinearLayout
                 android:layout_width="match_parent"
+                android:layout_marginTop="50dp"
                 android:layout_marginStart="40dp"
                 android:layout_marginEnd="40dp"
                 android:layout_marginBottom="80dp"
@@ -105,8 +107,9 @@
                     style="@style/Headline3"/>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/CatElectric"
-                    android:contentDescription="@string/electric_cars"
+                    android:id="@+id/Electric"
+                    android:contentDescription="@string/Electric_subtitle"
+                    app:cardBackgroundColor="@color/blue"
                     style="@style/CategoryCard">
 
                     <LinearLayout
@@ -125,15 +128,16 @@
                         <ImageView
                             android:id="@+id/CatElectricImg"
                             android:contentDescription="@string/electric_cars"
-                            android:src="@drawable/sedan"
+                            android:src="@drawable/electric"
                             style="@style/CategoryImage"/>
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/CatHybrid"
-                    android:contentDescription="@string/hybrid_cars"
+                    android:id="@+id/Hybrid"
+                    android:contentDescription="@string/Hybrid_subtitle"
+                    app:cardBackgroundColor="@color/orange"
                     style="@style/CategoryCard">
 
                     <LinearLayout
@@ -152,15 +156,16 @@
                         <ImageView
                             android:id="@+id/CatHybridImage"
                             android:contentDescription="@string/hybrid_cars"
-                            android:src="@drawable/hatchback"
+                            android:src="@drawable/hybrid"
                             style="@style/CategoryImage"/>
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/CatPetrol"
-                    android:contentDescription="@string/petrol_cars"
+                    android:id="@+id/Petrol"
+                    android:contentDescription="@string/Petrol_subtitle"
+                    app:cardBackgroundColor="@color/green"
                     style="@style/CategoryCard" >
 
                     <LinearLayout
@@ -179,7 +184,7 @@
                         <ImageView
                             android:id="@+id/CatPetrolImage"
                             android:contentDescription="@string/petrol_cars"
-                            android:src="@drawable/truck"
+                            android:src="@drawable/petrol"
                             style="@style/CategoryImage"/>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

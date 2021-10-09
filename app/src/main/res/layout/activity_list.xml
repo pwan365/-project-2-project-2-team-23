@@ -1,6 +1,167 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ListActivity">
 
+    <ImageView
+        android:id="@+id/closeSearchArea"
+        android:layout_width="match_parent"
+        android:layout_height="660dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"></ImageView>
+
+    <!-- Header Section -->
+    <RelativeLayout
+        android:id="@+id/ListHeader"
+        android:layout_height="220dp"
+        android:background="@color/blue"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        style="@style/Container">
+
+        <ImageButton
+            android:id="@+id/listBackButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="back arrow"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/back_arrow_icon" />
+
+        <SearchView
+            android:id="@+id/ListSearchBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="10dp"
+            android:elevation="20dp"
+            android:iconifiedByDefault="false"
+            android:queryBackground="@android:color/transparent"
+            android:queryHint="@string/search_hint"
+            android:visibility="invisible"
+            app:theme="@style/AppSearchView"
+            style="@style/RoundedBackground" />
+
+        <ImageButton
+            android:id="@+id/listSearchButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:contentDescription="@string/search"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:src="@drawable/search_icon_white" />
+
+        <TextView
+            android:id="@+id/ListTitle"
+            style="@style/Headline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="40dp"
+            android:text="@string/categories" />
+
+        <TextView
+            android:id="@+id/ListSubtitle"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ListTitle"
+            android:layout_marginStart="40dp"
+            android:text="@string/slogan"
+            style="@style/Subtitle1"/>
+
+        <ImageView
+            android:id="@+id/ListHeaderImage"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="-50dp"
+            android:contentDescription="@string/electric_cars"
+            android:src="@drawable/electric" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/ListHeader"
+        android:layout_marginTop="-15dp"
+        android:orientation="vertical"
+        android:backgroundTint="@color/white"
+        style="@style/RoundedBackground" >
+
+        <RelativeLayout
+            android:id="@+id/refineBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/blue"
+            android:orientation="horizontal"
+            style="@style/RoundedBackground">
+
+            <ImageView
+                android:id="@+id/refineIcon"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginEnd="20dp"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/refine_icon_white" />
+
+            <TextView
+                android:id="@+id/refineTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/refineIcon"
+                android:text="@string/refine"
+                style="@style/Subtitle1" />
+
+            <ImageView
+                android:id="@+id/refineArrowDown"
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_toEndOf="@id/refineTitle"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/down_icon_white" />
+        </RelativeLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
+    </LinearLayout>
+
+    <!-- Navigation -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="0dp"
+        app:itemIconSize="34dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:menu="@navigation/bottom_nav_menu">
+    </com.google.android.material.bottomnavigation.BottomNavigationView>
 </androidx.constraintlayout.widget.ConstraintLayout>

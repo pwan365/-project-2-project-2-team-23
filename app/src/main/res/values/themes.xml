@@ -43,7 +43,6 @@
 
     <style name="RoundedBackground">
         <item name="android:background">@drawable/background</item>
-        <item name="android:elevation">20dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:paddingTop">10dp</item>
@@ -68,6 +67,13 @@
         <item name="android:layout_marginEnd">-50dp</item>
         <item name="android:layout_weight">2</item>
         <item name="android:scaleType">fitCenter</item>
+    </style>
+
+    <style name="BottomSheetTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+    </style>
+    <style name="BottomSheetStyle">
+        <item name="android:background">@android:color/transparent</item>
     </style>
 
     <!-- Type Scale -->

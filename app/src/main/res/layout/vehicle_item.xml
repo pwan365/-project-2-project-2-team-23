@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:id="@+id/topLayout">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -15,15 +14,24 @@
         <ImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:id="@+id/top_image_view"
-            android:src="@drawable/hybrid"/>
+            android:src="@drawable/electric">
+        </ImageView>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/top_name_view"
-            android:text="Tesla"
-            android:textSize="20sp"
-            android:textStyle="bold"/>
+            android:text="Title"
+            android:id="@+id/listItemTitle"
+            android:layout_gravity="left"
+            style="@style/Headline3"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/listItemPrice"
+            android:textColor="@color/blackGrey"
+            android:layout_gravity="left"
+            android:text="Subtitle"
+            style="@style/Subtitle1"/>
     </LinearLayout>
 </RelativeLayout>

@@ -15,7 +15,10 @@ import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Tag;
@@ -24,7 +27,7 @@ import com.softeng306.p2.Models.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CoreActivity {
     static class ViewHolder {
         private CardView CatElectric, CatHybrid, CatPetrol;
         private SearchView SearchBar;
@@ -37,22 +40,26 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
 
+    IVehicleDataAccess vda;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        VehicleDataAccess vda = new VehicleDataAccess();
-        Tag tag = new Tag(1, "Toyota", "BRAND");
-        Tag tag2 = new Tag(2, "Blue", "APPEARANCE");
-        List<Tag> tags = new ArrayList<>();
-        tags.add(tag);
-        tags.add(tag2);
-        vda.getVehicleByTag(tags, new OnGetVehicleListener() {
+        VehicleService.getInstance().InjectService(this);
+
+        List<Integer> is = new ArrayList<>();
+        is.add(101);
+        is.add(301);
+        is.add(201);
+
+        vda.getVehicleById(is, new OnGetVehicleListener() {
+
             @Override
             public void onCallBack(List<Vehicle> vehicleList) {
                 for (Vehicle v: vehicleList){
-                    System.out.println(v.getClass());
+                    System.out.println(v.getImageNames());
                 }
             }
         });
@@ -154,5 +161,10 @@ public class MainActivity extends AppCompatActivity {
         extras.putParcelable("categoryColour", (ColorStateList) category.getCardBackgroundColor());
         listIntent.putExtras(extras);
         startActivity(listIntent);
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        vda = vehicleDataAccess;
     }
 }

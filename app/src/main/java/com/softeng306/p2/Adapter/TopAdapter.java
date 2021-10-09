@@ -46,7 +46,8 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailsActivity.class);
-                intent.putExtra("title","Hello world");
+                final CharSequence carTitle = holder.textView.getText();
+                intent.putExtra("title",String.valueOf(carTitle));
                 context.startActivity(intent);
             }
         });

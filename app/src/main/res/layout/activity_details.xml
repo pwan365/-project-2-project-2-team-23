@@ -1,34 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".DetailsActivity"
-        android:orientation="vertical">
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".DetailsActivity">
 
 
     <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:id="@+id/scrollView2"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/nav_bar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.denzcoskun.imageslider.ImageSlider
+                android:id="@+id/image_slider"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="-7dp"
+                app:iss_auto_cycle="true"
+                app:iss_delay="0"
+                app:iss_period="5000"
+                app:iss_placeholder="@color/blackGrey" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <com.denzcoskun.imageslider.ImageSlider
-                    android:id="@+id/image_slider"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    app:iss_auto_cycle="true"
-                    app:iss_period="1000"
-                    app:iss_delay="0"/>
             </RelativeLayout>
 
             <LinearLayout
@@ -40,23 +48,33 @@
                     android:id="@+id/carTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Car Title" />
+                    android:gravity="center"
+                    android:text="Car Title"
+                    android:textSize="34sp" />
 
                 <TextView
                     android:id="@+id/carDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:paddingLeft="30dp"
+                    android:paddingRight="30dp"
                     android:text="car description" />
 
                 <TextView
                     android:id="@+id/carPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="price" />
+                    android:layout_marginTop="20dp"
+                    android:paddingLeft="30dp"
+                    android:text="price"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -73,4 +91,17 @@
 
         </LinearLayout>
     </ScrollView>
-</LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:itemIconSize="34dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@navigation/bottom_nav_menu"></com.google.android.material.bottomnavigation.BottomNavigationView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

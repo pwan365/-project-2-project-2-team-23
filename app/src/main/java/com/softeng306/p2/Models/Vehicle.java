@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Vehicle {
+    private final int IMAGE_COUNT = 3;
+
     private int id;
     private String vehicleName;
     private Map<String, String> tags = new HashMap<>();
@@ -101,5 +103,18 @@ public abstract class Vehicle {
 
     public void setImages(List<String> imageNames){
         images = imageNames;
+    }
+
+    public boolean containsString(String str){
+        return vehicleName.replaceAll("\\s", "").toLowerCase().contains(str.replaceAll("\\s", "").toLowerCase());
+    }
+
+    public List<String> getImageNames(){
+        List<String> names = new ArrayList<>();
+        String imageName = vehicleName.replaceAll("\\s", "_").toLowerCase();
+        for (int i = 0; i < IMAGE_COUNT; i++){
+            names.add(imageName + "_" +i);
+        }
+        return names;
     }
 }

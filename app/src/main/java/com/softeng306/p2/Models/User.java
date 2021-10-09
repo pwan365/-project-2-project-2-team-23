@@ -4,19 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class User {
-    private static User _user = null;
-    private static List<Integer> favourites;
+    private List<Integer> favourites = new ArrayList<>();;
 
-    private User(){
-        favourites = new ArrayList<>();
-    }
-
-    public static User getInstance(){
-        if (_user == null){
-            _user = new User();
-        }
-        return _user;
-    }
+    private User(){}
 
     public List<Integer> getFavourites(){
         return favourites;

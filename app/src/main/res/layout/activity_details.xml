@@ -83,9 +83,12 @@
                         android:layout_height="wrap_content"
                         android:text="Details" />
 
-                    <androidx.recyclerview.widget.RecyclerView
+                    <ListView
+                        android:id="@+id/detailList"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent" />
+                        android:layout_height="match_parent"
+                        />
+
                 </LinearLayout>
             </LinearLayout>
 

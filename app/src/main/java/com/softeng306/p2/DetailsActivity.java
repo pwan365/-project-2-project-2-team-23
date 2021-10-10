@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,18 +20,33 @@ import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes; // important
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
+import com.softeng306.p2.Models.Electric;
+import com.softeng306.p2.Models.Hybrid;
+import com.softeng306.p2.Models.Petrol;
+import com.softeng306.p2.Models.Vehicle;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements CoreActivity {
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        vda = vehicleDataAccess;
+    }
 
     class ViewHolder {
         private TextView titleText,descText,priceText;
         private ImageSlider imageSlider;
         private BottomNavigationView bottomNavigationView;
+        private ListView detailList;
 
         public ViewHolder(){
             titleText = findViewById(R.id.carTitle);
@@ -38,6 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
             priceText = findViewById(R.id.carPrice);
             imageSlider = findViewById(R.id.image_slider);
             bottomNavigationView = findViewById(R.id.nav_bar);
+            detailList = findViewById(R.id.detailList);
             // Initialise the navigation buttons
             Menu menu = bottomNavigationView.getMenu();
             MenuItem menuItem = menu.getItem(0);
@@ -72,26 +89,37 @@ public class DetailsActivity extends AppCompatActivity {
     String[] imageList;
     String carTitle, carDesc, carPrice;
     List<SlideModel> slideModelList = new ArrayList<>();
+    Vehicle vehicle;
+    IVehicleDataAccess vda;
+    ViewHolder vh;
+    List<String> details = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-        ViewHolder vh = new ViewHolder();
+        vh = new ViewHolder();
+        VehicleService.getInstance().InjectService(this);
         getData();
-        setData(vh);
-
     }
 
     private void getData(){
         if(getIntent().hasExtra("title")){
             carTitle = getIntent().getStringExtra("title");
-            carDesc = "Can curiosity may end shameless explained. True high on said " +
-                    "mr on come. An do mr design at little myself wholly entire though. Attended" +
-                    " of on stronger or mr pleasure. Rich four like real yet west get. Felicity in dw" +
-                    "elling to drawings. His pleasure new steepest for reserved formerly disposed jennings.";
-            carPrice = "$";
-            carPrice += String.valueOf(89900);
+            vda.getVehicleByName(carTitle, new OnGetVehicleListener() {
+
+                @Override
+                public void onCallBack(List<Vehicle> vehicleList) {
+                    for (Vehicle v: vehicleList){
+                        vehicle = v;
+                    }
+                    carDesc = vehicle.getDescription();
+                    carPrice = "$";
+                    carPrice += vehicle.getPrice();
+                    getDetails(vehicle);
+                    setData();
+                }
+            });
         }else{
             Toast.makeText(this, "No data.", Toast.LENGTH_LONG).show();
         }
@@ -99,11 +127,10 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
     private String convertNameToFileName(String carTitle){
-
         return carTitle.toLowerCase(Locale.ROOT).replace(" ","_");
     }
 
-    private void setData(ViewHolder vh){
+    private void setData(){
         vh.titleText.setText(carTitle);
         vh.descText.setText(carDesc);
         vh.priceText.setText(carPrice);
@@ -113,7 +140,6 @@ public class DetailsActivity extends AppCompatActivity {
         for(int i = 1; i < numImage+1;i++){
             String fileName = convertNameToFileName(carTitle)+"_"+i;
             int resourceId = getResources().getIdentifier(fileName, "drawable", getPackageName());
-            System.out.println("WTFWTF"+resourceId);
             if(resourceId != 0){
                 slideModelList.add(new SlideModel(resourceId, ScaleTypes.CENTER_CROP));
             }else{
@@ -121,6 +147,16 @@ public class DetailsActivity extends AppCompatActivity {
             }
         }
         vh.imageSlider.setImageList(slideModelList,ScaleTypes.CENTER_CROP);
+    }
+
+    private void getDetails(Vehicle v){
+        details.add("Dimensions" + v.getDimension());
+        details.add("Weight: "+ v.getWeight());
+        details.add("Manufacture Date: " + v.getManufacturedDate());
+        if(v instanceof Electric){
+        }else if(v instanceof Petrol){
+        }else if(v instanceof Hybrid){
+        }
     }
 
 }

@@ -191,6 +191,28 @@ public class VehicleDataAccess implements IVehicleDataAccess{
         });
     }
 
+    // Added by Kayla - to get by tag but by string instead of Tag object
+    public void getVehicleByTagName(List<String> tagList, OnGetVehicleListener listener) {
+        List<Vehicle> vList = new ArrayList<>();
+        getAllVehicles(new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    boolean hasAllTags = true;
+                    for(String tagName: tagList){
+                        if (!v.hasTag(tagName)){
+                            hasAllTags = false;
+                        }
+                    }
+                    if (hasAllTags){
+                        vList.add(v);
+                    }
+                }
+                listener.onCallBack(vList);
+            }
+        });
+    }
+
     @Override
     public void getVehicleByName(String str, OnGetVehicleListener listener) {
         List<Vehicle> vList = new ArrayList<>();

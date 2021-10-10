@@ -26,25 +26,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
+            android:layout_marginBottom="30dp"
             android:text="@string/refine"
             android:textColor="@color/blackGrey"
             android:layout_gravity="center_horizontal"
             style="@style/Headline2"/>
-
-        <TextView
-            android:id="@+id/TypeTitle1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:text="@string/tagcategory1"
-            style="@style/Headline3"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tagsRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
 
         <Button
             android:id="@+id/submitRefineBtn"

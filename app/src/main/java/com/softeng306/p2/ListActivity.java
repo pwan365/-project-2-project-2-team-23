@@ -13,9 +13,11 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -34,6 +36,7 @@ import com.softeng306.p2.Models.Tag;
 import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,6 +46,9 @@ public class ListActivity extends AppCompatActivity {
     private ImageView closeSearch;
     private String categoryName;
     private View bottomSheetView;
+    private List<Integer> recyclerIds;
+    private List<TagAdapter> adapters;
+    private BottomSheetDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +59,8 @@ public class ListActivity extends AppCompatActivity {
         ImageButton listSearchButton = findViewById(R.id.listSearchButton);
         searchBar = findViewById(R.id.ListSearchBar);
         closeSearch = findViewById(R.id.closeSearchArea);
+        recyclerIds = new ArrayList<>();
+        adapters = new ArrayList<>();
 
         // Receive data from intent
         Intent intent = getIntent();
@@ -62,6 +70,7 @@ public class ListActivity extends AppCompatActivity {
         ColorStateList categoryColour = extras.getParcelable("categoryColour");
 
         fetchVehicleData();
+        initRefineDialog();
 
         // Set the list title
         TextView catTitle = findViewById(R.id.ListTitle);
@@ -85,14 +94,12 @@ public class ListActivity extends AppCompatActivity {
         RelativeLayout refineBtn = findViewById(R.id.refineBtn);
         refineBtn.setBackgroundTintList(categoryColour);
 
+        // Initialize refine button
+        refineBtn.setOnClickListener(v -> dialog.show());
+
         // Initialize back button
         ImageButton listBackButton = findViewById(R.id.listBackButton);
         listBackButton.setOnClickListener(v -> GoBack());
-
-        // Initialize refine button
-        refineBtn.setOnClickListener(v -> {
-            showRefineDialog();
-        });
 
         // Initialize search button
         listSearchButton.setOnClickListener(v -> {
@@ -164,10 +171,10 @@ public class ListActivity extends AppCompatActivity {
 
     private void fetchVehicleData() {
         VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getCategoryVehicles(categoryName, this::propagateAdaptor);
+        vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
     }
 
-    private void propagateAdaptor(List<Vehicle> vehicleList) {
+    private void propagateListAdaptor(List<Vehicle> vehicleList) {
         VehicleAdapter vehicleAdapter;
         RecyclerView recyclerView = findViewById(R.id.recycler);
 
@@ -199,50 +206,92 @@ public class ListActivity extends AppCompatActivity {
 
     }
 
-    private void showRefineDialog() {
-        BottomSheetDialog dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
+    private void initRefineDialog() {
+        dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
         bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
-        //bottomSheetView.findViewById(R.id.submitRefineBtn).setOnClickListener(view -> /*TO DO*/ );
+        bottomSheetView.findViewById(R.id.submitRefineBtn).setOnClickListener(view -> {
+            List<String> onTags = new ArrayList<>();
+            for (TagAdapter a : adapters) {
+                for (String s : a.getOnTags()) {
+                    onTags.add(s);
+                }
+            }
+            if(onTags.isEmpty()) {
+                Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
+            } else {
+                VehicleDataAccess vda = new VehicleDataAccess();
+                vda.getVehicleByTagName(onTags, ListActivity.this::propagateListAdaptor);
+                dialog.hide();
+            }
+        });
+
         dialog.setContentView(bottomSheetView);
-        dialog.show();
 
         VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllTags(this::propagateTagAdaptor);
+        vda.getAllTags(tagList -> {
+            ArrayList<List<String>> sortedTags = listTagTypes(tagList);
+
+            for(List<String> typeTagList : sortedTags) {
+                String type = typeTagList.get(0);
+                TextView typeTitle = new TextView(ListActivity.this);
+                typeTitle.setText(type);
+                typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                ((LinearLayout) bottomSheetView).addView(typeTitle, 2);
+
+                propagateTagAdaptor(typeTagList);
+
+            }
+        });
+
     }
 
-    private void propagateTagAdaptor(List<Tag> tagsList) {
+    private ArrayList<List<String>> listTagTypes(List<Tag> tagsList) {
 
-        TagAdapter tagAdapter;
-        RecyclerView recyclerView = bottomSheetView.findViewById(R.id.tagsRecycler);
-
-        // Create string array
-        List<String> tagName = new ArrayList<>();
-        List<String> tagType = new ArrayList<>();
-
+        // Create string hash set of types
+        LinkedHashSet<String> tagTypes = new LinkedHashSet<>();
         for(Tag tag : tagsList) {
-            tagName.add(tag.getTagName());
-            tagType.add(tag.getTagType());
+            tagTypes.add(tag.getTagType());
         }
+
+        ArrayList<List<String>> sortedTags = new ArrayList<>();
+        // Sort tags by type
+        for(String type: tagTypes) {
+            List<String> tagNames = new ArrayList<>();
+            tagNames.add(type);
+            for (Tag tag : tagsList) {
+                if (tag.getTagType().equals(type)) {
+                    tagNames.add(tag.getTagName());
+                }
+            }
+            sortedTags.add(tagNames);
+        }
+
+        return sortedTags;
+    }
+
+    private void propagateTagAdaptor(List<String> tagNames) {
+        RecyclerView tagRecyclerView = new RecyclerView(ListActivity.this);
+        int id = View.generateViewId();
+        tagRecyclerView.setId(id);
+        recyclerIds.add(id);
+        TagAdapter tagAdapter;
 
         // Initialize arraylist
         ArrayList<TagModel> tagModels = new ArrayList<>();
-        for(int i = 0; i<tagsList.size();i++){
-            TagModel model = new TagModel(tagName.get(i), tagType.get(i));
+        for(int i = 1; i<tagNames.size();i++){
+            TagModel model = new TagModel(tagNames.get(i));
             tagModels.add(model);
         }
 
-        // Design grid layout
-        recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        // Design horizontal layout
+        tagRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false));
+        tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
-        // Initialize top adapter
+        // Initialize adapter
         tagAdapter = new TagAdapter(ListActivity.this, tagModels);
-        recyclerView.setAdapter(tagAdapter);
+        adapters.add(tagAdapter);
+        tagRecyclerView.setAdapter(tagAdapter);
 
-        TextView typeTitle = bottomSheetView.findViewById(R.id.TypeTitle1);
-        typeTitle.setText(tagModels.get(0).getTType());
-
+        ((LinearLayout) bottomSheetView).addView(tagRecyclerView, 3);
     }
-
 }

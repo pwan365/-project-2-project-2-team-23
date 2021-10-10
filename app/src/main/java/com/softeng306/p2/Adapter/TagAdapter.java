@@ -1,6 +1,7 @@
 package com.softeng306.p2.Adapter;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +15,12 @@ import com.softeng306.p2.Model.TagModel;
 import com.softeng306.p2.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
     ArrayList<TagModel> tagModels;
     ArrayList<String> onTags;
     Context context;
+    ColorStateList CatColour;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //Initialize variable
@@ -30,9 +31,10 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         }
     }
 
-    public TagAdapter(Context context, ArrayList<TagModel> tagModels){
+    public TagAdapter(Context context, ArrayList<TagModel> tagModels, ColorStateList CatColour){
         this.context = context;
         this.tagModels = tagModels;
+        this.CatColour = CatColour;
     }
 
     @NonNull
@@ -49,12 +51,19 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
         holder.tagTextView.setText(tagModels.get(position).getTName());
         holder.tagTextView.setTextOff(tagModels.get(position).getTName());
         holder.tagTextView.setTextOn(tagModels.get(position).getTName());
+
         holder.tagTextView.setOnClickListener(view -> {
             if (holder.tagTextView.isChecked()) {
                 holder.tagTextView.setTextColor(Color.WHITE);
+                holder.tagTextView.setBackgroundTintList(CatColour);
+
                 onTags.add((String)holder.tagTextView.getText());
             } else {
                 holder.tagTextView.setTextColor(Color.BLACK);
+                holder.tagTextView.setBackgroundTintList(ColorStateList.valueOf(
+                        view.getResources().getColor(R.color.lightGrey)));
+
+                onTags.remove(holder.tagTextView.getText());
             }
         });
     }
@@ -65,9 +74,7 @@ public class TagAdapter extends RecyclerView.Adapter<TagAdapter.ViewHolder> {
     }
 
     public ArrayList<String> getOnTags() {
-        ArrayList<String> list = new ArrayList<>(onTags);
-        onTags.clear();
-        return list;
+        return onTags;
     }
 
 

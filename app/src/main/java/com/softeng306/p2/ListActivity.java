@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -49,6 +50,8 @@ public class ListActivity extends AppCompatActivity {
     private List<Integer> recyclerIds;
     private List<TagAdapter> adapters;
     private BottomSheetDialog dialog;
+    private int CatColourInt;
+    private ColorStateList CatColourState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +70,7 @@ public class ListActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         categoryName = extras.getString("category");
         String categorySubtitle = extras.getString("categorySubtitle");
-        ColorStateList categoryColour = extras.getParcelable("categoryColour");
+        CatColourState = extras.getParcelable("categoryColour");
 
         fetchVehicleData();
         initRefineDialog();
@@ -88,11 +91,12 @@ public class ListActivity extends AppCompatActivity {
 
         // Set the heading colour
         RelativeLayout listHeading = findViewById(R.id.ListHeader);
-        listHeading.setBackgroundColor(categoryColour.getDefaultColor());
+        CatColourInt = CatColourState.getDefaultColor();
+        listHeading.setBackgroundColor(CatColourInt);
 
         // Set the refine colour
         RelativeLayout refineBtn = findViewById(R.id.refineBtn);
-        refineBtn.setBackgroundTintList(categoryColour);
+        refineBtn.setBackgroundTintList(CatColourState);
 
         // Initialize refine button
         refineBtn.setOnClickListener(v -> dialog.show());
@@ -209,7 +213,10 @@ public class ListActivity extends AppCompatActivity {
     private void initRefineDialog() {
         dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
         bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
-        bottomSheetView.findViewById(R.id.submitRefineBtn).setOnClickListener(view -> {
+
+        Button submitRefineBtn = bottomSheetView.findViewById(R.id.submitRefineBtn);
+        submitRefineBtn.setBackgroundTintList(CatColourState);
+        submitRefineBtn.setOnClickListener(view -> {
             List<String> onTags = new ArrayList<>();
             for (TagAdapter a : adapters) {
                 for (String s : a.getOnTags()) {
@@ -288,7 +295,7 @@ public class ListActivity extends AppCompatActivity {
         tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Initialize adapter
-        tagAdapter = new TagAdapter(ListActivity.this, tagModels);
+        tagAdapter = new TagAdapter(ListActivity.this, tagModels, CatColourState);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 

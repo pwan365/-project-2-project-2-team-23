@@ -115,7 +115,7 @@
 
     <style name="roundedCorners" parent="">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerSize">10dp</item>
+        <item name="cornerSize">25dp</item>
     </style>
 
 </resources>

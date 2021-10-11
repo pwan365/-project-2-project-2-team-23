@@ -19,7 +19,8 @@
             android:id="@+id/top_image_view"
             android:layout_width="match_parent"
             android:layout_height="130dp"
-            android:src="@drawable/hybrid"
+            android:scaleType="centerCrop"
+            android:src="@color/blackGrey"
             app:shapeAppearanceOverlay="@style/roundedCorners" />
 
         <TextView
@@ -27,7 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginTop="-20dp"
+            android:layout_marginTop="0dp"
             android:text="Tesla"
             android:textAlignment="textStart"
             android:textSize="20sp"

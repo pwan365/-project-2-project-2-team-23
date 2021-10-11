@@ -118,7 +118,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     }
                     carDesc = vehicle.getDescription();
                     carPrice = "$";
-                    carPrice += vehicle.getPrice();
+                    carPrice += (int)vehicle.getPrice();
                     getDetails(vehicle);
                     setDetails();
                     setData();

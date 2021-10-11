@@ -13,15 +13,24 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.DetailsActivity;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
+import com.softeng306.p2.MainActivity;
 import com.softeng306.p2.Model.TopModel;
+import com.softeng306.p2.Models.Vehicle;
 import com.softeng306.p2.R;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
-public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
+public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> implements CoreActivity {
     ArrayList<TopModel> topModels;
     Context context;
+    IVehicleDataAccess vda;
 
     public TopAdapter(Context context,ArrayList<TopModel> topModels){
         this.context = context;
@@ -39,24 +48,49 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull TopAdapter.ViewHolder holder, int position) {
-        //set Logo to ImageView
-        holder.imageView.setImageResource(topModels.get(position).getTpImg());
-        holder.titleView.setText(topModels.get(position).getTpName());
-        holder.topLayout.setOnClickListener(new View.OnClickListener(){
+        VehicleService.getInstance().InjectService(this);
+        String vehicleName = topModels.get(position).getTpName();
+        vda.getVehicleByName(vehicleName,new OnGetVehicleListener() {
 
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, DetailsActivity.class);
-                final CharSequence carTitle = holder.titleView.getText();
-                intent.putExtra("title",String.valueOf(carTitle));
-                context.startActivity(intent);
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for (Vehicle v: vehicleList){
+                    String fileName = convertNameToFileName(vehicleName)+"_"+1;
+                    holder.imageView.setImageResource(context.getResources().getIdentifier(fileName, "drawable", context.getPackageName()));
+                    holder.titleView.setText(vehicleName);
+                    holder.priceView.setText("$"+(int)v.getPrice());
+                    holder.topLayout.setOnClickListener(new View.OnClickListener(){
+
+                        @Override
+                        public void onClick(View view) {
+                            Intent intent = new Intent(context, DetailsActivity.class);
+                            final CharSequence carTitle = holder.titleView.getText();
+                            intent.putExtra("title",String.valueOf(carTitle));
+                            context.startActivity(intent);
+                        }
+                    });
+                }
+
             }
         });
+        //set Logo to ImageView
+//        holder.imageView.setImageResource(topModels.get(position).getTpImg());
+//        holder.titleView.setText(topModels.get(position).getTpName());
+
+    }
+
+    private String convertNameToFileName(String carTitle){
+        return carTitle.toLowerCase(Locale.ROOT).replace(" ","_").replace("-","_");
     }
 
     @Override
     public int getItemCount() {
         return topModels.size();
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        vda = vehicleDataAccess;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -72,4 +106,6 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
             topLayout = itemView.findViewById(R.id.topLayout);
         }
     }
+
+
 }

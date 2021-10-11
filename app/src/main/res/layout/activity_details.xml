@@ -97,7 +97,31 @@
                         android:dividerHeight="0dp" />
 
                 </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-50dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/TopPicks"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:text="@string/top_picks"
+                        android:textStyle="bold"
+                        style="@style/Headline3"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="10dp" />
+                </LinearLayout>
             </LinearLayout>
+
+
 
         </LinearLayout>
     </ScrollView>

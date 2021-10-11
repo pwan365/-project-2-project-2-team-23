@@ -77,15 +77,14 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         recyclerView = findViewById(R.id.recycler_view);
 
         // Create integer array
-        Integer[] topImg = {R.drawable.hybrid,R.drawable.electric,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck};
 
         // Create string array
-        String[] topName = {"RAV4","Model S","C-HR","Model Y","Model X","Cyber Truck"};
+        String[] topName = {"C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Model X","Cybertruck"};
 
         // Initialize arraylist
         topModels =  new ArrayList<>();
-        for(int i = 0; i<topImg.length;i++){
-            TopModel model = new TopModel(topImg[i],topName[i]);
+        for(int i = 0; i<topName.length;i++){
+            TopModel model = new TopModel(topName[i]);
             topModels.add(model);
         }
 

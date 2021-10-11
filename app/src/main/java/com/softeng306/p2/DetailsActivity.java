@@ -10,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -26,10 +27,12 @@ import java.util.List;
 import java.util.Locale;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes; // important
+import com.softeng306.p2.Adapter.DetailAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
+import com.softeng306.p2.Model.DetailModel;
 import com.softeng306.p2.Models.Electric;
 import com.softeng306.p2.Models.Hybrid;
 import com.softeng306.p2.Models.Petrol;
@@ -92,7 +95,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     Vehicle vehicle;
     IVehicleDataAccess vda;
     ViewHolder vh;
-    List<String> details = new ArrayList();
+    List<DetailModel> details = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +120,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     carPrice = "$";
                     carPrice += vehicle.getPrice();
                     getDetails(vehicle);
+                    setDetails();
                     setData();
                 }
             });
@@ -127,7 +131,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     }
 
     private String convertNameToFileName(String carTitle){
-        return carTitle.toLowerCase(Locale.ROOT).replace(" ","_");
+        return carTitle.toLowerCase(Locale.ROOT).replace(" ","_").replace("-","_");
     }
 
     private void setData(){
@@ -150,13 +154,29 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     }
 
     private void getDetails(Vehicle v){
-        details.add("Dimensions" + v.getDimension());
-        details.add("Weight: "+ v.getWeight());
-        details.add("Manufacture Date: " + v.getManufacturedDate());
+        details.add(new DetailModel("Dimension",v.getDimension()));
+        details.add(new DetailModel("Weight",v.getWeight()+"kg"));
+        details.add(new DetailModel("Manufacture Date",v.getManufacturedDate()+""));
+
         if(v instanceof Electric){
+
+            details.add(new DetailModel("Battery Capacity",((Electric) v).getBatteryCapacity()));
+            details.add(new DetailModel("Charging Time",((Electric) v).getChargingTime()));
+            details.add(new DetailModel("Travel Distance",((Electric) v).getTravelDistance()));
+
         }else if(v instanceof Petrol){
+            details.add(new DetailModel("Tank Capacity",((Petrol) v).getTankCapacity()+"L"));
+
         }else if(v instanceof Hybrid){
+            details.add(new DetailModel("PHEV",((Hybrid) v).getIsPHEV()+""));
+            details.add(new DetailModel("Charging Time",((Hybrid) v).getChargingTime()+"Mins"));
+
         }
+    }
+
+    private void setDetails(){
+        DetailAdapter detailAdapter = new DetailAdapter(vh.detailList.getContext(), details);
+        vh.detailList.setAdapter(detailAdapter);
     }
 
 }

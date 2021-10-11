@@ -4,6 +4,7 @@ public class TopModel {
     Integer topImg;
     String topName;
 
+
     public TopModel(Integer tpImg, String tpName){
         this.topImg = tpImg;
         this.topName = tpName;

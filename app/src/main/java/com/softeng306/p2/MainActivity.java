@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         Integer[] topImg = {R.drawable.hybrid,R.drawable.electric,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck,R.drawable.pickup_truck};
 
         // Create string array
-        String[] topName = {"Model 3","Model S","Roadster","Model Y","Model X","Cyber Truck"};
+        String[] topName = {"RAV4","Model S","C-HR","Model Y","Model X","Cyber Truck"};
 
         // Initialize arraylist
         topModels =  new ArrayList<>();

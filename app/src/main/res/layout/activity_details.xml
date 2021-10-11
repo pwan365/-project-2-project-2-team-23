@@ -41,7 +41,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
@@ -50,7 +50,9 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="Car Title"
-                    android:textSize="34sp" />
+                    android:textColor="@color/blackGrey"
+                    android:textSize="34sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/carDescription"
@@ -68,12 +70,13 @@
                     android:layout_marginTop="20dp"
                     android:paddingLeft="30dp"
                     android:text="price"
+                    android:textColor="@color/blackGrey"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:orientation="vertical">
 
@@ -81,13 +84,17 @@
                         android:id="@+id/textView4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Details" />
+                        android:layout_marginLeft="30dp"
+                        android:text="Details"
+                        android:textColor="@color/blackGrey"
+                        android:textSize="18sp" />
 
                     <ListView
                         android:id="@+id/detailList"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        />
+                        android:layout_height="307dp"
+                        android:divider="@null"
+                        android:dividerHeight="0dp" />
 
                 </LinearLayout>
             </LinearLayout>

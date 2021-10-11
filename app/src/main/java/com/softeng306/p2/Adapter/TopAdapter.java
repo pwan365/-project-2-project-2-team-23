@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -40,13 +41,13 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
     public void onBindViewHolder(@NonNull TopAdapter.ViewHolder holder, int position) {
         //set Logo to ImageView
         holder.imageView.setImageResource(topModels.get(position).getTpImg());
-        holder.textView.setText(topModels.get(position).getTpName());
+        holder.titleView.setText(topModels.get(position).getTpName());
         holder.topLayout.setOnClickListener(new View.OnClickListener(){
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(context, DetailsActivity.class);
-                final CharSequence carTitle = holder.textView.getText();
+                final CharSequence carTitle = holder.titleView.getText();
                 intent.putExtra("title",String.valueOf(carTitle));
                 context.startActivity(intent);
             }
@@ -61,12 +62,13 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
         //Initialize variable
         ImageView imageView;
-        TextView textView;
-        RelativeLayout topLayout;
+        TextView titleView,priceView;
+        LinearLayout topLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            priceView = itemView.findViewById(R.id.top_price_view);
             imageView = itemView.findViewById(R.id.top_image_view);
-            textView = itemView.findViewById(R.id.top_name_view);
+            titleView = itemView.findViewById(R.id.top_name_view);
             topLayout = itemView.findViewById(R.id.topLayout);
         }
     }

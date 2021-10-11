@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         // Create integer array
 
         // Create string array
-        String[] topName = {"C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Model X","Cybertruck"};
+        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Model X","Cybertruck"};
 
         // Initialize arraylist
         topModels =  new ArrayList<>();

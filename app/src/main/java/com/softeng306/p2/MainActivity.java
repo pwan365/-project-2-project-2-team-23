@@ -131,8 +131,10 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
     // Open search activity with results of the phrase inputted by user
     public void SearchEventHandler(String phrase) {
-        Log.i("MainActivity", "Searching for " + phrase);
-        /* TO DO */
+        Intent listIntent = new Intent(this, ResultsActivity.class);
+        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        listIntent.putExtra("searchPhrase", phrase);
+        startActivity(listIntent);
     }
 
     // Open list activity based on the category clicked on

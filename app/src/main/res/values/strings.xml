@@ -16,4 +16,6 @@
     <string name="refine">Refine</string>
     <string name="tagcategory1">TagCategory1</string>
     <string name="apply_filters">Apply filters</string>
+    <string name="back_arrow">back arrow</string>
+    <string name="search_results">Search results for</string>
 </resources>

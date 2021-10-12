@@ -9,6 +9,7 @@
     <!-- Header -->
     <LinearLayout
         style="@style/Container"
+        android:id="@+id/FavouritesHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/yellow"
@@ -30,6 +31,24 @@
             android:text="@string/favourites"
             android:layout_marginBottom="20dp"
             style="@style/Headline1" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/FavouritesHeader"
+        android:layout_marginTop="-20dp"
+        android:orientation="vertical"
+        android:backgroundTint="@color/white"
+        style="@style/RoundedBackground" >
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"/>
     </LinearLayout>
 
     <!-- Navigation -->

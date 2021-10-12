@@ -17,11 +17,9 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
-import com.softeng306.p2.Database.VehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TopModel;
-import com.softeng306.p2.Models.Tag;
 import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
@@ -54,13 +52,9 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         is.add(301);
         is.add(201);
 
-        vda.getVehicleById(is, new OnGetVehicleListener() {
-
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    System.out.println(v.getImageNames());
-                }
+        vda.getVehicleById(is, vehicleList -> {
+            for (Vehicle v: vehicleList){
+                System.out.println(v.getImageNames());
             }
         });
 
@@ -72,9 +66,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         vh.CatPetrol = findViewById(R.id.Petrol);
         vh.recyclerView = findViewById(R.id.recycler_view);
         vh.bottomNavigationView = findViewById(R.id.nav_bar);
-
-        // Assign variable
-        recyclerView = findViewById(R.id.recycler_view);
 
         // Create integer array
 
@@ -157,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         int intName= category.getId();
         extras.putString("category", getResources().getResourceEntryName(intName));
         extras.putString("categorySubtitle", (String) category.getContentDescription());
-        extras.putParcelable("categoryColour", (ColorStateList) category.getCardBackgroundColor());
+        extras.putParcelable("categoryColour", category.getCardBackgroundColor());
         listIntent.putExtras(extras);
         startActivity(listIntent);
     }

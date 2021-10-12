@@ -1,6 +1,7 @@
 package com.softeng306.p2.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softeng306.p2.DetailsActivity;
 import com.softeng306.p2.Model.VehicleModel;
 import com.softeng306.p2.R;
 
@@ -38,6 +40,12 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHold
         holder.nameTextView.setText(vehicleModels.get(position).getVName());
         String price = "$" + vehicleModels.get(position).getVPrice().toString();
         holder.priceTextView.setText(price);
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, DetailsActivity.class);
+            final CharSequence carTitle = holder.nameTextView.getText();
+            intent.putExtra("title",String.valueOf(carTitle));
+            context.startActivity(intent);
+        });
     }
 
     @Override

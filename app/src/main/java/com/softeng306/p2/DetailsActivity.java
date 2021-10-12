@@ -3,6 +3,8 @@ package com.softeng306.p2;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -28,11 +30,13 @@ import java.util.Locale;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes; // important
 import com.softeng306.p2.Adapter.DetailAdapter;
+import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.DetailModel;
+import com.softeng306.p2.Model.TopModel;
 import com.softeng306.p2.Models.Electric;
 import com.softeng306.p2.Models.Hybrid;
 import com.softeng306.p2.Models.Petrol;
@@ -50,6 +54,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         private ImageSlider imageSlider;
         private BottomNavigationView bottomNavigationView;
         private ListView detailList;
+        private RecyclerView recyclerView;
 
         public ViewHolder(){
             titleText = findViewById(R.id.carTitle);
@@ -58,6 +63,9 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             imageSlider = findViewById(R.id.image_slider);
             bottomNavigationView = findViewById(R.id.nav_bar);
             detailList = findViewById(R.id.detailList);
+            recyclerView = findViewById(R.id.related_view);
+
+
             // Initialise the navigation buttons
             Menu menu = bottomNavigationView.getMenu();
             MenuItem menuItem = menu.getItem(0);
@@ -96,6 +104,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     IVehicleDataAccess vda;
     ViewHolder vh;
     List<DetailModel> details = new ArrayList();
+    ArrayList<TopModel> topModels = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +113,23 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
+
+        // Design Horizontal Layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(DetailsActivity.this, LinearLayoutManager.HORIZONTAL,false);
+        vh.recyclerView.setLayoutManager(layoutManager);
+        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
+        vda.getCategoryVehicles("Electric", new OnGetVehicleListener(){
+
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                for(Vehicle v : vehicleList){
+                    System.out.println(v.getVehicleName());
+                    topModels.add(new TopModel(v.getVehicleName()));
+                }
+            }
+        });
+        TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+        vh.recyclerView.setAdapter(topAdapter);
     }
 
     private void getData(){
@@ -164,6 +190,8 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             details.add(new DetailModel("Charging Time",((Electric) v).getChargingTime()));
             details.add(new DetailModel("Travel Distance",((Electric) v).getTravelDistance()));
 
+
+
         }else if(v instanceof Petrol){
             details.add(new DetailModel("Tank Capacity",((Petrol) v).getTankCapacity()+"L"));
 
@@ -178,5 +206,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         DetailAdapter detailAdapter = new DetailAdapter(vh.detailList.getContext(), details);
         vh.detailList.setAdapter(detailAdapter);
     }
+
+
 
 }

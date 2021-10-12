@@ -3,7 +3,7 @@ package com.softeng306.p2.Database;
 import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.DataModel.Tag;
 
 import java.util.List;
 

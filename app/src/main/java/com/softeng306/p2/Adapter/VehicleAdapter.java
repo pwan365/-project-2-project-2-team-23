@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.softeng306.p2.DetailsActivity;
-import com.softeng306.p2.Model.VehicleModel;
+import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.R;
 
 import java.util.ArrayList;

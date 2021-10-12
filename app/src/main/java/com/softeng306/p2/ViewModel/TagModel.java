@@ -1,4 +1,4 @@
-package com.softeng306.p2.Model;
+package com.softeng306.p2.ViewModel;
 
 public class TagModel {
     String tName;

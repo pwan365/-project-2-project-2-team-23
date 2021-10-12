@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +17,8 @@ import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.DetailsActivity;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.MainActivity;
-import com.softeng306.p2.Model.TopModel;
-import com.softeng306.p2.Models.Vehicle;
+import com.softeng306.p2.ViewModel.TopModel;
+import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.R;
 
 import java.util.ArrayList;

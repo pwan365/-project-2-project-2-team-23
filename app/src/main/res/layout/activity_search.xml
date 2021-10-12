@@ -49,6 +49,17 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:theme="@style/AppSearchView" />
 
+    <LinearLayout
+        android:id="@+id/SearchTagContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="40dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/SearchBar"
+        />
+
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"

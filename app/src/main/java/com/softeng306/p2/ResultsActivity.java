@@ -1,22 +1,16 @@
 package com.softeng306.p2;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,110 +25,64 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.Model.TagModel;
 import com.softeng306.p2.Model.VehicleModel;
 import com.softeng306.p2.Models.Tag;
 import com.softeng306.p2.Models.Vehicle;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
+import java.util.Set;
 
-public class ListActivity extends AppCompatActivity {
-
-    private SearchView searchBar;
-    private ImageView closeSearch;
-    private String categoryName;
+public class ResultsActivity extends AppCompatActivity {
+    private String searchPhrase;
+    private ArrayList<String> tags;
     private View bottomSheetView;
     private List<Integer> recyclerIds;
     private List<TagAdapter> adapters;
     private BottomSheetDialog dialog;
     private int CatColourInt;
     private ColorStateList CatColourState;
+    private List<Vehicle> vehicleList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_list);
-
-        // find id references
-        ImageButton listSearchButton = findViewById(R.id.listSearchButton);
-        searchBar = findViewById(R.id.ListSearchBar);
-        closeSearch = findViewById(R.id.closeSearchArea);
+        setContentView(R.layout.activity_results);
 
         // init arrays
         recyclerIds = new ArrayList<>();
         adapters = new ArrayList<>();
+        tags = new ArrayList<>();
+        vehicleList = new ArrayList<>();
+        CatColourInt = R.color.yellow;
+        CatColourState = ColorStateList.valueOf(getResources().getColor(CatColourInt));
 
         // Receive data from intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        categoryName = extras.getString("category");
-        String categorySubtitle = extras.getString("categorySubtitle");
-        CatColourState = extras.getParcelable("categoryColour");
+        searchPhrase = extras.getString("searchPhrase");
+        tags = extras.getStringArrayList("tags");
+
+        // Set the list title
+        TextView phraseTitle = findViewById(R.id.phraseText);
+        phraseTitle.setText("\"" + searchPhrase + "\"");
 
         fetchVehicleData();
         initRefineDialog();
 
-        // Set the list title
-        TextView catTitle = findViewById(R.id.ListTitle);
-        catTitle.setText(categoryName);
-
-        // Set the list subtitle
-        TextView catSubtitle = findViewById(R.id.ListSubtitle);
-        catSubtitle.setText(categorySubtitle);
-
-        // Set the list image
-        ImageView catImg = findViewById(R.id.ListHeaderImage);
-        int resId = getResources().getIdentifier(categoryName.toLowerCase(Locale.ROOT),"drawable",ListActivity.this.getPackageName());
-        Drawable d = ListActivity.this.getResources().getDrawable(resId);
-        catImg.setImageDrawable(d);
-
-        // Set the heading colour
-        RelativeLayout listHeading = findViewById(R.id.ListHeader);
-        CatColourInt = CatColourState.getDefaultColor();
-        listHeading.setBackgroundColor(CatColourInt);
-
-        // Set the refine colour
-        RelativeLayout refineBtn = findViewById(R.id.refineBtn);
-        refineBtn.setBackgroundTintList(CatColourState);
-
         // Initialize refine button
+        RelativeLayout refineBtn = findViewById(R.id.refineBtn);
+        refineBtn.setVisibility(View.GONE);
         refineBtn.setOnClickListener(v -> dialog.show());
 
         // Initialize back button
         ImageButton listBackButton = findViewById(R.id.listBackButton);
         listBackButton.setOnClickListener(v -> GoBack());
 
-        // Initialize search button
-        listSearchButton.setOnClickListener(v -> {
-            searchBar.setVisibility(View.VISIBLE);
-            searchBar.requestFocus();
-            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
-            closeSearch.setVisibility(View.VISIBLE);
-        });
-
-        // Initialize close search view
-        closeSearch.setOnClickListener(v -> {
-            searchBar.setVisibility(View.INVISIBLE);
-            closeSearch.setVisibility(View.INVISIBLE);
-        });
-
-        // Set up the search bar
-        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String searchInput) {
-                SearchEventHandler(searchInput);
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String searchInput) {
-                return false;
-            }
-        });
 
         // Initialise the navigation buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
@@ -169,17 +117,28 @@ public class ListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // Open search activity with results of the phrase inputted by user
-    public void SearchEventHandler(String phrase) {
-        Intent listIntent = new Intent(this, ResultsActivity.class);
-        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        listIntent.putExtra("searchPhrase", phrase);
-        startActivity(listIntent);
-    }
-
     private void fetchVehicleData() {
         VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
+        //vda.getVehicleByName(searchPhrase, vehicleList -> ResultsActivity.this.vehicleList.addAll(vehicleList));
+        //vda.getVehicleByName(searchPhrase, vehicleList -> propagateListAdaptor(vehicleList));
+
+        vda.getVehicleByName(searchPhrase, new OnGetVehicleListener() {
+            @Override
+            public void onCallBack(List<Vehicle> vehicleList) {
+                ResultsActivity.this.vehicleList.addAll(vehicleList);
+                if (tags != null && tags.size()>0) {
+                    vda.getVehicleByTagName(tags, new OnGetVehicleListener() {
+                        @Override
+                        public void onCallBack(List<Vehicle> vehicleList) {
+                            ResultsActivity.this.vehicleList.removeAll(vehicleList);
+                            ResultsActivity.this.vehicleList.addAll(vehicleList);
+                        }
+                    });
+                }
+                propagateListAdaptor(ResultsActivity.this.vehicleList);
+                System.out.println(ResultsActivity.this.vehicleList);
+            }
+        });
     }
 
     private void propagateListAdaptor(List<Vehicle> vehicleList) {
@@ -203,19 +162,18 @@ public class ListActivity extends AppCompatActivity {
         }
 
         // Design grid layout
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
         // Initialize top adapter
-        vehicleAdapter = new VehicleAdapter(ListActivity.this, vehicleModels);
+        vehicleAdapter = new VehicleAdapter(ResultsActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
 
     }
 
     private void initRefineDialog() {
-        dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
+        dialog = new BottomSheetDialog(ResultsActivity.this, R.style.BottomSheetTheme);
         bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
 
         Button submitRefineBtn = bottomSheetView.findViewById(R.id.submitRefineBtn);
@@ -231,7 +189,7 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
             } else {
                 VehicleDataAccess vda = new VehicleDataAccess();
-                vda.getVehicleByTagName(onTags, ListActivity.this::propagateListAdaptor);
+                vda.getVehicleByTagName(onTags, ResultsActivity.this::propagateListAdaptor);
                 dialog.hide();
             }
         });
@@ -244,7 +202,7 @@ public class ListActivity extends AppCompatActivity {
 
             for(List<String> typeTagList : sortedTags) {
                 String type = typeTagList.get(0);
-                TextView typeTitle = new TextView(ListActivity.this);
+                TextView typeTitle = new TextView(ResultsActivity.this);
                 typeTitle.setText(type);
                 typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                 ((LinearLayout) bottomSheetView).addView(typeTitle, 2);
@@ -281,7 +239,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void propagateTagAdaptor(List<String> tagNames) {
-        RecyclerView tagRecyclerView = new RecyclerView(ListActivity.this);
+        RecyclerView tagRecyclerView = new RecyclerView(ResultsActivity.this);
         int id = View.generateViewId();
         tagRecyclerView.setId(id);
         recyclerIds.add(id);
@@ -299,7 +257,7 @@ public class ListActivity extends AppCompatActivity {
         tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         // Initialize adapter
-        tagAdapter = new TagAdapter(ListActivity.this, tagModels, CatColourState);
+        tagAdapter = new TagAdapter(ResultsActivity.this, tagModels, CatColourState);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 

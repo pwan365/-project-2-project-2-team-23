@@ -10,12 +10,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.Models.Electric;
-import com.softeng306.p2.Models.Hybrid;
-import com.softeng306.p2.Models.Petrol;
-import com.softeng306.p2.Models.Tag;
-import com.softeng306.p2.Models.User;
-import com.softeng306.p2.Models.Vehicle;
+import com.softeng306.p2.DataModel.Electric;
+import com.softeng306.p2.DataModel.Hybrid;
+import com.softeng306.p2.DataModel.Petrol;
+import com.softeng306.p2.DataModel.Tag;
+import com.softeng306.p2.DataModel.User;
+import com.softeng306.p2.DataModel.Vehicle;
 
 import java.util.ArrayList;
 import java.util.List;

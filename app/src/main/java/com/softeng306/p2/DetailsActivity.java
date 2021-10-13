@@ -1,29 +1,22 @@
 package com.softeng306.p2;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,12 +28,12 @@ import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.Model.DetailModel;
-import com.softeng306.p2.Model.TopModel;
-import com.softeng306.p2.Models.Electric;
-import com.softeng306.p2.Models.Hybrid;
-import com.softeng306.p2.Models.Petrol;
-import com.softeng306.p2.Models.Vehicle;
+import com.softeng306.p2.ViewModel.DetailModel;
+import com.softeng306.p2.ViewModel.TopModel;
+import com.softeng306.p2.DataModel.Electric;
+import com.softeng306.p2.DataModel.Hybrid;
+import com.softeng306.p2.DataModel.Petrol;
+import com.softeng306.p2.DataModel.Vehicle;
 
 public class DetailsActivity extends AppCompatActivity implements CoreActivity {
 
@@ -105,6 +98,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     ViewHolder vh;
     List<DetailModel> details = new ArrayList();
     ArrayList<TopModel> topModels = new ArrayList<>();
+    String relatedVehicleType = "Electric";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,22 +108,8 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         VehicleService.getInstance().InjectService(this);
         getData();
 
-        // Design Horizontal Layout
-        LinearLayoutManager layoutManager = new LinearLayoutManager(DetailsActivity.this, LinearLayoutManager.HORIZONTAL,false);
-        vh.recyclerView.setLayoutManager(layoutManager);
-        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
-        vda.getCategoryVehicles("Electric", new OnGetVehicleListener(){
 
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for(Vehicle v : vehicleList){
-                    System.out.println(v.getVehicleName());
-                    topModels.add(new TopModel(v.getVehicleName()));
-                }
-            }
-        });
-        TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
-        vh.recyclerView.setAdapter(topAdapter);
+
     }
 
     private void getData(){
@@ -148,6 +128,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     getDetails(vehicle);
                     setDetails();
                     setData();
+                    addRelatedView();
                 }
             });
         }else{
@@ -191,20 +172,81 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             details.add(new DetailModel("Travel Distance",((Electric) v).getTravelDistance()));
 
 
-
         }else if(v instanceof Petrol){
             details.add(new DetailModel("Tank Capacity",((Petrol) v).getTankCapacity()+"L"));
-
         }else if(v instanceof Hybrid){
             details.add(new DetailModel("PHEV",((Hybrid) v).getIsPHEV()+""));
             details.add(new DetailModel("Charging Time",((Hybrid) v).getChargingTime()+"Mins"));
-
         }
     }
 
     private void setDetails(){
         DetailAdapter detailAdapter = new DetailAdapter(vh.detailList.getContext(), details);
         vh.detailList.setAdapter(detailAdapter);
+    }
+
+    private void addRelatedView(){
+        // Design Horizontal Layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(DetailsActivity.this, LinearLayoutManager.HORIZONTAL,false);
+        vh.recyclerView.setLayoutManager(layoutManager);
+        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+
+        if(vehicle instanceof Electric){
+            relatedVehicleType = "Electric";
+            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
+
+                @Override
+                public void onCallBack(List<Vehicle> vehicleList) {
+                    for(Vehicle v : vehicleList){
+
+                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                            topModels.add(new TopModel(v.getVehicleName()));
+                        }
+                    }
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    vh.recyclerView.setAdapter(topAdapter);
+                }
+            });
+
+
+        }else if(vehicle instanceof Petrol){
+            relatedVehicleType = "Petrol";
+            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
+
+                @Override
+                public void onCallBack(List<Vehicle> vehicleList) {
+                    for(Vehicle v : vehicleList){
+                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                            topModels.add(new TopModel(v.getVehicleName()));
+                        }
+
+                    }
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    vh.recyclerView.setAdapter(topAdapter);
+                }
+            });
+
+
+        }else if(vehicle instanceof Hybrid){
+            relatedVehicleType = "Hybrid";
+            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
+
+                @Override
+                public void onCallBack(List<Vehicle> vehicleList) {
+                    for(Vehicle v : vehicleList){
+                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                            topModels.add(new TopModel(v.getVehicleName()));
+                        }
+                    }
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    vh.recyclerView.setAdapter(topAdapter);
+                }
+            });
+
+
+        }
+
     }
 
 

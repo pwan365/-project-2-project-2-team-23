@@ -11,7 +11,7 @@ import android.widget.ToggleButton;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.softeng306.p2.Model.TagModel;
+import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.R;
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package com.softeng306.p2.Models;
+package com.softeng306.p2.DataModel;
 
 public enum TagType {
     BRAND,

@@ -26,10 +26,10 @@ import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.Model.TagModel;
-import com.softeng306.p2.Model.VehicleModel;
-import com.softeng306.p2.Models.Tag;
-import com.softeng306.p2.Models.Vehicle;
+import com.softeng306.p2.ViewModel.TagModel;
+import com.softeng306.p2.ViewModel.VehicleModel;
+import com.softeng306.p2.DataModel.Tag;
+import com.softeng306.p2.DataModel.Vehicle;
 
 import java.util.ArrayList;
 import java.util.HashSet;

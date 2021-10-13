@@ -17,6 +17,7 @@ import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Vehicle;
 
@@ -45,15 +46,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
         VehicleService.getInstance().InjectService(this);
 
-        List<Integer> is = new ArrayList<>();
-        is.add(101);
-        is.add(301);
-        is.add(201);
-
-        vda.getVehicleById(is, vehicleList -> {
-            for (Vehicle v: vehicleList){
-                System.out.println(v.getImageNames());
-            }
+        vda.getVehicleByName("c", vehicleList -> {
+            vda.getElectricVehicles(vehicleList2 ->{
+                List<Vehicle> l1 = VehicleComparator.commonVehicles(vehicleList, vehicleList2);
+                for (Vehicle v: l1){
+                    System.out.println(v.getVehicleName());
+                }
+            });
         });
 
         // Initialise views for future references

@@ -20,8 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Database.VehicleDataAccess;
-import com.softeng306.p2.Model.TagModel;
-import com.softeng306.p2.Models.Tag;
+import com.softeng306.p2.ViewModel.TagModel;
+import com.softeng306.p2.DataModel.Tag;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

@@ -17,4 +17,20 @@ public class VehicleComparator {
         }
         return vehicles;
     }
+
+    public static List<Vehicle> mergeVehicles(List<Vehicle> list1, List<Vehicle> list2){
+        List<Vehicle> vehicles = list1;
+        for (Vehicle v: list2){
+            boolean contains = false;
+            for(Vehicle v2: list1){
+                if (v.getVehicleName().equals(v2.getVehicleName())){
+                    contains = true;
+                }
+            }
+            if (!contains){
+                vehicles.add(v);
+            }
+        }
+        return vehicles;
+    }
 }

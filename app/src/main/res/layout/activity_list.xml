@@ -30,16 +30,17 @@
             android:id="@+id/listBackButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:contentDescription="@string/back_arrow"
             android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:background="@null"
+            android:contentDescription="@string/back_arrow"
             android:scaleType="fitCenter"
             android:src="@drawable/back_arrow_icon" />
 
         <SearchView
             android:id="@+id/ListSearchBar"
+            style="@style/RoundedBackground"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
@@ -50,8 +51,7 @@
             android:queryBackground="@android:color/transparent"
             android:queryHint="@string/search_hint"
             android:visibility="invisible"
-            app:theme="@style/AppSearchView"
-            style="@style/RoundedBackground" />
+            app:theme="@style/AppSearchView" />
 
         <ImageButton
             android:id="@+id/listSearchButton"

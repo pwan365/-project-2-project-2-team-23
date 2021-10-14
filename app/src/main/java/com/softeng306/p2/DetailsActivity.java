@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,11 +23,15 @@ import java.util.List;
 import java.util.Locale;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes; // important
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.softeng306.p2.Adapter.DetailAdapter;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.DetailModel;
 import com.softeng306.p2.ViewModel.TopModel;
@@ -48,6 +53,8 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         private BottomNavigationView bottomNavigationView;
         private ListView detailList;
         private RecyclerView recyclerView;
+        private ImageButton listBackButton;
+        private LikeButton likeButton;
 
         public ViewHolder(){
             titleText = findViewById(R.id.carTitle);
@@ -57,6 +64,11 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             bottomNavigationView = findViewById(R.id.nav_bar);
             detailList = findViewById(R.id.detailList);
             recyclerView = findViewById(R.id.related_view);
+            listBackButton = findViewById(R.id.listBackButton);
+            likeButton = findViewById(R.id.heart_button);
+
+            //Initialise the back button
+            listBackButton.setOnClickListener(view -> GoBack());
 
 
             // Initialise the navigation buttons
@@ -99,6 +111,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     List<DetailModel> details = new ArrayList();
     ArrayList<TopModel> topModels = new ArrayList<>();
     String relatedVehicleType = "Electric";
+    User userDetail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,9 +120,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
-
-
-
     }
 
     private void getData(){
@@ -129,16 +139,53 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     setDetails();
                     setData();
                     addRelatedView();
+                    vda.getFavourites(new OnGetUserListener() {
+                        @Override
+                        public void onCallBack(User user) {
+                            userDetail = user;
+                            checkFavourite(userDetail);
+
+                        }
+                    });
                 }
             });
         }else{
             Toast.makeText(this, "No data.", Toast.LENGTH_LONG).show();
         }
 
+
+
     }
 
     private String convertNameToFileName(String carTitle){
         return carTitle.toLowerCase(Locale.ROOT).replace(" ","_").replace("-","_");
+    }
+
+    public void GoBack() {
+        Intent intent = new Intent(this,  MainActivity.class);
+        startActivity(intent);
+    }
+
+    private void checkFavourite(User user){
+        List<Integer> favouriteList = user.getFavourites();
+        int vehicleId = vehicle.getId();
+        for(int i:favouriteList){
+            if(i==vehicleId){
+                vh.likeButton.setLiked(true);
+            }
+        }
+        vh.likeButton.setOnLikeListener(new OnLikeListener() {
+            @Override
+            public void liked(LikeButton likeButton) {
+                vda.addToFavourites(vehicle.getId());
+            }
+
+            @Override
+            public void unLiked(LikeButton likeButton) {
+                vda.removeFromFavourites(vehicle.getId());
+
+            }
+        });
     }
 
     private void setData(){

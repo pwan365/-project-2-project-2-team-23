@@ -14,13 +14,20 @@ import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.DataModel.Electric;
+import com.softeng306.p2.DataModel.Hybrid;
+import com.softeng306.p2.DataModel.Petrol;
+import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Listeners.OnGetUserListener;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Vehicle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CoreActivity {
@@ -37,6 +44,12 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     TopAdapter topAdapter;
 
     IVehicleDataAccess vda;
+    User userDetails;
+    List<Vehicle> vehicleFavList;
+    List<Vehicle> topPickList;
+    int electricNum = 0;
+    int hybridNum = 0;
+    int petrolNum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,11 +82,10 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
         // Create string array
         String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Model X","Cybertruck"};
-
         // Initialize arraylist
         topModels =  new ArrayList<>();
-        for(int i = 0; i<topName.length;i++){
-            TopModel model = new TopModel(topName[i]);
+        for(String name : topName){
+            TopModel model = new TopModel(name);
             topModels.add(model);
         }
 
@@ -86,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         // Initialize top adapter
         topAdapter = new TopAdapter(MainActivity.this,topModels);
         vh.recyclerView.setAdapter(topAdapter);
+
 
         // Set up the search bar
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -157,4 +170,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
     }
+
+
 }

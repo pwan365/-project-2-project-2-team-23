@@ -41,7 +41,10 @@ import com.softeng306.p2.DataModel.Petrol;
 import com.softeng306.p2.DataModel.Vehicle;
 
 public class DetailsActivity extends AppCompatActivity implements CoreActivity {
-
+    /**
+     * initialize the database object
+     * @param vehicleDataAccess
+     */
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
@@ -70,7 +73,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             //Initialise the back button
             listBackButton.setOnClickListener(view -> GoBack());
 
-
             // Initialise the navigation buttons
             Menu menu = bottomNavigationView.getMenu();
             MenuItem menuItem = menu.getItem(0);
@@ -96,13 +98,9 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 return false;
             });
         }
-
     }
 
-
-
-
-    String[] imageList;
+    //Initialize fields
     String carTitle, carDesc, carPrice;
     List<SlideModel> slideModelList = new ArrayList<>();
     Vehicle vehicle;
@@ -122,11 +120,14 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         getData();
     }
 
+    /**
+     * retrieve data from database
+     */
     private void getData(){
+        //get vehicle object from database depend on the name of the vehicle
         if(getIntent().hasExtra("title")){
             carTitle = getIntent().getStringExtra("title");
             vda.getVehicleByName(carTitle, new OnGetVehicleListener() {
-
                 @Override
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for (Vehicle v: vehicleList){
@@ -135,6 +136,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     carDesc = vehicle.getDescription();
                     carPrice = "$";
                     carPrice += (int)vehicle.getPrice();
+                    //set up data once the vehicle is retrieved
                     getDetails(vehicle);
                     setDetails();
                     setData();
@@ -144,7 +146,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                         public void onCallBack(User user) {
                             userDetail = user;
                             checkFavourite(userDetail);
-
                         }
                     });
                 }
@@ -157,23 +158,39 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
 
     }
 
+    /**
+     * A helper method that convert name of car to image name
+     * @param carTitle
+     * @return string in the format of image file name
+     */
     private String convertNameToFileName(String carTitle){
         return carTitle.toLowerCase(Locale.ROOT).replace(" ","_").replace("-","_");
     }
 
+    /**
+     * method for the back button
+     */
     public void GoBack() {
         Intent intent = new Intent(this,  MainActivity.class);
         startActivity(intent);
     }
 
+    /**
+     * On activity initialization, check if the vehicle is in the list of favourite
+     * vehicle for the user. Initialize the like button based on the information.
+     * @param user
+     */
     private void checkFavourite(User user){
         List<Integer> favouriteList = user.getFavourites();
         int vehicleId = vehicle.getId();
+        //if vehicle is favourite, like button is liked
         for(int i:favouriteList){
             if(i==vehicleId){
                 vh.likeButton.setLiked(true);
             }
         }
+
+        //Initialize the like button for adding and removing vehicle from favourite list
         vh.likeButton.setOnLikeListener(new OnLikeListener() {
             @Override
             public void liked(LikeButton likeButton) {
@@ -192,7 +209,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh.titleText.setText(carTitle);
         vh.descText.setText(carDesc);
         vh.priceText.setText(carPrice);
-        //get file name from car title
+
         //image slider initialization
         int numImage = 3;
         for(int i = 1; i < numImage+1;i++){
@@ -212,13 +229,11 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         details.add(new DetailModel("Weight",v.getWeight()+"kg"));
         details.add(new DetailModel("Manufacture Date",v.getManufacturedDate()+""));
 
+        //Dependency injection to the vehicle object to display different info based on different object
         if(v instanceof Electric){
-
             details.add(new DetailModel("Battery Capacity",((Electric) v).getBatteryCapacity()));
             details.add(new DetailModel("Charging Time",((Electric) v).getChargingTime()));
             details.add(new DetailModel("Travel Distance",((Electric) v).getTravelDistance()));
-
-
         }else if(v instanceof Petrol){
             details.add(new DetailModel("Tank Capacity",((Petrol) v).getTankCapacity()+"L"));
         }else if(v instanceof Hybrid){
@@ -227,11 +242,17 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         }
     }
 
+    /**
+     * set up the details view with adapter
+     */
     private void setDetails(){
         DetailAdapter detailAdapter = new DetailAdapter(vh.detailList.getContext(), details);
         vh.detailList.setAdapter(detailAdapter);
     }
 
+    /**
+     * created the suggestion view based on the type of the vehicle
+     */
     private void addRelatedView(){
         // Design Horizontal Layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(DetailsActivity.this, LinearLayoutManager.HORIZONTAL,false);
@@ -246,7 +267,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 @Override
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for(Vehicle v : vehicleList){
-
                         if(!v.getVehicleName().equals(vehicle.getVehicleName())){
                             topModels.add(new TopModel(v.getVehicleName()));
                         }
@@ -255,8 +275,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
-
-
         }else if(vehicle instanceof Petrol){
             relatedVehicleType = "Petrol";
             vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
@@ -267,14 +285,11 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                         if(!v.getVehicleName().equals(vehicle.getVehicleName())){
                             topModels.add(new TopModel(v.getVehicleName()));
                         }
-
                     }
                     TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
-
-
         }else if(vehicle instanceof Hybrid){
             relatedVehicleType = "Hybrid";
             vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
@@ -290,12 +305,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
-
-
         }
-
     }
-
-
-
 }

@@ -32,19 +32,16 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getAllTags(OnGetTagListener listener) {
         List<Tag> tagList = new ArrayList<>();
 
-        _db.collection("tags").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (Tag tag: task.getResult().toObjects(Tag.class)){
-                        tagList.add(tag);
-                        //System.out.println("tag " +tag.getId() + " "+ tag.getTagName()+ " "+ tag.getTagType());
-                    }
-                    listener.onCallBack(tagList);
+        _db.collection("tags").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (Tag tag: task.getResult().toObjects(Tag.class)){
+                    tagList.add(tag);
+                    //System.out.println("tag " +tag.getId() + " "+ tag.getTagName()+ " "+ tag.getTagType());
                 }
-                else{
-                    System.out.println("Error retrieving tags");
-                }
+                listener.onCallBack(tagList);
+            }
+            else{
+                System.out.println("Error retrieving tags");
             }
         });
     }
@@ -52,24 +49,15 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getAllVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vList = new ArrayList<>();
-        getElectricVehicles(new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                vList.addAll(vehicleList);
-                getPetrolVehicles(new OnGetVehicleListener() {
-                    @Override
-                    public void onCallBack(List<Vehicle> vehicleList) {
-                        vList.addAll(vehicleList);
-                        getHybridVehicles(new OnGetVehicleListener() {
-                            @Override
-                            public void onCallBack(List<Vehicle> vehicleList) {
-                                vList.addAll(vehicleList);
-                                listener.onCallBack(vList);
-                            }
-                        });
-                    }
+        getElectricVehicles(vehicleList -> {
+            vList.addAll(vehicleList);
+            getPetrolVehicles(vehicleList1 -> {
+                vList.addAll(vehicleList1);
+                getHybridVehicles(vehicleList11 -> {
+                    vList.addAll(vehicleList11);
+                    listener.onCallBack(vList);
                 });
-            }
+            });
         });
 
     }
@@ -114,18 +102,15 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getElectricVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
 
-        _db.collection("electric").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (Vehicle vehicle: task.getResult().toObjects(Electric.class)){
-                        vehicleList.add(vehicle);
-                    }
-                    listener.onCallBack(vehicleList);
+        _db.collection("electric").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (Vehicle vehicle: task.getResult().toObjects(Electric.class)){
+                    vehicleList.add(vehicle);
                 }
-                else{
-                    System.out.println("Error retrieving vehicles");
-                }
+                listener.onCallBack(vehicleList);
+            }
+            else{
+                System.out.println("Error retrieving vehicles");
             }
         });
     }
@@ -133,18 +118,15 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getPetrolVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
-        _db.collection("petrol").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (Vehicle vehicle: task.getResult().toObjects(Petrol.class)){
-                        vehicleList.add(vehicle);
-                    }
-                    listener.onCallBack(vehicleList);
+        _db.collection("petrol").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (Vehicle vehicle: task.getResult().toObjects(Petrol.class)){
+                    vehicleList.add(vehicle);
                 }
-                else{
-                    System.out.println("Error retrieving vehicles");
-                }
+                listener.onCallBack(vehicleList);
+            }
+            else{
+                System.out.println("Error retrieving vehicles");
             }
         });
     }
@@ -153,18 +135,15 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getHybridVehicles(OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
 
-        _db.collection("hybrid").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (Vehicle vehicle: task.getResult().toObjects(Hybrid.class)){
-                        vehicleList.add(vehicle);
-                    }
-                    listener.onCallBack(vehicleList);
+        _db.collection("hybrid").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (Vehicle vehicle: task.getResult().toObjects(Hybrid.class)){
+                    vehicleList.add(vehicle);
                 }
-                else{
-                    System.out.println("Error retrieving vehicles");
-                }
+                listener.onCallBack(vehicleList);
+            }
+            else{
+                System.out.println("Error retrieving vehicles");
             }
         });
     }
@@ -172,45 +151,69 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getVehicleByTag(List<Tag> tagList, OnGetVehicleListener listener) {
         List<Vehicle> vList = new ArrayList<>();
-        getAllVehicles(new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    boolean hasAllTags = true;
-                    for(Tag tag: tagList){
-                        if (!v.hasTag(tag)){
-                            hasAllTags = false;
-                        }
-                    }
-                    if (hasAllTags){
-                        vList.add(v);
+        getAllVehicles(vehicleList -> {
+            for (Vehicle v: vehicleList){
+                boolean hasAllTags = true;
+                for(Tag tag: tagList){
+                    if (!v.hasTag(tag)){
+                        hasAllTags = false;
                     }
                 }
-                listener.onCallBack(vList);
+                if (hasAllTags){
+                    vList.add(v);
+                }
             }
+            listener.onCallBack(vList);
         });
     }
 
     // Added by Kayla - to get by tag but by string instead of Tag object
-    public void getVehicleByTagName(List<String> tagList, OnGetVehicleListener listener) {
+    public void getVehicleByTagName(List<String> tagList, String category, OnGetVehicleListener listener) {
+        switch (category){
+            case "Electric":
+                getElectricVehicles(vehicleList -> {
+                    List<Vehicle> vList = hasTags(tagList, vehicleList);
+                    listener.onCallBack(vList);
+                });
+                break;
+            case "Hybrid":
+                getHybridVehicles(vehicleList -> {
+                    List<Vehicle> vList = hasTags(tagList, vehicleList);
+                    listener.onCallBack(vList);
+                });
+                break;
+            case "Petrol":
+                getPetrolVehicles(vehicleList -> {
+                    List<Vehicle> vList = hasTags(tagList, vehicleList);
+                    listener.onCallBack(vList);
+                });
+                break;
+            case "All":
+                getAllVehicles(new OnGetVehicleListener() {
+                    @Override
+                    public void onCallBack(List<Vehicle> vehicleList) {
+                        List<Vehicle> vList = hasTags(tagList, vehicleList);
+                        listener.onCallBack(vList);
+                    }
+                });
+                break;
+        }
+    }
+
+    public List<Vehicle> hasTags(List<String> tagList, List<Vehicle> vehicleList){
         List<Vehicle> vList = new ArrayList<>();
-        getAllVehicles(new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    boolean hasAllTags = true;
-                    for(String tagName: tagList){
-                        if (!v.hasTag(tagName)){
-                            hasAllTags = false;
-                        }
-                    }
-                    if (hasAllTags){
-                        vList.add(v);
-                    }
+        for (Vehicle v: vehicleList){
+            boolean hasAllTags = true;
+            for(String tagName: tagList){
+                if (!v.hasTag(tagName)){
+                    hasAllTags = false;
                 }
-                listener.onCallBack(vList);
             }
-        });
+            if (hasAllTags){
+                vList.add(v);
+            }
+        }
+        return vList;
     }
 
     @Override

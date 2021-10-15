@@ -1,5 +1,7 @@
 package com.softeng306.p2;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -15,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,7 +29,6 @@ import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.Database.VehicleDataAccess;
-import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Tag;
@@ -36,10 +38,8 @@ import com.softeng306.p2.DataModel.Tag;
 import com.softeng306.p2.DataModel.Vehicle;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 public class ResultsActivity extends AppCompatActivity {
     private String searchPhrase;
@@ -50,7 +50,8 @@ public class ResultsActivity extends AppCompatActivity {
     private BottomSheetDialog dialog;
     private int CatColourInt;
     private ColorStateList CatColourState;
-    private List<Vehicle> vehicleList;
+    private VehicleAdapter vehicleAdapter;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +62,11 @@ public class ResultsActivity extends AppCompatActivity {
         recyclerIds = new ArrayList<>();
         adapters = new ArrayList<>();
         tags = new ArrayList<>();
-        vehicleList = new ArrayList<>();
+        recyclerView = findViewById(R.id.results_recycler);
         CatColourInt = R.color.yellow;
         CatColourState = ColorStateList.valueOf(getResources().getColor(CatColourInt));
+
+        initLoading();
 
         // Receive data from intent
         Intent intent = getIntent();
@@ -84,11 +87,15 @@ public class ResultsActivity extends AppCompatActivity {
         refineBtn.setOnClickListener(v -> dialog.show());
 
         // Initialize back button
-        ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(v -> GoBack());
+        ImageButton backButton = findViewById(R.id.ResultsBackButton);
+        backButton.setOnClickListener(v -> finish());
 
 
         // Initialise the navigation buttons
+        initNavigation();
+    }
+
+    private void initNavigation(){
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -115,40 +122,40 @@ public class ResultsActivity extends AppCompatActivity {
         });
     }
 
-    // Returns to the main activity
-    public void GoBack() {
-        Intent intent = new Intent(this,  MainActivity.class);
-        startActivity(intent);
+    private void initLoading() {
+        CardView cardView = findViewById(R.id.results_load);
+        recyclerView.setVisibility(View.INVISIBLE);
+        cardView.postDelayed(new Runnable() {
+            public void run() {
+                cardView.animate()
+                        .translationY(cardView.getHeight())
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                                recyclerView.setVisibility(View.VISIBLE);
+                            }
+                        });
+            }
+        }, 1000);
     }
 
     private void fetchVehicleData() {
         VehicleDataAccess vda = new VehicleDataAccess();
-        //vda.getVehicleByName(searchPhrase, vehicleList -> ResultsActivity.this.vehicleList.addAll(vehicleList));
-        //vda.getVehicleByName(searchPhrase, vehicleList -> propagateListAdaptor(vehicleList));
-
-        vda.getVehicleByName(searchPhrase, new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                ResultsActivity.this.vehicleList.addAll(vehicleList);
-                if (tags != null && tags.size()>0) {
-                    vda.getVehicleByTagName(tags, new OnGetVehicleListener() {
-                        @Override
-                        public void onCallBack(List<Vehicle> vehicleList) {
-                            ResultsActivity.this.vehicleList.removeAll(vehicleList);
-                            ResultsActivity.this.vehicleList.addAll(vehicleList);
-                        }
-                    });
-                }
-                propagateListAdaptor(ResultsActivity.this.vehicleList);
-                System.out.println(ResultsActivity.this.vehicleList);
-            }
-        });
+        if(tags == null){
+            vda.getVehicleByName(searchPhrase, vehicleList -> propagateListAdaptor(vehicleList));
+        } else {
+            vda.getVehicleByTagName(tags, "All", vehicleList -> {
+                propagateListAdaptor(vehicleList);
+                ResultsActivity.this.vehicleAdapter.getSearchFilter().filter(searchPhrase);
+            });
+        }
     }
 
     private void propagateListAdaptor(List<Vehicle> vehicleList) {
-        VehicleAdapter vehicleAdapter;
-        RecyclerView recyclerView = findViewById(R.id.recycler);
-
         // Create string array
         List<String> vehicleName = new ArrayList<>();
         List<Float> vehiclePrice = new ArrayList<>();
@@ -193,7 +200,7 @@ public class ResultsActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
             } else {
                 VehicleDataAccess vda = new VehicleDataAccess();
-                vda.getVehicleByTagName(onTags, ResultsActivity.this::propagateListAdaptor);
+                vda.getVehicleByTagName(onTags, "All", ResultsActivity.this::propagateListAdaptor);
                 dialog.hide();
             }
         });

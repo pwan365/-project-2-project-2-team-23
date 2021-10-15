@@ -1,11 +1,15 @@
 package com.softeng306.p2;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -25,6 +29,8 @@ import java.util.List;
 public class FavouritesActivity extends AppCompatActivity implements CoreActivity {
 
     private IVehicleDataAccess _vda;
+    private RecyclerView favourites_recycler;
+    private VehicleAdapter vehicleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,8 +40,15 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         //Initialize database access
         VehicleService.getInstance().InjectService(this);
 
-        fetchVehicleData();
+        //Find recycler
+        favourites_recycler = findViewById(R.id.favourites_recycler);
 
+        fetchVehicleData();
+        initLoading();
+        initNavigation();
+    }
+
+    public void initNavigation() {
         // Initialise the navigation buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
         Menu menu = bottomNavigationView.getMenu();
@@ -60,6 +73,27 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         });
     }
 
+    private void initLoading() {
+        CardView cardView = findViewById(R.id.favourites_load);
+        favourites_recycler.setVisibility(View.INVISIBLE);
+        cardView.postDelayed(new Runnable() {
+            public void run() {
+                cardView.animate()
+                        .translationY(cardView.getHeight())
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                                favourites_recycler.setVisibility(View.VISIBLE);
+                            }
+                        });
+            }
+        }, 1000);
+    }
+
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         this._vda = vehicleDataAccess;
@@ -74,8 +108,7 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
     }
 
     private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
-        VehicleAdapter vehicleAdapter;
-        RecyclerView recyclerView = findViewById(R.id.recycler);
+        RecyclerView recyclerView = findViewById(R.id.favourites_recycler);
 
         // Create string array
         List<String> vehicleName = new ArrayList<>();
@@ -95,12 +128,14 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
 
         // Design grid layout
         //recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
-        recyclerView.setLayoutManager(new GridLayoutManager(FavouritesActivity.this, 2));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
         // Initialize top adapter
         vehicleAdapter = new VehicleAdapter(FavouritesActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
+
     }
+
 }

@@ -7,13 +7,14 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/darkGrey</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@color/yellow</item>
+        <item name="android:statusBarColor" tools:targetApi="lollipop">@null</item>
     </style>
 
     <style name="Theme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
 
     <style name="VerticalContentContainer">
         <item name="android:layout_width">wrap_content</item>

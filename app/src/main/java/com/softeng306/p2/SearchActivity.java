@@ -1,5 +1,7 @@
 package com.softeng306.p2;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
@@ -9,9 +11,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,12 +42,33 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
+
+
         //init arrays
         recyclerIds = new ArrayList<>();
         adapters = new ArrayList<>();
 
         CatColourState = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
-        initRefineBtns();
+        showTags();
+
+        CardView cardView = findViewById(R.id.search_load);
+        tagContainer.setVisibility(View.INVISIBLE);
+        cardView.postDelayed(new Runnable() {
+            public void run() {
+                cardView.animate()
+                        .translationY(cardView.getHeight())
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                                tagContainer.setVisibility(View.VISIBLE);
+                            }
+                        });
+            }
+        }, 1000);
 
         // Set up the search bar
         SearchBar = findViewById(R.id.SearchBar);
@@ -71,9 +94,9 @@ public class SearchActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.homeIcon:
-                    Intent i1 = new Intent(this, MainActivity.class);
-                    i1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(i1);
+                    Intent mainItent = new Intent(this, MainActivity.class);
+                    mainItent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(mainItent);
                     break;
                 case R.id.searchIcon:
                     break;
@@ -97,7 +120,7 @@ public class SearchActivity extends AppCompatActivity {
         return onTags;
     }
 
-    private void initRefineBtns() {
+    private void showTags() {
         tagContainer = findViewById(R.id.SearchTagContainer);
         VehicleDataAccess vda = new VehicleDataAccess();
         vda.getAllTags(tagList -> {

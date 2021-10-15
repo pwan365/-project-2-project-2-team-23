@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
@@ -45,38 +46,58 @@ public class ListActivity extends AppCompatActivity {
 
     private SearchView searchBar;
     private ImageView closeSearch;
+    private ImageButton listSearchButton;
     private String categoryName;
+    private String categorySubtitle;
     private View bottomSheetView;
-    private List<Integer> recyclerIds;
     private List<TagAdapter> adapters;
     private BottomSheetDialog dialog;
     private int CatColourInt;
     private ColorStateList CatColourState;
+    private VehicleAdapter vehicleAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        // find id references
-        ImageButton listSearchButton = findViewById(R.id.listSearchButton);
+        // Find id references
+        listSearchButton = findViewById(R.id.listSearchButton);
         searchBar = findViewById(R.id.ListSearchBar);
         closeSearch = findViewById(R.id.closeSearchArea);
 
-        // init arrays
-        recyclerIds = new ArrayList<>();
+        // Initialise arrays
         adapters = new ArrayList<>();
 
         // Receive data from intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         categoryName = extras.getString("category");
-        String categorySubtitle = extras.getString("categorySubtitle");
+        categorySubtitle = extras.getString("categorySubtitle");
         CatColourState = extras.getParcelable("categoryColour");
+        CatColourInt = CatColourState.getDefaultColor();
 
         fetchVehicleData();
         initRefineDialog();
+        initHeaderStyling();
 
+        // Set the refine colour
+        RelativeLayout refineBtn = findViewById(R.id.refineBtn);
+        refineBtn.setBackgroundTintList(CatColourState);
+
+        // Initialize refine button
+        refineBtn.setOnClickListener(v -> dialog.show());
+
+        // Initialize back button
+        ImageButton listBackButton = findViewById(R.id.listBackButton);
+        listBackButton.setOnClickListener(v -> finish());
+
+        SearchSetup();
+        initNavigation();
+    }
+
+    private void initHeaderStyling() {
         // Set the list title
         TextView catTitle = findViewById(R.id.ListTitle);
         catTitle.setText(categoryName);
@@ -93,20 +114,41 @@ public class ListActivity extends AppCompatActivity {
 
         // Set the heading colour
         RelativeLayout listHeading = findViewById(R.id.ListHeader);
-        CatColourInt = CatColourState.getDefaultColor();
+        RelativeLayout listActionBar = findViewById(R.id.ListActionBar);
         listHeading.setBackgroundColor(CatColourInt);
+        listActionBar.setBackgroundColor(CatColourInt);
+    }
 
-        // Set the refine colour
-        RelativeLayout refineBtn = findViewById(R.id.refineBtn);
-        refineBtn.setBackgroundTintList(CatColourState);
+    public void initNavigation() {
+        // Initialise the navigation buttons
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
+        Menu menu = bottomNavigationView.getMenu();
+        MenuItem menuItem = menu.getItem(0);
+        menuItem.setChecked(true);
+        bottomNavigationView.setOnItemSelectedListener((item) -> {
+            switch (item.getItemId()) {
+                case R.id.homeIcon:
+                    /*Intent homeIntent = new Intent(this, MainActivity.class);
+                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(homeIntent);*/
+                    finish();
+                    break;
+                case R.id.searchIcon:
+                    Intent searchIntent = new Intent(this, SearchActivity.class);
+                    /*searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
+                    startActivity(searchIntent);
+                    break;
+                case R.id.favourtiesIcon:
+                    Intent favIntent = new Intent(this, FavouritesActivity.class);
+                    /*favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
+                    startActivity(favIntent);
+                    break;
+            }
+            return false;
+        });
+    }
 
-        // Initialize refine button
-        refineBtn.setOnClickListener(v -> dialog.show());
-
-        // Initialize back button
-        ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(v -> GoBack());
-
+    public void SearchSetup(){
         // Initialize search button
         listSearchButton.setOnClickListener(v -> {
             searchBar.setVisibility(View.VISIBLE);
@@ -126,55 +168,18 @@ public class ListActivity extends AppCompatActivity {
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
-                SearchEventHandler(searchInput);
+                ListActivity.this.vehicleAdapter.getSearchFilter().filter(searchInput);
+                searchBar.setVisibility(View.INVISIBLE);
+                closeSearch.setVisibility(View.INVISIBLE);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String searchInput) {
+                ListActivity.this.vehicleAdapter.getSearchFilter().filter(searchInput);
                 return false;
             }
         });
-
-        // Initialise the navigation buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
-        Menu menu = bottomNavigationView.getMenu();
-        MenuItem menuItem = menu.getItem(0);
-        menuItem.setChecked(true);
-        bottomNavigationView.setOnItemSelectedListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.homeIcon:
-                    Intent homeIntent = new Intent(this, MainActivity.class);
-                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(homeIntent);
-                    break;
-                case R.id.searchIcon:
-                    Intent searchIntent = new Intent(this, SearchActivity.class);
-                    searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(searchIntent);
-                    break;
-                case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(this, FavouritesActivity.class);
-                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(favIntent);
-                    break;
-            }
-            return false;
-        });
-    }
-
-    // Returns to the main activity
-    public void GoBack() {
-        Intent intent = new Intent(this,  MainActivity.class);
-        startActivity(intent);
-    }
-
-    // Open search activity with results of the phrase inputted by user
-    public void SearchEventHandler(String phrase) {
-        Intent listIntent = new Intent(this, ResultsActivity.class);
-        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        listIntent.putExtra("searchPhrase", phrase);
-        startActivity(listIntent);
     }
 
     private void fetchVehicleData() {
@@ -183,8 +188,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void propagateListAdaptor(List<Vehicle> vehicleList) {
-        VehicleAdapter vehicleAdapter;
-        RecyclerView recyclerView = findViewById(R.id.recycler);
+        RecyclerView recyclerView = findViewById(R.id.list_recycler);
 
         // Create string array
         List<String> vehicleName = new ArrayList<>();
@@ -203,12 +207,11 @@ public class ListActivity extends AppCompatActivity {
         }
 
         // Design grid layout
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
 
-        // Initialize top adapter
+        // Initialize adapter
         vehicleAdapter = new VehicleAdapter(ListActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
 
@@ -217,7 +220,36 @@ public class ListActivity extends AppCompatActivity {
     private void initRefineDialog() {
         dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
         bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
+        // Submit changes to the recycler view from tags chosen
+        refineSubmit();
+        dialog.setContentView(bottomSheetView);
 
+        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+        VehicleDataAccess vda = new VehicleDataAccess();
+        vda.getAllTags(tagList -> {
+            ArrayList<List<String>> sortedTags = listTagTypes(tagList);
+
+            for(List<String> typeTagList : sortedTags) {
+                String type = typeTagList.get(0);
+                System.out.println(type);
+                if (!"VEHICLE TYPE".equals(type)) {
+                    TextView typeTitle = new TextView(ListActivity.this);
+                    typeTitle.setText(type);
+                    typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                    ((LinearLayout) bottomSheetView).addView(typeTitle, 2);
+
+                    propagateTagAdaptor(typeTagList);
+                }
+
+            }
+        });
+
+    }
+
+    private void refineSubmit() {
         Button submitRefineBtn = bottomSheetView.findViewById(R.id.submitRefineBtn);
         submitRefineBtn.setBackgroundTintList(CatColourState);
         submitRefineBtn.setOnClickListener(view -> {
@@ -231,29 +263,10 @@ public class ListActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
             } else {
                 VehicleDataAccess vda = new VehicleDataAccess();
-                vda.getVehicleByTagName(onTags, ListActivity.this::propagateListAdaptor);
+                vda.getVehicleByTagName(onTags, categoryName, ListActivity.this::propagateListAdaptor);
                 dialog.hide();
             }
         });
-
-        dialog.setContentView(bottomSheetView);
-
-        VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllTags(tagList -> {
-            ArrayList<List<String>> sortedTags = listTagTypes(tagList);
-
-            for(List<String> typeTagList : sortedTags) {
-                String type = typeTagList.get(0);
-                TextView typeTitle = new TextView(ListActivity.this);
-                typeTitle.setText(type);
-                typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                ((LinearLayout) bottomSheetView).addView(typeTitle, 2);
-
-                propagateTagAdaptor(typeTagList);
-
-            }
-        });
-
     }
 
     private ArrayList<List<String>> listTagTypes(List<Tag> tagsList) {
@@ -284,7 +297,6 @@ public class ListActivity extends AppCompatActivity {
         RecyclerView tagRecyclerView = new RecyclerView(ListActivity.this);
         int id = View.generateViewId();
         tagRecyclerView.setId(id);
-        recyclerIds.add(id);
         TagAdapter tagAdapter;
 
         // Initialize arraylist

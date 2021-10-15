@@ -11,6 +11,7 @@
         android:theme="@style/Theme">
         <activity
             android:name=".DetailsActivity"
+            android:theme="@style/Theme.NoActionBar"
             android:exported="true" />
         <activity
             android:name=".MainActivity"
@@ -35,6 +36,7 @@
         <activity android:name=".ResultsActivity"
             android:theme="@style/Theme.NoActionBar"
             android:exported="true"
+            android:launchMode = "singleTop"
             android:parentActivityName=".MainActivity">
         </activity>
         <activity android:name=".FavouritesActivity"

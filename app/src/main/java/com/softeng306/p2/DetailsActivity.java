@@ -98,6 +98,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 return false;
             });
         }
+
     }
 
     //Initialize fields
@@ -118,6 +119,11 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
+
+        // Initialize back button
+        ImageButton listBackButton = findViewById(R.id.listBackButton);
+        listBackButton.setOnClickListener(v -> finish());
+
     }
 
     /**
@@ -128,6 +134,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         if(getIntent().hasExtra("title")){
             carTitle = getIntent().getStringExtra("title");
             vda.getVehicleByName(carTitle, new OnGetVehicleListener() {
+
                 @Override
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for (Vehicle v: vehicleList){

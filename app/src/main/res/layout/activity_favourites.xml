@@ -8,8 +8,8 @@
 
     <!-- Header -->
     <LinearLayout
-        style="@style/Container"
         android:id="@+id/FavouritesHeader"
+        style="@style/Container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/yellow"
@@ -20,36 +20,61 @@
 
         <ImageView
             android:layout_width="300dp"
-            android:layout_height="150dp"
+            android:layout_height="120dp"
             android:layout_marginTop="20dp"
             android:contentDescription="@string/favourites"
             android:src="@drawable/favourites_image" />
 
         <TextView
+            style="@style/Headline1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/favourites"
-            android:layout_marginBottom="20dp"
-            style="@style/Headline1" />
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="40dp"
+            android:text="@string/favourites" />
     </LinearLayout>
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
+        style="@style/RoundedBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/FavouritesHeader"
         android:layout_marginTop="-20dp"
-        android:orientation="vertical"
         android:backgroundTint="@color/white"
-        style="@style/RoundedBackground" >
+        app:layout_constraintTop_toBottomOf="@id/FavouritesHeader">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"/>
-    </LinearLayout>
+            android:layout_marginBottom="150dp"
+            android:orientation="vertical">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/favourites_load"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="100dp"
+                app:cardElevation="0dp">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </androidx.cardview.widget.CardView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favourites_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginBottom="150dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView

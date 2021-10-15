@@ -7,34 +7,34 @@
     tools:context=".ListActivity">
 
     <!-- Header Section -->
-    <LinearLayout
-        android:id="@+id/ListHeader"
-        android:layout_height="60dp"
+    <RelativeLayout
+        android:id="@+id/ResultsActionBar"
+        android:layout_height="70dp"
         android:background="@color/yellow"
-        android:orientation="vertical"
+        android:orientation="horizontal"
+        android:gravity="left"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         style="@style/Container">
 
         <ImageButton
-            android:id="@+id/listBackButton"
+            android:id="@+id/ResultsBackButton"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:contentDescription="@string/back_arrow"
-            android:layout_gravity="start"
+            android:layout_alignParentStart="true"
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:background="@null"
+            android:contentDescription="@string/back_arrow"
             android:scaleType="fitCenter"
             android:src="@drawable/back_arrow_icon" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ListHeader"
+        app:layout_constraintTop_toBottomOf="@id/ResultsActionBar"
         android:orientation="vertical"
         android:backgroundTint="@color/white" >
 
@@ -91,8 +91,23 @@
                 android:contentDescription="@string/app_name"
                 android:src="@drawable/down_icon_white" />
         </RelativeLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/results_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="100dp"
+            app:cardElevation="0dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true" />
+        </androidx.cardview.widget.CardView>
+
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler"
+            android:id="@+id/results_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"

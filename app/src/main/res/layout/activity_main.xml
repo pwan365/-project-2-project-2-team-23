@@ -7,11 +7,39 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!--<androidx.cardview.widget.CardView
+        android:id="@+id/ProgressCard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true"
+            app:lottie_rawRes="@raw/car_load_2"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingTop="150dp"
+            android:text="LOADING..."
+            style="@style/Headline3"/>
+    </androidx.cardview.widget.CardView>-->
+
+
+
     <!-- Wraps all content in order to scroll -->
     <ScrollView
+        android:id="@+id/scrollView3"
+        style="@style/Container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/Container" >
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,65 +49,85 @@
 
             <!-- Header Section -->
             <LinearLayout
+                android:id="@+id/mainHeader"
+                style="@style/Container"
                 android:layout_height="250dp"
                 android:background="@color/yellow"
-                android:orientation="vertical"
-                style="@style/Container">
+                android:orientation="vertical">
 
                 <ImageView
                     android:layout_width="200dp"
                     android:layout_height="100dp"
                     android:layout_marginTop="30dp"
-                    android:src="@drawable/home_image"
-                    android:contentDescription="@string/app_name"/>
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/home_image" />
 
                 <TextView
                     android:id="@+id/AppTitle"
+                    style="@style/Headline1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/app_name"
-                    android:textAlignment="center"
-                    style="@style/Headline1" />
+                    android:textAlignment="center" />
 
                 <TextView
                     android:id="@+id/Slogan"
+                    style="@style/Subtitle1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/slogan"
-                    android:textAlignment="center"
-                    style="@style/Subtitle1" />
+                    android:textAlignment="center" />
             </LinearLayout>
 
             <!-- Search Bar -->
             <SearchView
                 android:id="@+id/SearchBar"
+                style="@style/RoundedBackground"
                 android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
                 android:layout_marginTop="-20dp"
-                android:queryHint="@string/search_hint"
-                android:iconifiedByDefault="false"
+                android:layout_marginRight="40dp"
                 android:elevation="20dp"
+                android:iconifiedByDefault="false"
                 android:queryBackground="@android:color/transparent"
-                app:theme="@style/AppSearchView"
-                style="@style/RoundedBackground"/>
+                android:queryHint="@string/search_hint"
+                app:theme="@style/AppSearchView" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/main_load"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:cardElevation="0dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="100dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </androidx.cardview.widget.CardView>
 
             <!-- Top Picks-->
             <LinearLayout
+                android:id="@+id/TopPicksContainer"
+                style="@style/VerticalContentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginStart="20dp"
                 android:layout_marginEnd="0dp"
-                android:background="@color/white"
-                style="@style/VerticalContentContainer">
+                android:background="@color/white">
 
                 <TextView
                     android:id="@+id/TopPicks"
+                    style="@style/Headline3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"
                     android:text="@string/top_picks"
-                    android:textStyle="bold"
-                    style="@style/Headline3"/>
+                    android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_view"
@@ -90,102 +138,102 @@
 
             <!-- Category Section -->
             <LinearLayout
+                style="@style/VerticalContentContainer"
                 android:layout_width="match_parent"
-                android:layout_marginTop="50dp"
                 android:layout_marginStart="40dp"
+                android:layout_marginTop="50dp"
                 android:layout_marginEnd="40dp"
-                android:layout_marginBottom="80dp"
-                style="@style/VerticalContentContainer">
+                android:layout_marginBottom="80dp">
 
                 <TextView
                     android:id="@+id/CatTitle"
+                    style="@style/Headline3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:text="@string/categories"
-                    android:textAlignment="textStart"
-                    style="@style/Headline3"/>
+                    android:textAlignment="textStart" />
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/Electric"
+                    style="@style/CategoryCard"
                     android:contentDescription="@string/Electric_subtitle"
-                    app:cardBackgroundColor="@color/blue"
-                    style="@style/CategoryCard">
+                    app:cardBackgroundColor="@color/blue">
 
                     <LinearLayout
-                        android:backgroundTint="@color/blue"
-                        style="@style/RoundedBackground">
+                        style="@style/RoundedBackground"
+                        android:backgroundTint="@color/blue">
 
                         <TextView
                             android:id="@+id/CatElectricText"
+                            style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="@string/electric_cars"
-                            style="@style/Headline2" />
+                            android:text="@string/electric_cars" />
 
                         <ImageView
                             android:id="@+id/CatElectricImg"
+                            style="@style/CategoryImage"
                             android:contentDescription="@string/electric_cars"
-                            android:src="@drawable/electric"
-                            style="@style/CategoryImage"/>
+                            android:src="@drawable/electric" />
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/Hybrid"
+                    style="@style/CategoryCard"
                     android:contentDescription="@string/Hybrid_subtitle"
-                    app:cardBackgroundColor="@color/orange"
-                    style="@style/CategoryCard">
+                    app:cardBackgroundColor="@color/orange">
 
                     <LinearLayout
-                        android:backgroundTint="@color/orange"
-                        style="@style/RoundedBackground">
+                        style="@style/RoundedBackground"
+                        android:backgroundTint="@color/orange">
 
                         <TextView
                             android:id="@+id/CatHybridText"
+                            style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="@string/hybrid_cars"
-                            style="@style/Headline2"/>
+                            android:text="@string/hybrid_cars" />
 
                         <ImageView
                             android:id="@+id/CatHybridImage"
+                            style="@style/CategoryImage"
                             android:contentDescription="@string/hybrid_cars"
-                            android:src="@drawable/hybrid"
-                            style="@style/CategoryImage"/>
+                            android:src="@drawable/hybrid" />
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/Petrol"
+                    style="@style/CategoryCard"
                     android:contentDescription="@string/Petrol_subtitle"
-                    app:cardBackgroundColor="@color/green"
-                    style="@style/CategoryCard" >
+                    app:cardBackgroundColor="@color/green">
 
                     <LinearLayout
-                        android:backgroundTint="@color/green"
-                        style="@style/RoundedBackground">
+                        style="@style/RoundedBackground"
+                        android:backgroundTint="@color/green">
 
                         <TextView
                             android:id="@+id/CatPetrolTitle"
+                            style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:gravity="center"
-                            android:text="@string/petrol_cars"
-                            style="@style/Headline2"/>
+                            android:text="@string/petrol_cars" />
 
                         <ImageView
                             android:id="@+id/CatPetrolImage"
+                            style="@style/CategoryImage"
                             android:contentDescription="@string/petrol_cars"
-                            android:src="@drawable/petrol"
-                            style="@style/CategoryImage"/>
+                            android:src="@drawable/petrol" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </LinearLayout>

@@ -180,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
     private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
         // Create string array
-        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Cybertruck"};
+        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","Roadster","Model X","Model S"};
         List<String> defaultTopList = Arrays.asList(topName);
         Collections.shuffle(defaultTopList);
         Collections.shuffle(vehicleList);

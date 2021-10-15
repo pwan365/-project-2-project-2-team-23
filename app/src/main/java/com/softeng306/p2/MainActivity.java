@@ -2,7 +2,6 @@ package com.softeng306.p2;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.cardview.widget.CardView;
@@ -34,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.ToLongBiFunction;
 
 public class MainActivity extends AppCompatActivity implements CoreActivity {
     static class ViewHolder {
@@ -126,8 +124,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         });
     }
 
-
-
     private void initLoading() {
         CardView cardView = findViewById(R.id.main_load);
         LinearLayout topPickContainer = findViewById(R.id.TopPicksContainer);
@@ -188,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
     private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
         // Create string array
-        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Cybertruck"};
+        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","Roadster","Model X","Model S"};
         List<String> defaultTopList = Arrays.asList(topName);
         Collections.shuffle(defaultTopList);
         Collections.shuffle(vehicleList);
@@ -208,8 +204,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
             TopModel model = new TopModel(vehicleName);
             topModels.add(model);
         }
-
-
 
         // Design Horizontal Layout
         LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL,false);

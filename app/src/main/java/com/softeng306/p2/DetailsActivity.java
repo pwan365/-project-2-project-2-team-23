@@ -119,11 +119,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
-
-        // Initialize back button
-        ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(v -> finish());
-
     }
 
     /**
@@ -178,8 +173,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
      * method for the back button
      */
     public void GoBack() {
-        Intent intent = new Intent(this,  MainActivity.class);
-        startActivity(intent);
+        finish();
     }
 
     /**

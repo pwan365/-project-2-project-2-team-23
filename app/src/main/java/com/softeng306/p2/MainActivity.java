@@ -2,6 +2,7 @@ package com.softeng306.p2;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.cardview.widget.CardView;
@@ -14,14 +15,21 @@ import android.view.View;
 import android.widget.SearchView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.Adapter.VehicleAdapter;
+import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Vehicle;
+import com.softeng306.p2.ViewModel.VehicleModel;
+
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.function.ToLongBiFunction;
 
 public class MainActivity extends AppCompatActivity implements CoreActivity {
     static class ViewHolder {
@@ -35,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     RecyclerView recyclerView;
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
+    ViewHolder vh;
 
     IVehicleDataAccess vda;
 
@@ -57,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         });
 
         // Initialise views for future references
-        ViewHolder vh = new ViewHolder();
+        vh = new ViewHolder();
         vh.SearchBar = findViewById(R.id.SearchBar);
         vh.CatElectric = findViewById(R.id.Electric);
         vh.CatHybrid = findViewById(R.id.Hybrid);
@@ -66,26 +75,8 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         vh.bottomNavigationView = findViewById(R.id.nav_bar);
 
         // Create integer array
+        fetchTopPickData();
 
-        // Create string array
-        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Model X","Cybertruck"};
-
-        // Initialize arraylist
-        topModels =  new ArrayList<>();
-        for(int i = 0; i<topName.length;i++){
-            TopModel model = new TopModel(topName[i]);
-            topModels.add(model);
-        }
-
-        // Design Horizontal Layout
-        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL,false);
-
-        vh.recyclerView.setLayoutManager(layoutManager);
-        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // Initialize top adapter
-        topAdapter = new TopAdapter(MainActivity.this,topModels);
-        vh.recyclerView.setAdapter(topAdapter);
 
         // Set up the search bar
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -156,5 +147,47 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
+    }
+
+    private void fetchTopPickData(){vda.getFavourites(this::propagateUsersAdaptor);}
+
+    private void propagateUsersAdaptor(User user) {
+        vda.getVehicleById(user.getFavourites(), this::propagateFavouritesAdaptor);
+    }
+
+    private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
+        // Create string array
+        String[] topName = {"Taycan","Mach-E","Combi","Xpeng P5","C-HR","RAV4","Roadster","Model X","Model S","Model 3","Model Y","Cybertruck"};
+        List<String> defaultTopList = Arrays.asList(topName);
+        Collections.shuffle(defaultTopList);
+        Collections.shuffle(vehicleList);
+        // Initialize arraylist
+        topModels =  new ArrayList<>();
+        int topPickFav = 3;
+        for(int i = 0;i <vehicleList.size();i++){
+            if(i<topPickFav){
+                if(!defaultTopList.contains(vehicleList.get(i).getVehicleName())){
+                    TopModel model = new TopModel(vehicleList.get(i).getVehicleName());
+                    topModels.add(model);
+                }
+
+            }
+        }
+        for(String vehicleName: defaultTopList){
+            TopModel model = new TopModel(vehicleName);
+            topModels.add(model);
+        }
+
+
+
+        // Design Horizontal Layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL,false);
+
+        vh.recyclerView.setLayoutManager(layoutManager);
+        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // Initialize top adapter
+        topAdapter = new TopAdapter(MainActivity.this,topModels);
+        vh.recyclerView.setAdapter(topAdapter);
     }
 }

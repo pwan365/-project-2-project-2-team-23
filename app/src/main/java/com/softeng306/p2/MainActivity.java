@@ -9,6 +9,7 @@ import androidx.cardview.widget.CardView;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -112,11 +113,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
                     Intent searchIntent = new Intent(this, SearchActivity.class);
                     searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(searchIntent);
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                     break;
                 case R.id.favourtiesIcon:
                     Intent favIntent = new Intent(this, FavouritesActivity.class);
                     favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(favIntent);
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                     break;
             }
         return false;
@@ -169,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         extras.putParcelable("categoryColour", category.getCardBackgroundColor());
         listIntent.putExtras(extras);
         startActivity(listIntent);
+        overridePendingTransition(R.anim.slide_from_bottom, R.anim.no_movement);
     }
 
     @Override

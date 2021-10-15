@@ -97,6 +97,7 @@ public class SearchActivity extends AppCompatActivity {
                     Intent mainItent = new Intent(this, MainActivity.class);
                     mainItent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(mainItent);
+                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                     break;
                 case R.id.searchIcon:
                     break;
@@ -104,6 +105,7 @@ public class SearchActivity extends AppCompatActivity {
                     Intent favIntent = new Intent(this, FavouritesActivity.class);
                     favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(favIntent);
+                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                     break;
             }
             return false;

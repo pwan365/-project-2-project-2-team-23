@@ -26,12 +26,19 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.like.LikeButton;
+import com.like.OnLikeListener;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
+import com.softeng306.p2.DataModel.User;
+import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Listeners.OnGetUserListener;
+import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Tag;
@@ -47,15 +54,14 @@ public class ListActivity extends AppCompatActivity {
     private SearchView searchBar;
     private ImageView closeSearch;
     private ImageButton listSearchButton;
-    private String categoryName;
-    private String categorySubtitle;
+    private String categoryName, categorySubtitle;
     private View bottomSheetView;
     private List<TagAdapter> adapters;
     private BottomSheetDialog dialog;
     private int CatColourInt;
     private ColorStateList CatColourState;
     private VehicleAdapter vehicleAdapter;
-
+    private LinearLayout listNoResults;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +72,31 @@ public class ListActivity extends AppCompatActivity {
         listSearchButton = findViewById(R.id.listSearchButton);
         searchBar = findViewById(R.id.ListSearchBar);
         closeSearch = findViewById(R.id.closeSearchArea);
+        listNoResults = findViewById(R.id.listNoResults);
 
         // Initialise arrays
         adapters = new ArrayList<>();
 
+        fetchIntent();
+        fetchVehicleData();
+        initRefineDialog();
+        initHeaderStyling();
+        setupRefineBtn();
+        SearchSetup();
+        initNavigation();
+        setUpNoResults();
+    }
+
+    private void setUpNoResults() {
+        Button listResetBtn = findViewById(R.id.listResetBtn);
+        listResetBtn.setBackgroundTintList(CatColourState);
+        listResetBtn.setOnClickListener(view -> {
+            fetchVehicleData();
+            initRefineDialog();
+        });
+    }
+
+    private void fetchIntent() {
         // Receive data from intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -77,11 +104,9 @@ public class ListActivity extends AppCompatActivity {
         categorySubtitle = extras.getString("categorySubtitle");
         CatColourState = extras.getParcelable("categoryColour");
         CatColourInt = CatColourState.getDefaultColor();
+    }
 
-        fetchVehicleData();
-        initRefineDialog();
-        initHeaderStyling();
-
+    private void setupRefineBtn() {
         // Set the refine colour
         RelativeLayout refineBtn = findViewById(R.id.refineBtn);
         refineBtn.setBackgroundTintList(CatColourState);
@@ -123,6 +148,10 @@ public class ListActivity extends AppCompatActivity {
         RelativeLayout listActionBar = findViewById(R.id.ListActionBar);
         listHeading.setBackgroundColor(CatColourInt);
         listActionBar.setBackgroundColor(CatColourInt);
+
+        // Initialize back button
+        ImageButton listBackButton = findViewById(R.id.listBackButton);
+        listBackButton.setOnClickListener(v -> finish());
     }
 
     public void initNavigation() {
@@ -134,21 +163,16 @@ public class ListActivity extends AppCompatActivity {
         bottomNavigationView.setOnItemSelectedListener((item) -> {
             switch (item.getItemId()) {
                 case R.id.homeIcon:
-                    /*Intent homeIntent = new Intent(this, MainActivity.class);
-                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(homeIntent);*/
                     finish();
                     overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
                 case R.id.searchIcon:
                     Intent searchIntent = new Intent(this, SearchActivity.class);
-                    /*searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
                     startActivity(searchIntent);
                     overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
                 case R.id.favourtiesIcon:
                     Intent favIntent = new Intent(this, FavouritesActivity.class);
-                    /*favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
                     startActivity(favIntent);
                     overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
@@ -160,11 +184,14 @@ public class ListActivity extends AppCompatActivity {
     public void SearchSetup(){
         // Initialize search button
         listSearchButton.setOnClickListener(v -> {
+            closeSearch.setVisibility(View.VISIBLE);
+            closeSearch.bringToFront();
             searchBar.setVisibility(View.VISIBLE);
             searchBar.requestFocus();
+            searchBar.bringToFront();
             InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             mgr.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
-            closeSearch.setVisibility(View.VISIBLE);
+
         });
 
         // Initialize close search view
@@ -180,6 +207,11 @@ public class ListActivity extends AppCompatActivity {
                 ListActivity.this.vehicleAdapter.getSearchFilter().filter(searchInput);
                 searchBar.setVisibility(View.INVISIBLE);
                 closeSearch.setVisibility(View.INVISIBLE);
+                if (ListActivity.this.vehicleAdapter.getItemCount() == 0){
+                    listNoResults.setVisibility(View.VISIBLE);
+                } else {
+                    listNoResults.setVisibility(View.GONE);
+                }
                 return false;
             }
 
@@ -196,21 +228,29 @@ public class ListActivity extends AppCompatActivity {
         vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
     }
 
-    private void propagateListAdaptor(List<Vehicle> vehicleList) {
+    private void propagateListAdaptor(List<Vehicle> vehicleList){
+
+        if(vehicleList.isEmpty()){
+            listNoResults.setVisibility(View.VISIBLE);
+        } else {
+            listNoResults.setVisibility(View.GONE);
+        }
+
         RecyclerView recyclerView = findViewById(R.id.list_recycler);
+        VehicleDataAccess vda = new VehicleDataAccess();
 
         // Create string array
         List<String> vehicleName = new ArrayList<>();
         List<Float> vehiclePrice = new ArrayList<>();
 
-        for(Vehicle vehicle : vehicleList) {
+        for (Vehicle vehicle : vehicleList) {
             vehicleName.add(vehicle.getVehicleName());
             vehiclePrice.add(vehicle.getPrice());
         }
 
         // Initialize arraylist
         ArrayList<VehicleModel> vehicleModels = new ArrayList<>();
-        for(int i = 0; i<vehicleList.size();i++){
+        for (int i = 0; i < vehicleList.size(); i++) {
             VehicleModel model = new VehicleModel(vehicleName.get(i), vehiclePrice.get(i));
             vehicleModels.add(model);
         }
@@ -223,7 +263,6 @@ public class ListActivity extends AppCompatActivity {
         // Initialize adapter
         vehicleAdapter = new VehicleAdapter(ListActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
-
     }
 
     private void initRefineDialog() {

@@ -4,9 +4,11 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -31,6 +33,8 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
     private IVehicleDataAccess _vda;
     private RecyclerView favourites_recycler;
     private VehicleAdapter vehicleAdapter;
+    private CardView cardView;
+    private LinearLayout noResultsContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +46,10 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
 
         //Find recycler
         favourites_recycler = findViewById(R.id.favourites_recycler);
+
+
+        noResultsContainer = findViewById(R.id.favsNoResults);
+        cardView = findViewById(R.id.favourites_load);
 
         fetchVehicleData();
         initLoading();
@@ -111,6 +119,14 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
 
     private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
         RecyclerView recyclerView = findViewById(R.id.favourites_recycler);
+
+        if(vehicleList.isEmpty()){
+            cardView.setVisibility(View.GONE);
+            noResultsContainer.setVisibility(View.VISIBLE);
+        } else {
+            initLoading();
+            noResultsContainer.setVisibility(View.GONE);
+        }
 
         // Create string array
         List<String> vehicleName = new ArrayList<>();

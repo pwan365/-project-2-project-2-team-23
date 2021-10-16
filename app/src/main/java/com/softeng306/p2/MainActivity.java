@@ -24,10 +24,8 @@ import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Vehicle;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,29 +41,15 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     }
 
     //Initialize variable
-    RecyclerView recyclerView;
     ArrayList<TopModel> topModels;
     TopAdapter topAdapter;
     ViewHolder vh;
-
     IVehicleDataAccess vda;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        initLoading();
-        VehicleService.getInstance().InjectService(this);
-
-        vda.getVehicleByName("c", vehicleList -> {
-            vda.getElectricVehicles(vehicleList2 ->{
-                List<Vehicle> l1 = VehicleComparator.commonVehicles(vehicleList, vehicleList2);
-                for (Vehicle v: l1){
-                    System.out.println(v.getVehicleName());
-                }
-            });
-        });
 
         // Initialise views for future references
         vh = new ViewHolder();
@@ -76,15 +60,28 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         vh.recyclerView = findViewById(R.id.recycler_view);
         vh.bottomNavigationView = findViewById(R.id.nav_bar);
 
-        // Create integer array
+        VehicleService.getInstance().InjectService(this);
         fetchTopPickData();
+        initLoading();
+        initNav();
+        initSearch();
+        initCatBtns();
+    }
 
+    private void initCatBtns() {
+        // Initialise the category buttons
+        vh.CatElectric.setOnClickListener(this::CategoryEventHandler);
+        vh.CatHybrid.setOnClickListener(this::CategoryEventHandler);
+        vh.CatPetrol.setOnClickListener(this::CategoryEventHandler);
+    }
 
+    private void initSearch() {
         // Set up the search bar
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
                 SearchEventHandler(searchInput);
+                vh.SearchBar.clearFocus();
                 return false;
             }
 
@@ -94,11 +91,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
             }
         });
 
-        // Initialise the category buttons
-        vh.CatElectric.setOnClickListener(this::CategoryEventHandler);
-        vh.CatHybrid.setOnClickListener(this::CategoryEventHandler);
-        vh.CatPetrol.setOnClickListener(this::CategoryEventHandler);
+        View bg = findViewById(R.id.mainBodyContainer);
+        bg.setOnClickListener(view -> {
+            vh.SearchBar.clearFocus();
+        });
+    }
 
+    private void initNav() {
         // Initialise the navigation buttons
         Menu menu = vh.bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -120,7 +119,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
                     overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
                     break;
             }
-        return false;
+            return false;
         });
     }
 
@@ -128,28 +127,30 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         CardView cardView = findViewById(R.id.main_load);
         LinearLayout topPickContainer = findViewById(R.id.TopPicksContainer);
         topPickContainer.setVisibility(View.INVISIBLE);
+        LinearLayout catContainer = findViewById(R.id.catContainer);
+        catContainer.setVisibility(View.INVISIBLE);
         cardView.postDelayed(new Runnable() {
             public void run() {
                 cardView.animate()
                         .translationY(cardView.getHeight())
                         .alpha(0.0f)
-                        .setDuration(200)
+                        .setDuration(500)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 super.onAnimationEnd(animation);
                                 cardView.setVisibility(View.GONE);
                                 topPickContainer.setVisibility(View.VISIBLE);
+                                catContainer.setVisibility(View.VISIBLE);
                             }
                         });
             }
-        }, 2000);
+        }, 3000);
     }
 
     // Open search activity with results of the phrase inputted by user
     public void SearchEventHandler(String phrase) {
         Intent listIntent = new Intent(this, ResultsActivity.class);
-        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         listIntent.putExtra("searchPhrase", phrase);
         startActivity(listIntent);
     }
@@ -159,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         CardView category = (CardView) v;
         Log.i("MainActivity", "Opening " + category.getContentDescription());
         Intent listIntent = new Intent(this, ListActivity.class);
-        /*listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
 
         Bundle extras = new Bundle();
         int intName= category.getId();

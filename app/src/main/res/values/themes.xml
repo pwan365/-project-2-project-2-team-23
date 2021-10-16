@@ -108,6 +108,13 @@
         <item name="android:fontFamily">@font/roboto</item>
     </style>
 
+    <style name="Subtitle2" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/blackGrey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/roboto</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
     <style name="Body1" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/blackGrey</item>
         <item name="android:textSize">14sp</item>

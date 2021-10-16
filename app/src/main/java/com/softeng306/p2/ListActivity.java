@@ -91,7 +91,13 @@ public class ListActivity extends AppCompatActivity {
 
         // Initialize back button
         ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(v -> finish());
+        listBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+                overridePendingTransition(R.anim.no_movement, R.anim.slide_to_bottom);
+            }
+        });
 
         SearchSetup();
         initNavigation();
@@ -132,16 +138,19 @@ public class ListActivity extends AppCompatActivity {
                     homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(homeIntent);*/
                     finish();
+                    overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
                 case R.id.searchIcon:
                     Intent searchIntent = new Intent(this, SearchActivity.class);
                     /*searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
                     startActivity(searchIntent);
+                    overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
                 case R.id.favourtiesIcon:
                     Intent favIntent = new Intent(this, FavouritesActivity.class);
                     /*favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
                     startActivity(favIntent);
+                    overridePendingTransition(0, R.anim.slide_to_bottom);
                     break;
             }
             return false;

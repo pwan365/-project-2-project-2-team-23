@@ -144,7 +144,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 cardView.animate()
                         .translationY(cardView.getHeight())
                         .alpha(0.0f)
-                        .setDuration(300)
+                        .setDuration(200)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {

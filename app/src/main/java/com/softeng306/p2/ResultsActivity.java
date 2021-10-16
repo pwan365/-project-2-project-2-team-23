@@ -116,7 +116,7 @@ public class ResultsActivity extends AppCompatActivity {
                 cardView.animate()
                         .translationY(cardView.getHeight())
                         .alpha(0.0f)
-                        .setDuration(500)
+                        .setDuration(200)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {

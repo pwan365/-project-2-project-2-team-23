@@ -83,16 +83,19 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                         Intent i1 = new Intent(DetailsActivity.this, MainActivity.class);
                         i1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(i1);
+                        overridePendingTransition(0, R.anim.slide_to_right);
                         break;
                     case R.id.searchIcon:
                         Intent searchIntent = new Intent(DetailsActivity.this, SearchActivity.class);
                         searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(searchIntent);
+                        overridePendingTransition(0, R.anim.slide_to_right);
                         break;
                     case R.id.favourtiesIcon:
                         Intent favIntent = new Intent(DetailsActivity.this, FavouritesActivity.class);
                         favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                         startActivity(favIntent);
+                        overridePendingTransition(0, R.anim.slide_to_right);
                         break;
                 }
                 return false;
@@ -119,6 +122,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
+        overridePendingTransition(R.anim.slide_from_right, R.anim.no_movement);
     }
 
     /**
@@ -174,6 +178,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
      */
     public void GoBack() {
         finish();
+        overridePendingTransition(R.anim.no_movement, R.anim.slide_to_right);
     }
 
     /**

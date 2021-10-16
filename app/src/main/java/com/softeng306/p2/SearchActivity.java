@@ -77,6 +77,7 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String searchInput) {
                 ArrayList<String> onTags = GetOnTags();
                 SearchEventHandler(searchInput, onTags);
+                SearchBar.clearFocus();
                 return false;
             }
 
@@ -84,6 +85,11 @@ public class SearchActivity extends AppCompatActivity {
             public boolean onQueryTextChange(String searchInput) {
                 return false;
             }
+        });
+
+        View bg = findViewById(R.id.searchBodyContainer);
+        bg.setOnClickListener(view -> {
+            SearchBar.clearFocus();
         });
 
         // Initialise the navigation buttons

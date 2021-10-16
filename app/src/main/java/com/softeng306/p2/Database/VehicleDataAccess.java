@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
@@ -189,12 +190,9 @@ public class VehicleDataAccess implements IVehicleDataAccess{
                 });
                 break;
             case "All":
-                getAllVehicles(new OnGetVehicleListener() {
-                    @Override
-                    public void onCallBack(List<Vehicle> vehicleList) {
-                        List<Vehicle> vList = hasTags(tagList, vehicleList);
-                        listener.onCallBack(vList);
-                    }
+                getAllVehicles(vehicleList -> {
+                    List<Vehicle> vList = hasTags(tagList, vehicleList);
+                    listener.onCallBack(vList);
                 });
                 break;
         }
@@ -203,15 +201,13 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public List<Vehicle> hasTags(List<String> tagList, List<Vehicle> vehicleList){
         List<Vehicle> vList = new ArrayList<>();
         for (Vehicle v: vehicleList){
-            boolean hasAllTags = true;
+            List<Vehicle> vTagList = new ArrayList<>();
             for(String tagName: tagList){
-                if (!v.hasTag(tagName)){
-                    hasAllTags = false;
+                if (v.hasTag(tagName)){
+                    vTagList.add(v);
                 }
             }
-            if (hasAllTags){
-                vList.add(v);
-            }
+            vList = VehicleComparator.mergeVehicles(vTagList, vList);
         }
         return vList;
     }

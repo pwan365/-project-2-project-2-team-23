@@ -1,15 +1,22 @@
 package com.softeng306.p2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,14 +25,17 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import com.denzcoskun.imageslider.constants.ScaleTypes; // important
 import com.like.LikeButton;
 import com.like.OnLikeListener;
 import com.softeng306.p2.Adapter.DetailAdapter;
+import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
@@ -34,6 +44,7 @@ import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.DetailModel;
+import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Electric;
 import com.softeng306.p2.DataModel.Hybrid;
@@ -56,7 +67,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         private BottomNavigationView bottomNavigationView;
         private ListView detailList;
         private RecyclerView recyclerView;
-        private ImageButton listBackButton;
+        private ImageButton detailBackButton;
         private LikeButton likeButton;
 
         public ViewHolder(){
@@ -67,11 +78,11 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
             bottomNavigationView = findViewById(R.id.nav_bar);
             detailList = findViewById(R.id.detailList);
             recyclerView = findViewById(R.id.related_view);
-            listBackButton = findViewById(R.id.listBackButton);
+            detailBackButton = findViewById(R.id.detailBackButton);
             likeButton = findViewById(R.id.heart_button);
 
             //Initialise the back button
-            listBackButton.setOnClickListener(view -> GoBack());
+            detailBackButton.setOnClickListener(view -> GoBack());
 
             // Initialise the navigation buttons
             Menu menu = bottomNavigationView.getMenu();
@@ -119,10 +130,30 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        initLoading();
         vh = new ViewHolder();
         VehicleService.getInstance().InjectService(this);
         getData();
         overridePendingTransition(R.anim.slide_from_right, R.anim.no_movement);
+    }
+
+    private void initLoading() {
+        CardView cardView = findViewById(R.id.ProgressCard);
+        cardView.postDelayed(new Runnable() {
+            public void run() {
+                cardView.animate()
+                        .translationY(cardView.getHeight())
+                        .alpha(0.0f)
+                        .setDuration(300)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                            }
+                        });
+            }
+        }, 1200);
     }
 
     /**
@@ -140,12 +171,17 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                         vehicle = v;
                     }
                     carDesc = vehicle.getDescription();
-                    carPrice = "$";
-                    carPrice += (int)vehicle.getPrice();
+
+                    // Convert price to display as the conventional format for pricing with commas and 2dp
+                    String priceStr = Float.toString(vehicle.getPrice());
+                    double amount = Double.parseDouble(priceStr);
+                    DecimalFormat formatter = new DecimalFormat("#,###.00");
+                    carPrice = "$"+formatter.format(amount);
                     //set up data once the vehicle is retrieved
                     getDetails(vehicle);
                     setDetails();
                     setData();
+                    setTags();
                     addRelatedView();
                     vda.getFavourites(new OnGetUserListener() {
                         @Override
@@ -159,8 +195,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         }else{
             Toast.makeText(this, "No data.", Toast.LENGTH_LONG).show();
         }
-
-
 
     }
 
@@ -311,6 +345,44 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
+        }
+    }
+
+    private void setTags(){
+        LinearLayout tagsContainer = findViewById(R.id.detailTagContainer);
+        tagsContainer.setVisibility(View.VISIBLE);
+
+        Map<String, String> tags = vehicle.getTags();
+        List<String> tagNames = new ArrayList<>(tags.keySet());
+
+        System.out.println(tagNames);
+        if(tagNames.isEmpty()) {
+            TextView title = findViewById(R.id.featuresTitle);
+            title.setVisibility(View.GONE);
+            tagsContainer.setVisibility(View.GONE);
+        } else {
+            // Initialize arraylist
+            ArrayList<TagModel> tagModels = new ArrayList<>();
+            for (String tag : tagNames) {
+                TagModel model = new TagModel(tag);
+                tagModels.add(model);
+            }
+
+            RecyclerView tagRecyclerView = new RecyclerView(DetailsActivity.this);
+            int id = View.generateViewId();
+            tagRecyclerView.setId(id);
+            TagAdapter tagAdapter;
+
+            // Design horizontal layout
+            tagRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false));
+            tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+            // Initialize adapter
+            ColorStateList colour = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
+            tagAdapter = new TagAdapter(DetailsActivity.this, tagModels, colour);
+            tagRecyclerView.setAdapter(tagAdapter);
+
+            tagsContainer.addView(tagRecyclerView);
         }
     }
 }

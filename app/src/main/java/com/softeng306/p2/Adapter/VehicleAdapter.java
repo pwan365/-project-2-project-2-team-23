@@ -17,6 +17,8 @@ import com.softeng306.p2.DetailsActivity;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.R;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -48,8 +50,14 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHold
 
         //set Logo to ImageView
         holder.nameTextView.setText(vehicleModels.get(position).getVName());
-        String price = "$" + vehicleModels.get(position).getVPrice().toString();
-        holder.priceTextView.setText(price);
+
+        // Convert price to display as the conventional format for pricing with commas and 2dp
+        String priceStr = vehicleModels.get(position).getVPrice().toString();
+        double amount = Double.parseDouble(priceStr);
+        DecimalFormat formatter = new DecimalFormat("#,###.00");
+        String strPrice = "$" + formatter.format(amount);
+
+        holder.priceTextView.setText(strPrice);
         holder.itemView.setOnClickListener(view -> {
             Intent intent = new Intent(context, DetailsActivity.class);
             final CharSequence carTitle = holder.nameTextView.getText();

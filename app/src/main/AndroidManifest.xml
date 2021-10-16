@@ -15,21 +15,23 @@
             android:exported="true" />
         <activity
             android:name=".MainActivity"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true"
             android:theme="@style/Theme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".ListActivity"
             android:theme="@style/Theme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true"
             android:parentActivityName=".MainActivity">
         </activity>
         <activity android:name=".SearchActivity"
             android:theme="@style/Theme.NoActionBar"
+            android:windowSoftInputMode="adjustPan"
             android:exported="true"
             android:parentActivityName=".MainActivity">
         </activity>

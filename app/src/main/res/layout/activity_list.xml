@@ -13,8 +13,9 @@
     <ImageView
         android:id="@+id/closeSearchArea"
         android:layout_width="match_parent"
-        android:layout_height="660dp"
-        android:visibility="invisible"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/ListActionBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
@@ -165,6 +166,47 @@
                         android:src="@drawable/down_icon_white" />
                 </RelativeLayout>
 
+                <LinearLayout
+                    android:id="@+id/listNoResults"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="-50dp"
+                    android:layout_marginStart="-10dp"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/noResultsImg"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        android:layout_gravity="center_horizontal"
+                        app:lottie_rawRes="@raw/no_results"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="-100dp"
+                        android:layout_gravity="center_horizontal"
+                        android:text="No result found"
+                        style="@style/Subtitle2"/>
+                    <TextView
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_gravity="center_horizontal"
+                        android:text="We can't find any vehicles matching your search"
+                        style="@style/Body1"/>
+                    <Button
+                        android:id="@+id/listResetBtn"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="10dp"
+                        android:text="Reset"/>
+
+                </LinearLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/list_recycler"
                     android:layout_width="match_parent"
@@ -177,6 +219,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
+
             </LinearLayout>
 
         </LinearLayout>

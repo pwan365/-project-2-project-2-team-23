@@ -21,6 +21,7 @@ import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -56,9 +57,14 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> impl
                     String fileName = convertNameToFileName(vehicleName)+"_"+1;
                     holder.imageView.setImageResource(context.getResources().getIdentifier(fileName, "drawable", context.getPackageName()));
                     holder.titleView.setText(vehicleName);
-                    holder.priceView.setText("$"+(int)v.getPrice());
-                    holder.topLayout.setOnClickListener(new View.OnClickListener(){
 
+                    // Convert price to display as the conventional format for pricing with commas and 2dp
+                    String priceStr = Float.toString(v.getPrice());
+                    double amount = Double.parseDouble(priceStr);
+                    DecimalFormat formatter = new DecimalFormat("#,###.00");
+
+                    holder.priceView.setText("$"+formatter.format(amount));
+                    holder.topLayout.setOnClickListener(new View.OnClickListener(){
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(context, DetailsActivity.class);

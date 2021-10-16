@@ -153,7 +153,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                             }
                         });
             }
-        }, 3000);
+        }, 1200);
     }
 
     /**

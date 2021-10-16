@@ -8,7 +8,6 @@ import androidx.cardview.widget.CardView;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -145,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
                             }
                         });
             }
-        }, 3000);
+        }, 2000);
     }
 
     // Open search activity with results of the phrase inputted by user

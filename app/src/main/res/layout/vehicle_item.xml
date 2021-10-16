@@ -1,37 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/topLayout"
+    android:layout_width="130dp"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="30dp"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:paddingStart="10dp"
-        android:layout_marginEnd="10dp">
+<!--    <LinearLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:orientation="vertical"-->
+<!--        android:gravity="center"-->
+<!--        android:paddingStart="10dp"-->
+<!--        android:layout_marginEnd="10dp">-->
 
-        <ImageView
-            android:id="@+id/listItemImage"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:src="@drawable/electric"></ImageView>
+<com.google.android.material.imageview.ShapeableImageView
+    android:id="@+id/listItemImage"
+    android:layout_width="match_parent"
+    android:layout_height="130dp"
+    android:scaleType="centerCrop"
+    android:src="@color/blackGrey"
+    app:shapeAppearanceOverlay="@style/roundedCorners" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Title"
-            android:id="@+id/listItemTitle"
-            android:layout_gravity="left"
-            style="@style/Headline3"/>
+<TextView
+    android:id="@+id/listItemTitle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="0dp"
+    android:text="Tesla"
+    android:textAlignment="textStart"
+    android:textSize="20sp"
+    android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/listItemPrice"
-            android:textColor="@color/blackGrey"
-            android:layout_gravity="left"
-            android:text="Subtitle"
-            style="@style/Subtitle1"/>
-    </LinearLayout>
-</RelativeLayout>
+<TextView
+    android:id="@+id/listItemPrice"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:text="TextView"
+    android:textAlignment="textStart" />
+<!--    </LinearLayout>-->
+</LinearLayout>

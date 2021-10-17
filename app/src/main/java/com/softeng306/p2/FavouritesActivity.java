@@ -68,13 +68,11 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
                     Intent homeIntent = new Intent(this, MainActivity.class);
                     homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(homeIntent);
-                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                     break;
                 case R.id.searchIcon:
                     Intent searchIntent = new Intent(this, SearchActivity.class);
                     searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                     startActivity(searchIntent);
-                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
                     break;
                 case R.id.favourtiesIcon:
                     break;

@@ -77,6 +77,7 @@ public class ResultsActivity extends AppCompatActivity {
         backButton.setOnClickListener(v -> {
             noResultsContainer.setVisibility(View.GONE);
             finish();
+            overridePendingTransition(R.anim.no_movement, R.anim.slide_to_bottom);
         });
     }
 

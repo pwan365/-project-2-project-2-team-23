@@ -78,12 +78,25 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         // Create integer array
         fetchTopPickData();
         initLoading();
+        initNav();
+        initSearch();
+        initCatBtns();
+    }
 
+    private void initCatBtns() {
+        // Initialise the category buttons
+        vh.CatElectric.setOnClickListener(this::CategoryEventHandler);
+        vh.CatHybrid.setOnClickListener(this::CategoryEventHandler);
+        vh.CatPetrol.setOnClickListener(this::CategoryEventHandler);
+    }
+
+    private void initSearch() {
         // Set up the search bar
         vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
                 SearchEventHandler(searchInput);
+                vh.SearchBar.clearFocus();
                 return false;
             }
 
@@ -93,11 +106,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
             }
         });
 
-        // Initialise the category buttons
-        vh.CatElectric.setOnClickListener(this::CategoryEventHandler);
-        vh.CatHybrid.setOnClickListener(this::CategoryEventHandler);
-        vh.CatPetrol.setOnClickListener(this::CategoryEventHandler);
+        View bg = findViewById(R.id.mainBodyContainer);
+        bg.setOnClickListener(view -> {
+            vh.SearchBar.clearFocus();
+        });
+    }
 
+    private void initNav() {
         // Initialise the navigation buttons
         Menu menu = vh.bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(0);
@@ -117,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
                     startActivity(favIntent);
                     break;
             }
-        return false;
+            return false;
         });
     }
 
@@ -143,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
                             }
                         });
             }
-        }, 1200);
+        }, 1500);
     }
 
     // Open search activity with results of the phrase inputted by user
@@ -152,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         listIntent.putExtra("searchPhrase", phrase);
         startActivity(listIntent);
+        overridePendingTransition(R.anim.slide_from_bottom, R.anim.no_movement);
     }
 
     // Open list activity based on the category clicked on

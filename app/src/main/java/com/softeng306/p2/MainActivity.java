@@ -26,6 +26,7 @@ import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.TopModel;
+import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Vehicle;
 
 
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
     //Initialize variable
     RecyclerView recyclerView;
-    ArrayList<TopModel> topModels;
+    ArrayList<VehicleModel> topModels;
     TopAdapter topAdapter;
     ViewHolder vh;
 
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
             }
 
             for (Vehicle vehicle : vehicles) {
-                TopModel model = new TopModel(vehicle.getVehicleName());
+                VehicleModel model = new VehicleModel(vehicle.getVehicleName(),vehicle.getPrice());
                 topModels.add(model);
             }
 

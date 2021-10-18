@@ -17,7 +17,7 @@ import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.DetailsActivity;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.ViewModel.TopModel;
+import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.R;
 
@@ -27,13 +27,13 @@ import java.util.List;
 import java.util.Locale;
 
 public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> implements CoreActivity {
-    ArrayList<TopModel> topModels;
+    ArrayList<VehicleModel> vModels;
     Context context;
     IVehicleDataAccess vda;
 
-    public TopAdapter(Context context,ArrayList<TopModel> topModels){
+    public TopAdapter(Context context,ArrayList<VehicleModel> topModels){
         this.context = context;
-        this.topModels = topModels;
+        this.vModels = topModels;
     }
 
 
@@ -48,7 +48,7 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> impl
     @Override
     public void onBindViewHolder(@NonNull TopAdapter.ViewHolder holder, int position) {
         VehicleService.getInstance().InjectService(this);
-        String vehicleName = topModels.get(position).getTpName();
+        String vehicleName = vModels.get(position).getVName();
         vda.getVehicleByName(vehicleName,new OnGetVehicleListener() {
 
             @Override
@@ -86,7 +86,7 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> impl
 
     @Override
     public int getItemCount() {
-        return topModels.size();
+        return vModels.size();
     }
 
     @Override

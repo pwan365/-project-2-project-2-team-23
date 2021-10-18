@@ -7,39 +7,36 @@
     android:layout_marginBottom="30dp"
     android:orientation="vertical">
 
-<!--    <LinearLayout-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:orientation="vertical"-->
-<!--        android:gravity="center"-->
-<!--        android:paddingStart="10dp"-->
-<!--        android:layout_marginEnd="10dp">-->
+    <androidx.cardview.widget.CardView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="25dp"
+        app:cardElevation="5dp"
+        app:cardMaxElevation="10dp">
+        <ImageView
+            android:id="@+id/listItemImage"
+            android:layout_width="match_parent"
+            android:layout_height="130dp"
+            android:scaleType="centerCrop" />
+    </androidx.cardview.widget.CardView>
 
-<com.google.android.material.imageview.ShapeableImageView
-    android:id="@+id/listItemImage"
-    android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:scaleType="centerCrop"
-    android:src="@color/blackGrey"
-    app:shapeAppearanceOverlay="@style/roundedCorners" />
+    <TextView
+        android:id="@+id/listItemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="10dp"
+        android:text=""
+        android:textAlignment="textStart"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
-<TextView
-    android:id="@+id/listItemTitle"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:layout_marginTop="0dp"
-    android:text="Tesla"
-    android:textAlignment="textStart"
-    android:textSize="20sp"
-    android:textStyle="bold" />
+    <TextView
+        android:id="@+id/listItemPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text=""
+        android:textAlignment="textStart" />
 
-<TextView
-    android:id="@+id/listItemPrice"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="5dp"
-    android:text="TextView"
-    android:textAlignment="textStart" />
-<!--    </LinearLayout>-->
 </LinearLayout>

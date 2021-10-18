@@ -77,9 +77,6 @@ public class TopAdapter extends RecyclerView.Adapter<TopAdapter.ViewHolder> impl
 
             }
         });
-        //set Logo to ImageView
-//        holder.imageView.setImageResource(topModels.get(position).getTpImg());
-//        holder.titleView.setText(topModels.get(position).getTpName());
 
     }
 

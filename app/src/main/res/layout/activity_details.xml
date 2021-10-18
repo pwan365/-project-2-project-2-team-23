@@ -29,17 +29,25 @@
                 <com.denzcoskun.imageslider.ImageSlider
                     android:id="@+id/image_slider"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="270dp"
                     android:layout_marginTop="-7dp"
                     app:iss_auto_cycle="true"
                     app:iss_delay="0"
                     app:iss_period="5000"
                     app:iss_placeholder="@color/blackGrey" />
 
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal"
+                    android:alpha="0.7"
+                    android:background="@drawable/gradient_top">
+                </View>
                 <ImageButton
                     android:id="@+id/detailBackButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:alpha="1"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
@@ -58,10 +66,11 @@
                     android:layout_marginEnd="20dp"
                     app:circle_start_color="@color/white"
                     app:circle_end_color="#f54f4f"
-                    app:unlike_drawable="@drawable/heart_icon_white"
+                    app:unlike_drawable="@drawable/heart_white_fill"
                     app:like_drawable="@drawable/heart_red_fill"
                     app:icon_size="10dp"
                     app:icon_type="heart" />
+
             </RelativeLayout>
 
             <androidx.cardview.widget.CardView

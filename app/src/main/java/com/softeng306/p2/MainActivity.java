@@ -57,14 +57,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
         VehicleService.getInstance().InjectService(this);
 
-        vda.getVehicleByName("c", vehicleList -> {
-            vda.getElectricVehicles(vehicleList2 ->{
-                List<Vehicle> l1 = VehicleComparator.commonVehicles(vehicleList, vehicleList2);
-                for (Vehicle v: l1){
-                    System.out.println(v.getVehicleName());
-                }
-            });
-        });
 
         // Initialise views for future references
         vh = new ViewHolder();

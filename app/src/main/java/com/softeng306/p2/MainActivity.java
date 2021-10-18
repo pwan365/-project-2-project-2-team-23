@@ -25,7 +25,6 @@ import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Vehicle;
 

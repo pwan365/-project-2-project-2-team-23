@@ -45,7 +45,6 @@ import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.DetailModel;
 import com.softeng306.p2.ViewModel.TagModel;
-import com.softeng306.p2.ViewModel.TopModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Electric;
 import com.softeng306.p2.DataModel.Hybrid;

@@ -29,17 +29,25 @@
                 <com.denzcoskun.imageslider.ImageSlider
                     android:id="@+id/image_slider"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="270dp"
                     android:layout_marginTop="-7dp"
                     app:iss_auto_cycle="true"
                     app:iss_delay="0"
                     app:iss_period="5000"
                     app:iss_placeholder="@color/blackGrey" />
 
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="70dp"
+                    android:orientation="horizontal"
+                    android:alpha="0.7"
+                    android:background="@drawable/gradient_top">
+                </View>
                 <ImageButton
                     android:id="@+id/detailBackButton"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
+                    android:alpha="1"
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="20dp"
                     android:layout_marginTop="20dp"
@@ -58,10 +66,11 @@
                     android:layout_marginEnd="20dp"
                     app:circle_start_color="@color/white"
                     app:circle_end_color="#f54f4f"
-                    app:unlike_drawable="@drawable/heart_icon_white"
+                    app:unlike_drawable="@drawable/heart_white_fill"
                     app:like_drawable="@drawable/heart_red_fill"
                     app:icon_size="10dp"
                     app:icon_type="heart" />
+
             </RelativeLayout>
 
             <androidx.cardview.widget.CardView
@@ -120,6 +129,13 @@
                     android:textColor="@color/blackGrey"
                     style="@style/Headline2" />
 
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="30dp"
+                    android:background="?android:attr/listDivider" />
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -129,48 +145,71 @@
                         android:id="@+id/linearLayout2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
                         android:orientation="vertical"
+                        app:layout_constraintBottom_toTopOf="@id/divider2"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintBottom_toTopOf="@id/detailTagContainer">
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
                             android:id="@+id/textView4"
+                            style="@style/Subtitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="30dp"
-                            android:text="Details"
-                            style="@style/Subtitle2" />
+                            android:text="Details" />
 
                         <ListView
                             android:id="@+id/detailList"
                             android:layout_width="match_parent"
                             android:layout_height="130dp"
                             android:divider="@null"
-                            android:dividerHeight="-20sp"/>
+                            android:dividerHeight="-20sp" />
 
                     </LinearLayout>
+
+                    <View
+                        android:id="@+id/divider2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="?android:attr/listDivider"
+                        app:layout_constraintBottom_toTopOf="@id/detailTagContainer"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                     <LinearLayout
                         android:id="@+id/detailTagContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
                         android:layout_marginLeft="30dp"
+                        android:layout_marginBottom="10dp"
+                        android:orientation="vertical"
                         android:paddingTop="20dp"
+                        app:layout_constraintBottom_toTopOf="@+id/divider3"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+                        app:layout_constraintStart_toStartOf="parent">
+                        <!--                        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"-->
+
 
                         <TextView
                             android:id="@+id/featuresTitle"
+                            style="@style/Subtitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Features"
-                            style="@style/Subtitle2" />
+                            android:text="Features" />
 
                     </LinearLayout>
+
+                    <View
+                        android:id="@+id/divider3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="20dp"
+                        android:background="?android:attr/listDivider"
+                        app:layout_constraintBottom_toTopOf="@id/recommendation"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
 
                     <LinearLayout
                         android:id="@+id/recommendation"

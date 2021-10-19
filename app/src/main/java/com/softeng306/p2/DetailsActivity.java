@@ -45,7 +45,7 @@ import com.softeng306.p2.Listeners.OnGetUserListener;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.DetailModel;
 import com.softeng306.p2.ViewModel.TagModel;
-import com.softeng306.p2.ViewModel.TopModel;
+import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Electric;
 import com.softeng306.p2.DataModel.Hybrid;
 import com.softeng306.p2.DataModel.Petrol;
@@ -122,7 +122,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     IVehicleDataAccess vda;
     ViewHolder vh;
     List<DetailModel> details = new ArrayList();
-    ArrayList<TopModel> topModels = new ArrayList<>();
+    ArrayList<VehicleModel> vModels = new ArrayList<>();
     String relatedVehicleType = "Electric";
     User userDetail;
 
@@ -308,10 +308,10 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for(Vehicle v : vehicleList){
                         if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            topModels.add(new TopModel(v.getVehicleName()));
+                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
                         }
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
@@ -323,10 +323,10 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for(Vehicle v : vehicleList){
                         if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            topModels.add(new TopModel(v.getVehicleName()));
+                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
                         }
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });
@@ -338,10 +338,10 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
                 public void onCallBack(List<Vehicle> vehicleList) {
                     for(Vehicle v : vehicleList){
                         if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            topModels.add(new TopModel(v.getVehicleName()));
+                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
                         }
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,topModels);
+                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
                     vh.recyclerView.setAdapter(topAdapter);
                 }
             });

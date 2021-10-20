@@ -21,7 +21,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TagAdapter;
-import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.DataModel.Tag;
 
@@ -29,7 +31,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements CoreActivity {
+    private IVehicleDataAccess _vda;
 
     private List<Integer> recyclerIds;
     private List<TagAdapter> adapters;
@@ -42,7 +45,7 @@ public class SearchActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-
+        VehicleService.getInstance().InjectService(this);
 
         //init arrays
         recyclerIds = new ArrayList<>();
@@ -130,8 +133,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void showTags() {
         tagContainer = findViewById(R.id.SearchTagContainer);
-        VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllTags(tagList -> {
+        _vda.getAllTags(tagList -> {
             ArrayList<List<String>> sortedTags = listTagTypes(tagList);
 
             for(List<String> typeTagList : sortedTags) {
@@ -208,5 +210,10 @@ public class SearchActivity extends AppCompatActivity {
         b.putStringArrayList("tags", onTags);
         listIntent.putExtras(b);
         startActivity(listIntent);
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        _vda = vehicleDataAccess;
     }
 }

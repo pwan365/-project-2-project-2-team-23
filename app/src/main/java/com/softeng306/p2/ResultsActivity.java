@@ -21,13 +21,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.DataModel.Vehicle;
-import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.ViewModel.VehicleModel;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity implements CoreActivity {
+    private IVehicleDataAccess _vda;
+
     private String searchPhrase;
     private ArrayList<String> tags;
     private int CatColourInt;
@@ -41,6 +45,7 @@ public class ResultsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_results);
+        VehicleService.getInstance().InjectService(this);
 
         // initialise variables
         tags = new ArrayList<>();
@@ -131,11 +136,10 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
     private void fetchVehicleData() {
-        VehicleDataAccess vda = new VehicleDataAccess();
         if(tags == null || tags.isEmpty()){
-            vda.getVehicleByName(searchPhrase, vehicleList -> propagateListAdaptor(vehicleList));
+            _vda.getVehicleByName(searchPhrase, vehicleList -> propagateListAdaptor(vehicleList));
         } else {
-            vda.getVehicleByTagName(tags, "All", vehicleList -> {
+            _vda.getVehicleByTagName(tags, "All", vehicleList -> {
                 propagateListAdaptor(vehicleList);
                 ResultsActivity.this.vehicleAdapter.getSearchFilter().filter(searchPhrase);
             });
@@ -176,5 +180,10 @@ public class ResultsActivity extends AppCompatActivity {
         vehicleAdapter = new VehicleAdapter(ResultsActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
 
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        _vda = vehicleDataAccess;
     }
 }

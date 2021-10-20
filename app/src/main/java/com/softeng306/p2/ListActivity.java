@@ -31,7 +31,9 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.VehicleAdapter;
-import com.softeng306.p2.Database.VehicleDataAccess;
+import com.softeng306.p2.Database.CoreActivity;
+import com.softeng306.p2.Database.IVehicleDataAccess;
+import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Tag;
@@ -42,7 +44,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
-public class ListActivity extends AppCompatActivity {
+public class ListActivity extends AppCompatActivity implements CoreActivity {
+
+    private IVehicleDataAccess _vda;
 
     private SearchView searchBar;
     private ImageView closeSearch;
@@ -60,6 +64,8 @@ public class ListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        VehicleService.getInstance().InjectService(this);
 
         // Find id references
         listSearchButton = findViewById(R.id.listSearchButton);
@@ -217,8 +223,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void fetchVehicleData() {
-        VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
+        _vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
     }
 
     private void propagateListAdaptor(List<Vehicle> vehicleList){
@@ -230,7 +235,6 @@ public class ListActivity extends AppCompatActivity {
         }
 
         RecyclerView recyclerView = findViewById(R.id.list_recycler);
-        VehicleDataAccess vda = new VehicleDataAccess();
 
         // Create string array
         List<String> vehicleName = new ArrayList<>();
@@ -269,8 +273,7 @@ public class ListActivity extends AppCompatActivity {
         BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        VehicleDataAccess vda = new VehicleDataAccess();
-        vda.getAllTags(tagList -> {
+        _vda.getAllTags(tagList -> {
             ArrayList<List<String>> sortedTags = listTagTypes(tagList);
 
             for(List<String> typeTagList : sortedTags) {
@@ -303,8 +306,7 @@ public class ListActivity extends AppCompatActivity {
             if(onTags.isEmpty()) {
                 Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
             } else {
-                VehicleDataAccess vda = new VehicleDataAccess();
-                vda.getVehicleByTagName(onTags, categoryName, ListActivity.this::propagateListAdaptor);
+                _vda.getVehicleByTagName(onTags, categoryName, ListActivity.this::propagateListAdaptor);
                 dialog.hide();
             }
         });
@@ -357,5 +359,10 @@ public class ListActivity extends AppCompatActivity {
         tagRecyclerView.setAdapter(tagAdapter);
 
         ((LinearLayout) bottomSheetView).addView(tagRecyclerView, 3);
+    }
+
+    @Override
+    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+        _vda = vehicleDataAccess;
     }
 }

@@ -157,7 +157,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     }
 
     /**
-     * retrieve data from database
+     * retrieve data from database and initialize view at call back
      */
     private void getData(){
         //get vehicle object from database depend on the name of the vehicle
@@ -245,6 +245,9 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         });
     }
 
+    /**
+     * set text view and image slider with corresponding vehicle information
+     */
     private void setData(){
         vh.titleText.setText(carTitle);
         vh.descText.setText(carDesc);
@@ -264,6 +267,10 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh.imageSlider.setImageList(slideModelList,ScaleTypes.CENTER_CROP);
     }
 
+    /**
+     * display content of vehicle in a list view based on the vehicle type retrieved
+     * @param v
+     */
     private void getDetails(Vehicle v){
         details.add(new DetailModel("Dimension",v.getDimension()));
         details.add(new DetailModel("Weight",v.getWeight()+"kg"));
@@ -299,7 +306,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         vh.recyclerView.setLayoutManager(layoutManager);
         vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-
+        //show child vehicle object information
         if(vehicle instanceof Electric){
             relatedVehicleType = "Electric";
             vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
@@ -355,7 +362,6 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         Map<String, String> tags = vehicle.getTags();
         List<String> tagNames = new ArrayList<>(tags.keySet());
 
-        System.out.println(tagNames);
         if(tagNames.isEmpty()) {
             TextView title = findViewById(R.id.featuresTitle);
             title.setVisibility(View.GONE);

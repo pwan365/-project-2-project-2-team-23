@@ -8,7 +8,6 @@ import androidx.cardview.widget.CardView;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,7 +22,6 @@ import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Vehicle;
@@ -34,19 +32,34 @@ import java.util.List;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements CoreActivity {
-    static class ViewHolder {
-        private CardView CatElectric, CatHybrid, CatPetrol;
-        private SearchView SearchBar;
+
+     class ViewHolder {
+        private CardView catElectric, catHybrid, catPetrol, loadingView;
+        private SearchView searchBar;
         private RecyclerView recyclerView;
         private BottomNavigationView bottomNavigationView;
+        private LinearLayout topPickContainer, catContainer;
+
+        public ViewHolder(){
+            searchBar = findViewById(R.id.SearchBar);
+            catElectric = findViewById(R.id.Electric);
+            catHybrid = findViewById(R.id.Hybrid);
+            catPetrol = findViewById(R.id.Petrol);
+            recyclerView = findViewById(R.id.recycler_view);
+            bottomNavigationView = findViewById(R.id.nav_bar);
+
+            //elements for loading
+            loadingView = findViewById(R.id.main_load);
+            topPickContainer = findViewById(R.id.TopPicksContainer);
+            catContainer = findViewById(R.id.catContainer);
+        }
+
     }
 
-    //Initialize variable
-    RecyclerView recyclerView;
+    //Initialize fields used in multiple methods
     ArrayList<VehicleModel> topModels;
     TopAdapter topAdapter;
     ViewHolder vh;
-
     IVehicleDataAccess vda;
 
     @Override
@@ -54,20 +67,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //injection database service
         VehicleService.getInstance().InjectService(this);
-
 
         // Initialise views for future references
         vh = new ViewHolder();
-        vh.SearchBar = findViewById(R.id.SearchBar);
-        vh.CatElectric = findViewById(R.id.Electric);
-        vh.CatHybrid = findViewById(R.id.Hybrid);
-        vh.CatPetrol = findViewById(R.id.Petrol);
-        vh.recyclerView = findViewById(R.id.recycler_view);
-        vh.bottomNavigationView = findViewById(R.id.nav_bar);
 
-        // Create integer array
+        //construct the view based on the data
         fetchTopPickData();
         initLoading();
         initNav();
@@ -75,20 +81,26 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         initCatBtns();
     }
 
+    /**
+     * initialize category buttons with event handler
+     */
     private void initCatBtns() {
         // Initialise the category buttons
-        vh.CatElectric.setOnClickListener(this::CategoryEventHandler);
-        vh.CatHybrid.setOnClickListener(this::CategoryEventHandler);
-        vh.CatPetrol.setOnClickListener(this::CategoryEventHandler);
+        vh.catElectric.setOnClickListener(this::CategoryEventHandler);
+        vh.catHybrid.setOnClickListener(this::CategoryEventHandler);
+        vh.catPetrol.setOnClickListener(this::CategoryEventHandler);
     }
 
+    /**
+     * initialize the search bar at the top of main activity
+     */
     private void initSearch() {
         // Set up the search bar
-        vh.SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        vh.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
                 SearchEventHandler(searchInput);
-                vh.SearchBar.clearFocus();
+                vh.searchBar.clearFocus();
                 return false;
             }
 
@@ -100,10 +112,13 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
         View bg = findViewById(R.id.mainBodyContainer);
         bg.setOnClickListener(view -> {
-            vh.SearchBar.clearFocus();
+            vh.searchBar.clearFocus();
         });
     }
 
+    /**
+     * initialize the bottom navigation bar
+     */
     private void initNav() {
         // Initialise the navigation buttons
         Menu menu = vh.bottomNavigationView.getMenu();
@@ -128,32 +143,41 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         });
     }
 
+    /**
+     * initialize main activity with loading animation
+     */
     private void initLoading() {
-        CardView cardView = findViewById(R.id.main_load);
-        LinearLayout topPickContainer = findViewById(R.id.TopPicksContainer);
-        LinearLayout catContainer = findViewById(R.id.catContainer);
-        topPickContainer.setVisibility(View.INVISIBLE);
-        catContainer.setVisibility(View.INVISIBLE);
-        cardView.postDelayed(new Runnable() {
+        vh.loadingView = findViewById(R.id.main_load);
+        vh.topPickContainer = findViewById(R.id.TopPicksContainer);
+        vh.catContainer = findViewById(R.id.catContainer);
+        vh.topPickContainer.setVisibility(View.INVISIBLE);
+        vh.catContainer.setVisibility(View.INVISIBLE);
+
+        //set duration for the loading animation
+        vh.loadingView.postDelayed(new Runnable() {
             public void run() {
-                cardView.animate()
-                        .translationY(cardView.getHeight())
+                vh.loadingView.animate()
+                        .translationY(vh.loadingView.getHeight())
                         .alpha(0.0f)
                         .setDuration(200)
                         .setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 super.onAnimationEnd(animation);
-                                cardView.setVisibility(View.GONE);
-                                topPickContainer.setVisibility(View.VISIBLE);
-                                catContainer.setVisibility(View.VISIBLE);
+                                vh.loadingView.setVisibility(View.GONE);
+                                vh.topPickContainer.setVisibility(View.VISIBLE);
+                                vh.catContainer.setVisibility(View.VISIBLE);
                             }
                         });
             }
         }, 1500);
     }
 
-    // Open search activity with results of the phrase inputted by user
+
+    /**
+     * Open search activity with results of the phrase inputted by user
+     * @param phrase
+     */
     public void SearchEventHandler(String phrase) {
         Intent listIntent = new Intent(this, ResultsActivity.class);
         listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
@@ -167,7 +191,6 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         CardView category = (CardView) v;
         Log.i("MainActivity", "Opening " + category.getContentDescription());
         Intent listIntent = new Intent(this, ListActivity.class);
-        /*listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);*/
 
         Bundle extras = new Bundle();
         int intName= category.getId();
@@ -179,11 +202,18 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         overridePendingTransition(R.anim.slide_from_bottom, R.anim.no_movement);
     }
 
+    /**
+     * initialize the database object
+     * @param vehicleDataAccess
+     */
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
     }
 
+    /**
+     * using a advanced method to fetch top pick every time main activity loads
+     */
     private void fetchTopPickData(){vda.getAllVehicles(new OnGetVehicleListener() {
         @Override
         public void onCallBack(List<Vehicle> vehicleList) {

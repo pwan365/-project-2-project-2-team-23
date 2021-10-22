@@ -7,6 +7,9 @@ import com.softeng306.p2.DataModel.Tag;
 
 import java.util.List;
 
+/**
+ * Interface to be implemented, used for accessing the database
+ */
 public interface IVehicleDataAccess {
     void getAllTags(OnGetTagListener listener);
     void getAllVehicles(OnGetVehicleListener listener);

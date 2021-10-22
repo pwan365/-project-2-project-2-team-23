@@ -28,6 +28,9 @@ import com.softeng306.p2.DataModel.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The FavouritesActivity displays a list of vehicles that is favourited by the user
+ */
 public class FavouritesActivity extends AppCompatActivity implements CoreActivity {
 
     private IVehicleDataAccess _vda;
@@ -36,6 +39,10 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
     private CardView cardView;
     private LinearLayout noResultsContainer;
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState Bundle object that gives ability to restore previous state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,6 +63,9 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         initNavigation();
     }
 
+    /**
+     * Initialize the bottom navigation buttons
+     */
     public void initNavigation() {
         // Initialise the navigation buttons
         BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
@@ -83,6 +93,9 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         });
     }
 
+    /**
+     * initialize favourites activity with loading animation
+     */
     private void initLoading() {
         CardView cardView = findViewById(R.id.favourites_load);
         favourites_recycler.setVisibility(View.INVISIBLE);
@@ -104,19 +117,34 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         }, 1000);
     }
 
+    /**
+     * setup the vehicle data access of this activity
+     * @param vehicleDataAccess
+     */
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         this._vda = vehicleDataAccess;
     }
 
+    /**
+     * retrieve the vehicles from the user's favourite list in firebase
+     */
     private void fetchVehicleData() {
         _vda.getFavourites(this::propagateUsersAdaptor);
     }
 
+    /**
+     * Method to propagate the favourites adaptor with the User object
+     * @param user
+     */
     private void propagateUsersAdaptor(User user) {
         _vda.getVehicleById(user.getFavourites(), this::propagateFavouritesAdaptor);
     }
 
+    /**
+     * Method propagates a recyclerview with favourites from the favourite's list
+     * @param vehicleList
+     */
     private void propagateFavouritesAdaptor(List<Vehicle> vehicleList) {
         RecyclerView recyclerView = findViewById(R.id.favourites_recycler);
 

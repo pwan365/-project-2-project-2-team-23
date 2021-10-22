@@ -2,6 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ListActivity">
@@ -9,13 +12,13 @@
     <!-- Header Section -->
     <RelativeLayout
         android:id="@+id/ResultsActionBar"
+        style="@style/Container"
         android:layout_height="70dp"
         android:background="@color/yellow"
+        android:gravity="start"
         android:orientation="horizontal"
-        android:gravity="left"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Container">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/ResultsBackButton"
@@ -28,101 +31,112 @@
             android:contentDescription="@string/back_arrow"
             android:scaleType="fitCenter"
             android:src="@drawable/back_arrow_icon" />
-
     </RelativeLayout>
 
-    <LinearLayout
+    <!-- Navigation -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/resultsScroll"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/ResultsActionBar"
-        android:orientation="vertical"
-        android:backgroundTint="@color/white" >
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
-            android:layout_gravity="center_horizontal"
-            android:text="@string/search_results"
-            style="@style/Headline3"/>
-
-        <TextView
-            android:id="@+id/phraseText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text=""
-            style="@style/Headline3"/>
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/results_load"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="100dp"
-            app:cardElevation="0dp">
-
-            <com.google.android.material.progressindicator.CircularProgressIndicator
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-        </androidx.cardview.widget.CardView>
+        android:layout_height="match_parent"
+        android:layout_marginTop="70dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintTop_toBottomOf="@+id/ResultsActionBar"
+        app:layout_constraintVertical_bias="1.0">
 
         <LinearLayout
-            android:id="@+id/resultsNoResults"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            android:orientation="vertical">
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/noResultsImg"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                android:layout_gravity="center_horizontal"
-                app:lottie_rawRes="@raw/no_results"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="-100dp"
-                android:layout_gravity="center_horizontal"
-                android:text="No result found"
-                style="@style/Subtitle2"/>
-            <TextView
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:textAlignment="center"
-                android:layout_gravity="center_horizontal"
-                android:text="We can't find any vehicles matching your search"
-                style="@style/Body1"/>
-
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/results_recycler"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="20dp"
-            android:paddingBottom="150dp"/>
-    </LinearLayout>
+            android:backgroundTint="@color/white"
+            android:orientation="vertical">
 
-    <!-- Navigation -->
+            <TextView
+                style="@style/Headline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/search_results" />
+
+            <TextView
+                android:id="@+id/phraseText"
+                style="@style/Headline3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/results_load"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="100dp"
+                app:cardElevation="0dp">
+
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:id="@+id/resultsNoResults"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/noResultsImg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/no_results" />
+
+                <TextView
+                    style="@style/Subtitle2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="-100dp"
+                    android:text="@string/no_result_found" />
+
+                <TextView
+                    style="@style/Body1"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:text="@string/no_vehicle_match"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+            <!-- Display Vehicle List -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/results_recycler"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginStart="30dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="30dp"
+                android:layout_marginBottom="100dp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never" />
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
-        android:layout_marginStart="0dp"
-        android:layout_marginEnd="0dp"
         app:itemIconSize="34dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:menu="@navigation/bottom_nav_menu">
-    </com.google.android.material.bottomnavigation.BottomNavigationView>
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@navigation/bottom_nav_menu" />
 </androidx.constraintlayout.widget.ConstraintLayout>

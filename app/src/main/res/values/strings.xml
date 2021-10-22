@@ -14,8 +14,10 @@
     <string name="search">Search</string>
     <string name="searchSlogan">Let\'s find your dream car</string>
     <string name="refine">Refine</string>
-    <string name="tagcategory1">TagCategory1</string>
     <string name="apply_filters">Apply filters</string>
     <string name="back_arrow">back arrow</string>
     <string name="search_results">Search results for</string>
+    <string name="no_result_found">No result found</string>
+    <string name="no_vehicle_match">We can\'t find any vehicles matching your search</string>
+    <string name="reset">Reset</string>
 </resources>

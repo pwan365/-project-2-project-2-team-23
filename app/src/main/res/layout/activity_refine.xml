@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bottomSheetContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:paddingStart="40dp"
-    android:paddingEnd="40dp"
-    android:orientation="vertical"
-    android:clickable="true"
-    android:focusable="true"
-    android:gravity="center_vertical"
-    android:backgroundTint="@color/white"
-    android:background="@drawable/background">
-
+    android:layout_height="wrap_content">
+    <LinearLayout
+        android:id="@+id/tagsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="40dp"
+        android:paddingEnd="40dp"
+        android:orientation="vertical"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:backgroundTint="@color/white"
+        android:background="@drawable/background">
+        <!-- Tab -->
         <View
             android:id="@+id/view"
             android:layout_width="100dp"
@@ -22,6 +26,7 @@
             android:backgroundTint="@color/darkGrey"
             android:contentDescription="TODO" />
 
+        <!-- Refine title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -32,6 +37,7 @@
             android:layout_gravity="center_horizontal"
             style="@style/Headline2"/>
 
+        <!-- Apply button -->
         <Button
             android:id="@+id/submitRefineBtn"
             android:layout_width="match_parent"
@@ -43,5 +49,5 @@
             android:backgroundTint="@color/yellow"
             android:textColor="@color/white"
             style="@style/RoundedBackground" />
-
-</LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

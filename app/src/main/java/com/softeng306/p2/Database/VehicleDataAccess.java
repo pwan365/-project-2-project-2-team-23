@@ -169,6 +169,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     }
 
     // Added by Kayla - to get by tag but by string instead of Tag object
+    @Override
     public void getVehicleByTagName(List<String> tagList, String category, OnGetVehicleListener listener) {
         switch (category){
             case "Electric":

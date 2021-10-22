@@ -27,7 +27,7 @@ import com.softeng306.p2.ViewModel.VehicleModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ResultsActivity extends AppCompatActivity {
+public class ResultsActivity extends AppCompatActivity{
     private String searchPhrase;
     private ArrayList<String> tags;
     private int CatColourInt;

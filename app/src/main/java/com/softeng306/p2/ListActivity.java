@@ -1,14 +1,19 @@
 package com.softeng306.p2;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -20,8 +25,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +40,7 @@ import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Helpers.SortTagsByType;
 import com.softeng306.p2.ViewModel.TagModel;
 import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Tag;
@@ -44,13 +51,15 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * The ListActivity displays a list of vehicles pertaining to a category
+ */
 public class ListActivity extends AppCompatActivity implements CoreActivity {
 
     private IVehicleDataAccess _vda;
-
     private SearchView searchBar;
     private ImageView closeSearch;
-    private ImageButton listSearchButton;
+    private ImageButton searchButton;
     private String categoryName, categorySubtitle;
     private View bottomSheetView;
     private List<TagAdapter> adapters;
@@ -58,75 +67,69 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
     private int CatColourInt;
     private ColorStateList CatColourState;
     private VehicleAdapter vehicleAdapter;
-    private LinearLayout listNoResults;
+    private LinearLayout noResults, tagsContainer;
+    RecyclerView recyclerView;
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState Bundle object that gives ability to restore previous state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
 
-        VehicleService.getInstance().InjectService(this);
+        // Set up connection to the database
+        VehicleService.getInstance();
+        VehicleService.InjectService(this);
 
-        // Find id references
-        listSearchButton = findViewById(R.id.listSearchButton);
-        searchBar = findViewById(R.id.ListSearchBar);
+        // Find id references to elements in the layout
+        recyclerView = findViewById(R.id.list_recycler);
+        searchButton = findViewById(R.id.listSearchButton);
+        searchBar = findViewById(R.id.listSearchBar);
         closeSearch = findViewById(R.id.closeSearchArea);
-        listNoResults = findViewById(R.id.listNoResults);
+        noResults = findViewById(R.id.listNoResults);
 
-        // Initialise arrays
+        // Initialise any global array variables
         adapters = new ArrayList<>();
 
         fetchIntent();
         fetchVehicleData();
         initRefineDialog();
         initHeaderStyling();
-        setupRefineBtn();
-        SearchSetup();
-        initNavigation();
+        setUpRefineBtn();
+        searchSetup();
+        initNav();
         setUpNoResults();
     }
 
-    private void setUpNoResults() {
-        Button listResetBtn = findViewById(R.id.listResetBtn);
-        listResetBtn.setBackgroundTintList(CatColourState);
-        listResetBtn.setOnClickListener(view -> {
-            fetchVehicleData();
-            initRefineDialog();
-        });
-    }
-
+    /**
+     * Method allows activity to receive data from intent and stores as global variables
+     */
     private void fetchIntent() {
-        // Receive data from intent
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         categoryName = extras.getString("category");
         categorySubtitle = extras.getString("categorySubtitle");
         CatColourState = extras.getParcelable("categoryColour");
-        CatColourInt = CatColourState.getDefaultColor();
+        CatColourInt = CatColourState.getDefaultColor(); 
     }
 
-    private void setupRefineBtn() {
+    /**
+     * Method initialises the refine button
+     */
+    private void setUpRefineBtn() {
         // Set the refine colour
         RelativeLayout refineBtn = findViewById(R.id.refineBtn);
         refineBtn.setBackgroundTintList(CatColourState);
 
-        // Initialize refine button
+        // Initialise refine button
         refineBtn.setOnClickListener(v -> dialog.show());
-
-        // Initialize back button
-        ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-                overridePendingTransition(R.anim.no_movement, R.anim.slide_to_bottom);
-            }
-        });
-
-        SearchSetup();
-        initNavigation();
     }
 
+    /**
+     * Method sets up all the styling for the header section of the list activity
+     */
     private void initHeaderStyling() {
         // Set the list title
         TextView catTitle = findViewById(R.id.ListTitle);
@@ -138,8 +141,8 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
 
         // Set the list image
         ImageView catImg = findViewById(R.id.ListHeaderImage);
-        int resId = getResources().getIdentifier(categoryName.toLowerCase(Locale.ROOT),"drawable",ListActivity.this.getPackageName());
-        Drawable d = ListActivity.this.getResources().getDrawable(resId);
+        int resId = getResources().getIdentifier(categoryName.toLowerCase(Locale.ROOT), "drawable", ListActivity.this.getPackageName());
+        Drawable d = ResourcesCompat.getDrawable(getResources(), resId, null);
         catImg.setImageDrawable(d);
 
         // Set the heading colour
@@ -150,217 +153,283 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
 
         // Initialize back button
         ImageButton listBackButton = findViewById(R.id.listBackButton);
-        listBackButton.setOnClickListener(v -> finish());
+        listBackButton.setOnClickListener(view -> {
+            finish();
+            overridePendingTransition(R.anim.no_movement, R.anim.slide_to_bottom);
+        });
     }
 
-    public void initNavigation() {
-        // Initialise the navigation buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
+    /**
+     * Method sets up the bottom navigation bar to lead to their respective activities
+     */
+    public void initNav() {
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar); // Find the nav view
+
+        // Makes the search icon in the second position highlighted yellow
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
+
+        // Initialise the navigation buttons
         bottomNavigationView.setOnItemSelectedListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.homeIcon:
-                    finish();
-                    overridePendingTransition(0, R.anim.slide_to_bottom);
-                    break;
-                case R.id.searchIcon:
-                    Intent searchIntent = new Intent(this, SearchActivity.class);
-                    startActivity(searchIntent);
-                    overridePendingTransition(0, R.anim.slide_to_bottom);
-                    break;
-                case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(this, FavouritesActivity.class);
-                    startActivity(favIntent);
-                    overridePendingTransition(0, R.anim.slide_to_bottom);
-                    break;
+            int id = item.getItemId();
+            if (id == R.id.homeIcon) {
+                finish();
+                overridePendingTransition(0, R.anim.slide_to_bottom);
+            } else if (id == R.id.searchIcon) {
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                startActivity(searchIntent);
+                overridePendingTransition(0, R.anim.slide_to_bottom);
+            } else if (id == R.id.favourtiesIcon) {
+                Intent favIntent = new Intent(this, FavouritesActivity.class);
+                startActivity(favIntent);
+                overridePendingTransition(0, R.anim.slide_to_bottom);
             }
             return false;
         });
     }
 
-    public void SearchSetup(){
-        // Initialize search button
-        listSearchButton.setOnClickListener(v -> {
+    /**
+     * Method adds click function to search icon button, to display the search bar
+     */
+    public void searchSetup() {
+        searchButton.setOnClickListener(v -> {
+            // Display a empty container that provides the user to click anywhere
+            // to close the search bar
             closeSearch.setVisibility(View.VISIBLE);
             closeSearch.bringToFront();
+            // Show the search bar
             searchBar.setVisibility(View.VISIBLE);
             searchBar.requestFocus();
             searchBar.bringToFront();
+            // Displays the keyboard and focuses on the search bar to start typing instantly
             InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             mgr.showSoftInput(searchBar, InputMethodManager.SHOW_IMPLICIT);
 
         });
 
-        // Initialize close search view
+        // Clicking on the closeSearch container will hide the search bar and itself
         closeSearch.setOnClickListener(v -> {
             searchBar.setVisibility(View.INVISIBLE);
             closeSearch.setVisibility(View.INVISIBLE);
         });
 
-        // Set up the search bar
+        // Listener for search bar input from user
         searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
-                ListActivity.this.vehicleAdapter.getSearchFilter().filter(searchInput);
+                // When user submits their query, filters the vehicle adapter to show related results
+                vehicleAdapter.getSearchFilter().filter(searchInput);
+                // Hide the search bar and close search container
                 searchBar.setVisibility(View.INVISIBLE);
                 closeSearch.setVisibility(View.INVISIBLE);
-                if (ListActivity.this.vehicleAdapter.getItemCount() == 0){
-                    listNoResults.setVisibility(View.VISIBLE);
+                // Checks if any vehicles are returned after search
+                if (vehicleAdapter.getItemCount() == 0) {
+                    // Displays the no search message to user if no vehicles returned
+                    noResults.setVisibility(View.VISIBLE);
                 } else {
-                    listNoResults.setVisibility(View.GONE);
+                    // If returns vehicles, hide the no results message
+                    noResults.setVisibility(View.GONE);
                 }
                 return false;
             }
 
+            // As the user types in the search bar, filters the displayed vehicle list
             @Override
             public boolean onQueryTextChange(String searchInput) {
-                ListActivity.this.vehicleAdapter.getSearchFilter().filter(searchInput);
+                if(vehicleAdapter != null) {
+                    vehicleAdapter.getSearchFilter().filter(searchInput);
+                }
                 return false;
             }
         });
     }
 
+    /**
+     * Method sets up the reset button in the no results container
+     */
+    private void setUpNoResults() {
+        // Change colour of reset button to match category theme colour
+        Button listResetBtn = findViewById(R.id.listResetBtn);
+        listResetBtn.setBackgroundTintList(CatColourState);
+
+        // Clicking on the reset button to redisplay the original vehicle list and refine dialog
+        listResetBtn.setOnClickListener(view -> {
+            fetchVehicleData();
+            initRefineDialog();
+        });
+    }
+
+    /**
+     * Method retrieves the vehicles from the specific category and passes to the method to
+     * propagate the recyclerview of vehicles
+     */
     private void fetchVehicleData() {
         _vda.getCategoryVehicles(categoryName, this::propagateListAdaptor);
     }
 
-    private void propagateListAdaptor(List<Vehicle> vehicleList){
+    /**
+     * Method propagates the recyclerview with the vehicles from the vehicleList
+     * @param vehicleList List of vehicles from the category
+     */
+    private void propagateListAdaptor(List<Vehicle> vehicleList) {
 
-        if(vehicleList.isEmpty()){
-            listNoResults.setVisibility(View.VISIBLE);
+        // Check if the list is empty, if so, display the no results message
+        if (vehicleList.isEmpty()) {
+            noResults.setVisibility(View.VISIBLE);
         } else {
-            listNoResults.setVisibility(View.GONE);
+            noResults.setVisibility(View.GONE);
         }
 
-        RecyclerView recyclerView = findViewById(R.id.list_recycler);
-
-        // Create string array
+        // Loop through all vehicles to retrieve and store names and prices
         List<String> vehicleName = new ArrayList<>();
         List<Float> vehiclePrice = new ArrayList<>();
-
         for (Vehicle vehicle : vehicleList) {
             vehicleName.add(vehicle.getVehicleName());
             vehiclePrice.add(vehicle.getPrice());
         }
 
-        // Initialize arraylist
+        // Develop an arraylist of vehicles in their model form to be used in the adapter
         ArrayList<VehicleModel> vehicleModels = new ArrayList<>();
         for (int i = 0; i < vehicleList.size(); i++) {
             VehicleModel model = new VehicleModel(vehicleName.get(i), vehiclePrice.get(i));
             vehicleModels.add(model);
         }
 
-        // Design grid layout
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        // Format recyclerview in a grid layout with two columns if portrait and horizontal layout
+        // if device is in landscape mode
+        Configuration config = getResources().getConfiguration();
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT){
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        }
 
-
-        // Initialize adapter
+        // Set up the vehicle adapter to finally display the vehicles in the recyclerview
         vehicleAdapter = new VehicleAdapter(ListActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
     }
 
+    /**
+     * Method sets up the refine dialog that pops open when the refine button is clicked.
+     */
     private void initRefineDialog() {
+
+        // Initialise a bottom sheet dialog with the layout of the activity_refine XML file
         dialog = new BottomSheetDialog(ListActivity.this, R.style.BottomSheetTheme);
-        bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
-        // Submit changes to the recycler view from tags chosen
-        refineSubmit();
+        bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                R.layout.activity_refine, findViewById(R.id.bottomSheetContainer));
+        tagsContainer = bottomSheetView.findViewById(R.id.tagsContainer);
         dialog.setContentView(bottomSheetView);
 
-        FrameLayout bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        // Set up function behind the submit button in the refine dialog
+        refineSubmit();
+
+        // Ensures the refine dialog opens entirely to display all content on the bottom sheet dialog
+        FrameLayout bottomSheet = dialog.findViewById(R.id.design_bottom_sheet);
+        BottomSheetBehavior<View> behavior = BottomSheetBehavior.from(bottomSheet);
         behavior.setState(BottomSheetBehavior.STATE_EXPANDED);
 
-        _vda.getAllTags(tagList -> {
-            ArrayList<List<String>> sortedTags = listTagTypes(tagList);
-
-            for(List<String> typeTagList : sortedTags) {
-                String type = typeTagList.get(0);
-                System.out.println(type);
-                if (!"VEHICLE TYPE".equals(type)) {
-                    TextView typeTitle = new TextView(ListActivity.this);
-                    typeTitle.setText(type);
-                    typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                    ((LinearLayout) bottomSheetView).addView(typeTitle, 2);
-
-                    propagateTagAdaptor(typeTagList);
-                }
-
-            }
-        });
+        // Get all tags from the database and displays them in the refine log
+        _vda.getAllTags(this::displayTags);
 
     }
 
+    /**
+     * Method takes a list of tags, sort them by type and displays them on the refine dialog
+     * @param tagList List of Tag objects
+     */
+    private void displayTags(List<Tag> tagList) {
+        // Sorts tags by their tag type
+        ArrayList<List<String>> sortedTags = SortTagsByType.listTagTypes(tagList);
+
+        // Loop through each tag types list to display the tag type as text and to display its'
+        // related tags in a recyclerview
+        for (List<String> typeTagList : sortedTags) {
+            // First position of the list stores the tag type name
+            String type = typeTagList.get(0);
+
+            // Ignores the vehicle type as the category already refines by this type
+            if (!"VEHICLE TYPE".equals(type)) {
+                // Inserts the title of this type as a textview
+                TextView typeTitle = new TextView(ListActivity.this);
+                typeTitle.setText(type);
+                typeTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                tagsContainer.addView(typeTitle,2);
+                // Insert a recyclerview of tags
+                propagateTagAdaptor(typeTagList);
+            }
+
+        }
+    }
+
+    /**
+     * Method sets styling and functionality of submit button in the refine dialog
+     */
     private void refineSubmit() {
+        // Finds the button and matched the styling to the categories colour
         Button submitRefineBtn = bottomSheetView.findViewById(R.id.submitRefineBtn);
         submitRefineBtn.setBackgroundTintList(CatColourState);
+
+        // Clicking on 'apply filters' will refine the current vehicle list in the listActivity
         submitRefineBtn.setOnClickListener(view -> {
+            // Finds and lists all the tags the user has clicked
             List<String> onTags = new ArrayList<>();
             for (TagAdapter a : adapters) {
-                for (String s : a.getOnTags()) {
-                    onTags.add(s);
-                }
+                onTags.addAll(a.getOnTags());
             }
-            if(onTags.isEmpty()) {
-                Toast.makeText(getApplicationContext(),"Please select at least one tag",Toast. LENGTH_SHORT).show();
+
+            // Checking if at least one tag has been chosen
+            if (onTags.isEmpty()) {
+                // If no tags have been chosen (empty list), will provide a toast to inform the user
+                Toast.makeText(getApplicationContext(), "The list has been reset",
+                        Toast.LENGTH_SHORT).show();
+                fetchVehicleData();
             } else {
+                // Propagates the vehicle list again with all vehicles found by category and tags selected
+                fetchVehicleData();
                 _vda.getVehicleByTagName(onTags, categoryName, ListActivity.this::propagateListAdaptor);
                 dialog.hide();
             }
         });
     }
 
-    private ArrayList<List<String>> listTagTypes(List<Tag> tagsList) {
-
-        // Create string hash set of types
-        LinkedHashSet<String> tagTypes = new LinkedHashSet<>();
-        for(Tag tag : tagsList) {
-            tagTypes.add(tag.getTagType());
-        }
-
-        ArrayList<List<String>> sortedTags = new ArrayList<>();
-        // Sort tags by type
-        for(String type: tagTypes) {
-            List<String> tagNames = new ArrayList<>();
-            tagNames.add(type);
-            for (Tag tag : tagsList) {
-                if (tag.getTagType().equals(type)) {
-                    tagNames.add(tag.getTagName());
-                }
-            }
-            sortedTags.add(tagNames);
-        }
-
-        return sortedTags;
-    }
-
+    /**
+     * Method propagates a recyclerview with tags from the tagNames list
+     * @param tagNames List of tags by their tag name
+     */
     private void propagateTagAdaptor(List<String> tagNames) {
+
+        // Creates a new recyclerview for this list of tags along with an id for it
         RecyclerView tagRecyclerView = new RecyclerView(ListActivity.this);
         int id = View.generateViewId();
         tagRecyclerView.setId(id);
-        TagAdapter tagAdapter;
 
-        // Initialize arraylist
+        // Develop an arraylist of tags in their model form to be used in the adapter
         ArrayList<TagModel> tagModels = new ArrayList<>();
-        for(int i = 1; i<tagNames.size();i++){
+        for (int i = 1; i < tagNames.size(); i++) {
             TagModel model = new TagModel(tagNames.get(i));
             tagModels.add(model);
         }
 
-        // Design horizontal layout
-        tagRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false));
-        tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        // Display recyclerview in a horizontal layout
+        tagRecyclerView.setLayoutManager(new LinearLayoutManager(
+                this, GridLayoutManager.HORIZONTAL, false));
 
-        // Initialize adapter
-        tagAdapter = new TagAdapter(ListActivity.this, tagModels, CatColourState);
+        // Set up the tag adapter to finally display the vehicles in the recyclerview
+        TagAdapter tagAdapter = new TagAdapter(ListActivity.this, tagModels, CatColourState);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 
-        ((LinearLayout) bottomSheetView).addView(tagRecyclerView, 3);
+        // Adds this new recyclerview in the 3rd position which is below the refine title, bar and type title
+        tagsContainer.addView(tagRecyclerView,3);
     }
 
+    /**
+     * Set up the database access for this activity
+     * @param vehicleDataAccess Interface that provides access to the database
+     */
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         _vda = vehicleDataAccess;

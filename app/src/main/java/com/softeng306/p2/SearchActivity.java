@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,60 +23,58 @@ import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
+import com.softeng306.p2.Helpers.SortTagsByType;
 import com.softeng306.p2.ViewModel.TagModel;
-import com.softeng306.p2.DataModel.Tag;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 
+/**
+ * The SearchActivity allows the user to search by string input and tags to find vehicles
+ * from the database
+ */
 public class SearchActivity extends AppCompatActivity implements CoreActivity {
     private IVehicleDataAccess _vda;
-
-    private List<Integer> recyclerIds;
     private List<TagAdapter> adapters;
     private LinearLayout tagContainer;
     private ColorStateList CatColourState;
     private SearchView SearchBar;
 
+    /**
+     * Called when the activity is starting.
+     * @param savedInstanceState Bundle object that gives ability to restore previous state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search);
 
-        VehicleService.getInstance().InjectService(this);
+        // Set up connection to the database
+        VehicleService.getInstance();
+        VehicleService.InjectService(this);
 
-        //init arrays
-        recyclerIds = new ArrayList<>();
+        // Initialise any global array variables
         adapters = new ArrayList<>();
-
+        // Find id references to elements in the layout
         CatColourState = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
+
         showTags();
+        initLoading();
+        initSearch();
+        initNav();
+    }
 
-        CardView cardView = findViewById(R.id.search_load);
-        tagContainer.setVisibility(View.INVISIBLE);
-        cardView.postDelayed(new Runnable() {
-            public void run() {
-                cardView.animate()
-                        .translationY(cardView.getHeight())
-                        .alpha(0.0f)
-                        .setDuration(200)
-                        .setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                cardView.setVisibility(View.GONE);
-                                tagContainer.setVisibility(View.VISIBLE);
-                            }
-                        });
-            }
-        }, 1000);
-
+    /**
+     * Method adds click function to search bar which submitting leads to the resultsActivity
+     * with the search query (and tags) inputted by user
+     */
+    private void initSearch() {
         // Set up the search bar
         SearchBar = findViewById(R.id.SearchBar);
         SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
+                // Passes through the tags chosen by the user
                 ArrayList<String> onTags = GetOnTags();
                 SearchEventHandler(searchInput, onTags);
                 SearchBar.clearFocus();
@@ -90,52 +87,94 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
             }
         });
 
+        // Clicking on the background container will close keyboard and removes the focus
         View bg = findViewById(R.id.searchBodyContainer);
-        bg.setOnClickListener(view -> {
-            SearchBar.clearFocus();
-        });
+        bg.setOnClickListener(view -> SearchBar.clearFocus());
+    }
 
-        // Initialise the navigation buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
+    /**
+     * Method ensures the loading animation is only run for a certain duration before showing
+     * the tags
+     */
+    private void initLoading() {
+        // Hides the tags as they load in from database
+        CardView cardView = findViewById(R.id.search_load);
+        tagContainer.setVisibility(View.INVISIBLE);
+        // Delays the removal of the loading animation
+        cardView.postDelayed(new Runnable() {
+            public void run() {
+                cardView.animate()
+                        // Progress circle is animated to fade down
+                        .translationY(cardView.getHeight())
+                        .alpha(0.0f)
+                        .setDuration(200)
+                        .setListener(new AnimatorListenerAdapter() {
+                            @Override
+                            public void onAnimationEnd(Animator animation) {
+                                // Removes the progress circle and shows the tags in their recyclerview
+                                super.onAnimationEnd(animation);
+                                cardView.setVisibility(View.GONE);
+                                tagContainer.setVisibility(View.VISIBLE);
+                            }
+                        });
+            }
+        }, 1000); // time given to load for
+    }
+
+    /**
+     * Sets up the bottom navigation bar to lead to their respective activities
+     */
+    private void initNav() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar); // Find the nav view
+
+        // Makes the search icon in the second position highlighted yellow
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(1);
         menuItem.setChecked(true);
+
+        // Initialise the navigation buttons
         bottomNavigationView.setOnItemSelectedListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.homeIcon:
-                    Intent mainItent = new Intent(this, MainActivity.class);
-                    mainItent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(mainItent);
-                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                    break;
-                case R.id.searchIcon:
-                    break;
-                case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(this, FavouritesActivity.class);
-                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(favIntent);
-                    overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
-                    break;
+            int id = item.getItemId();
+            if (id == R.id.homeIcon) {
+                Intent mainIntent = new Intent(this, MainActivity.class);
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(mainIntent);
+            } else if ( id == R.id.favourtiesIcon) {
+                Intent favIntent = new Intent(this, FavouritesActivity.class);
+                favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(favIntent);
             }
             return false;
         });
     }
 
+    /**
+     * Method returns the tags toggled on in the tag adapters
+     * @return a list of the tags toggled on by the user to use in their search
+     */
     private ArrayList<String> GetOnTags() {
         ArrayList<String> onTags = new ArrayList<>();
+        // Loop through each tag types adapter to add all the tags that are toggled on
         for (TagAdapter a : adapters) {
-            for (String s : a.getOnTags()) {
-                onTags.add(s);
-            }
+            onTags.addAll(a.getOnTags());
         }
         return onTags;
     }
 
+    /**
+     * Method retrieves all tags from the database and display in their respective recyclerview
+     */
     private void showTags() {
+        // Find the container pre-made in the XML for the tags
         tagContainer = findViewById(R.id.SearchTagContainer);
-        _vda.getAllTags(tagList -> {
-            ArrayList<List<String>> sortedTags = listTagTypes(tagList);
 
+        // Retrieve tags from database
+        _vda.getAllTags(tagList -> {
+            // Sorts tags by their tag type
+            ArrayList<List<String>> sortedTags = SortTagsByType.listTagTypes(tagList);
+
+            // Loop through each tag types list to display the tag type as text and to display its'
+            // related tags in a recyclerview
             for(List<String> typeTagList : sortedTags) {
                 String type = typeTagList.get(0);
                 TextView typeTitle = new TextView(SearchActivity.this);
@@ -150,68 +189,59 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
 
     }
 
-    private ArrayList<List<String>> listTagTypes(List<Tag> tagsList) {
-
-        // Create string hash set of types
-        LinkedHashSet<String> tagTypes = new LinkedHashSet<>();
-        for(Tag tag : tagsList) {
-            tagTypes.add(tag.getTagType());
-        }
-
-        ArrayList<List<String>> sortedTags = new ArrayList<>();
-        // Sort tags by type
-        for(String type: tagTypes) {
-            List<String> tagNames = new ArrayList<>();
-            tagNames.add(type);
-            for (Tag tag : tagsList) {
-                if (tag.getTagType().equals(type)) {
-                    tagNames.add(tag.getTagName());
-                }
-            }
-            sortedTags.add(tagNames);
-        }
-
-        return sortedTags;
-    }
-
+    /**
+     * Method propagates a recyclerview with tags from the tagNames list
+     * @param tagNames List of tags by their tag name
+     */
     private void propagateTagAdaptor(List<String> tagNames) {
+        // Creates a new recyclerview for this list of tags along with an id for it
         RecyclerView tagRecyclerView = new RecyclerView(SearchActivity.this);
         int id = View.generateViewId();
         tagRecyclerView.setId(id);
-        recyclerIds.add(id);
-        TagAdapter tagAdapter;
 
-        // Initialize arraylist
+        // Develop an arraylist of tags in their model form to be used in the adapter
         ArrayList<TagModel> tagModels = new ArrayList<>();
         for(int i = 1; i<tagNames.size();i++){
             TagModel model = new TagModel(tagNames.get(i));
             tagModels.add(model);
         }
 
-        // Design horizontal layout
-        tagRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false));
-        tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        // Display recyclerview in a horizontal layout
+        tagRecyclerView.setLayoutManager(new LinearLayoutManager(
+                this, GridLayoutManager.HORIZONTAL, false));
 
-        // Initialize adapter
-        tagAdapter = new TagAdapter(SearchActivity.this, tagModels, CatColourState);
+        // Set up the tag adapter to finally display the vehicles in the recyclerview
+        TagAdapter tagAdapter = new TagAdapter(SearchActivity.this, tagModels, CatColourState);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 
+        // Adds the new recyclerview to the container preset in XML layout
         tagContainer.addView(tagRecyclerView);
     }
 
-    // Open search activity with results of the phrase inputted by user
+    /**
+     * Start ResultsActivity and passes through the phrase and tags inputted by user
+     *
+     * @param phrase string query from user
+     * @param onTags list of tags that the user selected
+     */
     public void SearchEventHandler(String phrase, ArrayList<String> onTags) {
+        // Bundles the phrase and tags to be passed through an intent and led to resultsActivity
         Intent listIntent = new Intent(this, ResultsActivity.class);
-        listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-
         Bundle b = new Bundle();
         b.putString("searchPhrase", phrase);
         b.putStringArrayList("tags", onTags);
         listIntent.putExtras(b);
         startActivity(listIntent);
+
+        // Animates the transition between the two activities
+        overridePendingTransition(R.anim.slide_from_bottom, R.anim.no_movement);
     }
 
+    /**
+     * Set up the database access for this activity
+     * @param vehicleDataAccess Interface that provides access to the database
+     */
     @Override
     public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
         _vda = vehicleDataAccess;

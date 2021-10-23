@@ -20,11 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.softeng306.p2.Adapter.TagAdapter;
+import com.softeng306.p2.DataModel.Tag;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Helpers.SortTagsByType;
-import com.softeng306.p2.ViewModel.TagModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +37,8 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
     private IVehicleDataAccess _vda;
     private List<TagAdapter> adapters;
     private LinearLayout tagContainer;
-    private ColorStateList CatColourState;
-    private SearchView SearchBar;
+    private ColorStateList catColourState;
+    private SearchView searchBar;
 
     /**
      * Called when the activity is starting.
@@ -56,7 +56,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
         // Initialise any global array variables
         adapters = new ArrayList<>();
         // Find id references to elements in the layout
-        CatColourState = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
+        catColourState = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
 
         showTags();
         initLoading();
@@ -70,14 +70,14 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      */
     private void initSearch() {
         // Set up the search bar
-        SearchBar = findViewById(R.id.SearchBar);
-        SearchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchBar = findViewById(R.id.searchBar);
+        searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
                 // Passes through the tags chosen by the user
-                ArrayList<String> onTags = GetOnTags();
-                SearchEventHandler(searchInput, onTags);
-                SearchBar.clearFocus();
+                ArrayList<String> onTags = getOnTags();
+                searchEventHandler(searchInput, onTags);
+                searchBar.clearFocus();
                 return false;
             }
 
@@ -89,7 +89,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
 
         // Clicking on the background container will close keyboard and removes the focus
         View bg = findViewById(R.id.searchBodyContainer);
-        bg.setOnClickListener(view -> SearchBar.clearFocus());
+        bg.setOnClickListener(view -> searchBar.clearFocus());
     }
 
     /**
@@ -98,7 +98,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      */
     private void initLoading() {
         // Hides the tags as they load in from database
-        CardView cardView = findViewById(R.id.search_load);
+        CardView cardView = findViewById(R.id.searchLoad);
         tagContainer.setVisibility(View.INVISIBLE);
         // Delays the removal of the loading animation
         cardView.postDelayed(new Runnable() {
@@ -125,7 +125,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      * Sets up the bottom navigation bar to lead to their respective activities
      */
     private void initNav() {
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar); // Find the nav view
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navBar); // Find the nav view
 
         // Makes the search icon in the second position highlighted yellow
         Menu menu = bottomNavigationView.getMenu();
@@ -152,7 +152,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      * Method returns the tags toggled on in the tag adapters
      * @return a list of the tags toggled on by the user to use in their search
      */
-    private ArrayList<String> GetOnTags() {
+    private ArrayList<String> getOnTags() {
         ArrayList<String> onTags = new ArrayList<>();
         // Loop through each tag types adapter to add all the tags that are toggled on
         for (TagAdapter a : adapters) {
@@ -166,7 +166,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      */
     private void showTags() {
         // Find the container pre-made in the XML for the tags
-        tagContainer = findViewById(R.id.SearchTagContainer);
+        tagContainer = findViewById(R.id.searchTagContainer);
 
         // Retrieve tags from database
         _vda.getAllTags(tagList -> {
@@ -200,9 +200,9 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
         tagRecyclerView.setId(id);
 
         // Develop an arraylist of tags in their model form to be used in the adapter
-        ArrayList<TagModel> tagModels = new ArrayList<>();
+        ArrayList<Tag> tagModels = new ArrayList<>();
         for(int i = 1; i<tagNames.size();i++){
-            TagModel model = new TagModel(tagNames.get(i));
+            Tag model = new Tag(tagNames.get(i));
             tagModels.add(model);
         }
 
@@ -211,7 +211,8 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
                 this, GridLayoutManager.HORIZONTAL, false));
 
         // Set up the tag adapter to finally display the vehicles in the recyclerview
-        TagAdapter tagAdapter = new TagAdapter(SearchActivity.this, tagModels, CatColourState);
+        TagAdapter tagAdapter = new TagAdapter(SearchActivity.this, tagModels,
+                catColourState, false);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 
@@ -225,7 +226,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      * @param phrase string query from user
      * @param onTags list of tags that the user selected
      */
-    public void SearchEventHandler(String phrase, ArrayList<String> onTags) {
+    public void searchEventHandler(String phrase, ArrayList<String> onTags) {
         // Bundles the phrase and tags to be passed through an intent and led to resultsActivity
         Intent listIntent = new Intent(this, ResultsActivity.class);
         Bundle b = new Bundle();
@@ -243,7 +244,7 @@ public class SearchActivity extends AppCompatActivity implements CoreActivity {
      * @param vehicleDataAccess Interface that provides access to the database
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         _vda = vehicleDataAccess;
     }
 }

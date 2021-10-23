@@ -9,17 +9,17 @@
     tools:context=".DetailsActivity">
 
     <ScrollView
-        android:id="@+id/scrollView2"
+        android:id="@+id/detailsScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/nav_bar"
+        app:layout_constraintBottom_toTopOf="@+id/navBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -57,7 +57,7 @@
                     android:src="@drawable/back_arrow_icon" />
 
                 <com.like.LikeButton
-                    android:id="@+id/heart_button"
+                    android:id="@+id/heartBtn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -74,11 +74,11 @@
             </RelativeLayout>
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/ProgressCard"
+                android:id="@+id/progressCard"
                 android:layout_width="match_parent"
                 android:layout_height="450dp"
                 android:animateLayoutChanges="true"
-                app:layout_constraintBottom_toTopOf="@id/nav_bar"
+                app:layout_constraintBottom_toTopOf="@id/navBar"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/image_slider">
@@ -100,32 +100,40 @@
                     android:id="@+id/carTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
-                    android:text="Car Title"
+                    android:text=""
                     android:textColor="@color/blackGrey"
-                    style="@style/Headline1" />
+                    style="@style/searchTitle" />
 
                 <TextView
                     android:id="@+id/carDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="left"
+                    android:gravity="start"
                     android:justificationMode="inter_word"
                     android:paddingTop="5dp"
                     android:paddingLeft="30dp"
                     android:paddingRight="30dp"
-                    android:text="car description"
+                    android:text=""
                     style="@style/Body1"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginStart="30dp"
+                    android:text="@string/retail_price"
+                    android:textColor="@color/yellow"
+                    style="@style/Body1" />
 
                 <TextView
                     android:id="@+id/carPrice"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:paddingLeft="30dp"
-                    android:text="price"
+                    android:layout_marginStart="30dp"
+                    android:text=""
                     android:textColor="@color/blackGrey"
                     style="@style/Headline2" />
 
@@ -142,7 +150,7 @@
                     android:layout_marginTop="30dp">
 
                     <LinearLayout
-                        android:id="@+id/linearLayout2"
+                        android:id="@+id/detailsInfoContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="20dp"
@@ -157,8 +165,8 @@
                             style="@style/Subtitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginLeft="30dp"
-                            android:text="Details" />
+                            android:layout_marginStart="30dp"
+                            android:text="@string/details" />
 
                         <ListView
                             android:id="@+id/detailList"
@@ -182,22 +190,20 @@
                         android:id="@+id/detailTagContainer"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"
                         android:layout_marginBottom="10dp"
                         android:orientation="vertical"
                         android:paddingTop="20dp"
                         app:layout_constraintBottom_toTopOf="@+id/divider3"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent">
-                        <!--                        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"-->
-
 
                         <TextView
                             android:id="@+id/featuresTitle"
                             style="@style/Subtitle2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Features" />
+                            android:text="@string/features" />
 
                     </LinearLayout>
 
@@ -207,12 +213,12 @@
                         android:layout_height="1dp"
                         android:layout_marginBottom="20dp"
                         android:background="?android:attr/listDivider"
-                        app:layout_constraintBottom_toTopOf="@id/recommendation"
+                        app:layout_constraintBottom_toTopOf="@id/recommendationSection"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent" />
 
                     <LinearLayout
-                        android:id="@+id/recommendation"
+                        android:id="@+id/recommendationSection"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -225,15 +231,14 @@
                             style="@style/Subtitle2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:paddingLeft="30dp"
-                            android:layout_margin="5dp"
-                            android:text="Recommendations" />
+                            android:layout_marginStart="30dp"
+                            android:text="@string/recommendations" />
 
                         <androidx.recyclerview.widget.RecyclerView
-                            android:id="@+id/related_view"
+                            android:id="@+id/relatedView"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:paddingLeft="30dp"
+                            android:layout_marginStart="20dp"
                             android:layout_marginTop="10dp" />
                     </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -244,7 +249,7 @@
     </ScrollView>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"

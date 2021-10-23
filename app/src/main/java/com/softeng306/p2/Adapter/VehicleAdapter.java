@@ -12,8 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.DetailsActivity;
-import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.R;
 
 import java.text.DecimalFormat;
@@ -21,19 +21,19 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHolder> {
-    ArrayList<VehicleModel> vehicleModels;
-    ArrayList<VehicleModel> FullList;
+    ArrayList<Vehicle> vehicleModels;
+    ArrayList<Vehicle> fullList;
     Context context;
 
     // Initialise object
-    public VehicleAdapter(Context context, ArrayList<VehicleModel> vehicleModels){
+    public VehicleAdapter(Context context, ArrayList<Vehicle> vehicleModels){
         this.context = context;
         this.vehicleModels = vehicleModels;
-        FullList = new ArrayList<>(vehicleModels);
+        fullList = new ArrayList<>(vehicleModels);
     }
 
     /**
-     * Method sets up global variables in a view holder and linked to their id
+     * Inner class sets up global variables in a view holder and linked to their id
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         //Initialize variable
@@ -41,9 +41,9 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHold
         ImageView itemImageView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            nameTextView = itemView.findViewById(R.id.listItemTitle);
-            priceTextView = itemView.findViewById(R.id.listItemPrice);
-            itemImageView = itemView.findViewById(R.id.listItemImage);
+            nameTextView = itemView.findViewById(R.id.vehicleItemTitle);
+            priceTextView = itemView.findViewById(R.id.vehicleItemPrice);
+            itemImageView = itemView.findViewById(R.id.vehicleItemImage);
         }
     }
 
@@ -69,14 +69,14 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHold
     @Override
     public void onBindViewHolder(@NonNull VehicleAdapter.ViewHolder holder, int position) {
 
-        String fileName = convertNameToFileName(vehicleModels.get(position).getVName())+"_"+1;
+        String fileName = convertNameToFileName(vehicleModels.get(position).getVehicleName())+"_"+1;
         holder.itemImageView.setImageResource(context.getResources().getIdentifier(fileName, "drawable", context.getPackageName()));
 
         // Sets the vehicle name as the title
-        holder.nameTextView.setText(vehicleModels.get(position).getVName());
+        holder.nameTextView.setText(vehicleModels.get(position).getVehicleName());
 
         // Convert price to display as the conventional format for pricing with commas and 2dp
-        String priceStr = vehicleModels.get(position).getVPrice().toString();
+        String priceStr = String.valueOf(vehicleModels.get(position).getPrice());
         double amount = Double.parseDouble(priceStr);
         DecimalFormat formatter = new DecimalFormat("#,###.00");
         String strPrice = "$" + formatter.format(amount);
@@ -116,28 +116,28 @@ public class VehicleAdapter extends RecyclerView.Adapter<VehicleAdapter.ViewHold
      * @return a filter that constrains data with a filtering pattern
      */
     public Filter getSearchFilter() {
-        return Search_Filter;
+        return searchFilter;
     }
 
     /**
      * Method creates a filter that constrains data by a vehicle name
      */
-    private final Filter Search_Filter = new Filter() {
+    private final Filter searchFilter = new Filter() {
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             // Initialise final filtered list
-            ArrayList<VehicleModel> filteredList = new ArrayList<>();
+            ArrayList<Vehicle> filteredList = new ArrayList<>();
             // Checks search query isn't empty
             if (constraint == null || constraint.length() == 0) {
                 // If so add all vehicles from the original list to the final list
-                filteredList.addAll(FullList);
+                filteredList.addAll(fullList);
             } else {
                 // If user had input a query, ensure the string is in a format able to be used to compare
                 String filterPattern = constraint.toString().toLowerCase().trim();
                 // Loop through the original list of vehicles and add all matching vehicles by
                 // name to the final list
-                for (VehicleModel item : FullList) {
-                    if (item.getVName().toLowerCase().contains(filterPattern)) {
+                for (Vehicle item : fullList) {
+                    if (item.getVehicleName().toLowerCase().contains(filterPattern)) {
                         filteredList.add(item);
                     }
                 }

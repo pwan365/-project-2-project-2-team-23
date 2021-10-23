@@ -3,8 +3,8 @@ package com.softeng306.p2;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,8 +12,8 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,7 +21,6 @@ import com.softeng306.p2.Adapter.VehicleAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.DataModel.Vehicle;
 
@@ -35,8 +34,7 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
 
     private IVehicleDataAccess _vda;
     private RecyclerView favourites_recycler;
-    private VehicleAdapter vehicleAdapter;
-    private CardView cardView;
+    private CardView loadingCard;
     private LinearLayout noResultsContainer;
 
     /**
@@ -49,18 +47,26 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         setContentView(R.layout.activity_favourites);
 
         //Initialize database access
-        VehicleService.getInstance().InjectService(this);
+        VehicleService.getInstance();
+        VehicleService.InjectService(this);
 
         //Find recycler
         favourites_recycler = findViewById(R.id.favourites_recycler);
 
 
         noResultsContainer = findViewById(R.id.favsNoResults);
-        cardView = findViewById(R.id.favourites_load);
+        loadingCard = findViewById(R.id.favourites_load);
 
         fetchVehicleData();
         initLoading();
         initNavigation();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        fetchVehicleData();
+        initLoading();
     }
 
     /**
@@ -68,26 +74,20 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
      */
     public void initNavigation() {
         // Initialise the navigation buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navBar);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(2);
         menuItem.setChecked(true);
         bottomNavigationView.setOnItemSelectedListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.homeIcon:
-                    Intent homeIntent = new Intent(this, MainActivity.class);
-                    homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(homeIntent);
-//                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                    break;
-                case R.id.searchIcon:
-                    Intent searchIntent = new Intent(this, SearchActivity.class);
-                    searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(searchIntent);
-//                    overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
-                    break;
-                case R.id.favourtiesIcon:
-                    break;
+            int id = item.getItemId();
+            if (id == R.id.homeIcon) {
+                Intent homeIntent = new Intent(this, MainActivity.class);
+                homeIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(homeIntent);
+            } else if (id == R.id.searchIcon) {
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(searchIntent);
             }
             return false;
         });
@@ -122,7 +122,7 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
      * @param vehicleDataAccess
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         this._vda = vehicleDataAccess;
     }
 
@@ -149,7 +149,7 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         RecyclerView recyclerView = findViewById(R.id.favourites_recycler);
 
         if(vehicleList.isEmpty()){
-            cardView.setVisibility(View.GONE);
+            loadingCard.setVisibility(View.GONE);
             noResultsContainer.setVisibility(View.VISIBLE);
         } else {
             initLoading();
@@ -166,20 +166,24 @@ public class FavouritesActivity extends AppCompatActivity implements CoreActivit
         }
 
         // Initialize arraylist
-        ArrayList<VehicleModel> vehicleModels = new ArrayList<>();
+        ArrayList<Vehicle> vehicleModels = new ArrayList<>();
         for(int i = 0; i<vehicleList.size();i++){
-            VehicleModel model = new VehicleModel(vehicleName.get(i), vehiclePrice.get(i));
+            Vehicle model = new Vehicle(vehicleName.get(i), vehiclePrice.get(i));
             vehicleModels.add(model);
         }
 
-        // Design grid layout
-        //recyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.VERTICAL, false));
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        // Format recyclerview in a grid layout with two columns if portrait and horizontal layout
+        // if device is in landscape mode
+        Configuration config = getResources().getConfiguration();
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+        } else if (config.orientation == Configuration.ORIENTATION_PORTRAIT){
+            recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        }
 
 
         // Initialize top adapter
-        vehicleAdapter = new VehicleAdapter(FavouritesActivity.this, vehicleModels);
+        VehicleAdapter vehicleAdapter = new VehicleAdapter(FavouritesActivity.this, vehicleModels);
         recyclerView.setAdapter(vehicleAdapter);
 
     }

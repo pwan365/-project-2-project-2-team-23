@@ -37,15 +37,12 @@ import com.like.OnLikeListener;
 import com.softeng306.p2.Adapter.DetailAdapter;
 import com.softeng306.p2.Adapter.TagAdapter;
 import com.softeng306.p2.Adapter.TopAdapter;
+import com.softeng306.p2.DataModel.Tag;
 import com.softeng306.p2.DataModel.User;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.Listeners.OnGetUserListener;
-import com.softeng306.p2.Listeners.OnGetVehicleListener;
 import com.softeng306.p2.ViewModel.DetailModel;
-import com.softeng306.p2.ViewModel.TagModel;
-import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Electric;
 import com.softeng306.p2.DataModel.Hybrid;
 import com.softeng306.p2.DataModel.Petrol;
@@ -54,60 +51,55 @@ import com.softeng306.p2.DataModel.Vehicle;
 public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     /**
      * initialize the database object
-     * @param vehicleDataAccess
+     * @param vehicleDataAccess Interface that provides access to the database
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
     }
 
     class ViewHolder {
-        private TextView titleText,descText,priceText;
-        private ImageSlider imageSlider;
-        private BottomNavigationView bottomNavigationView;
-        private ListView detailList;
-        private RecyclerView recyclerView;
-        private ImageButton detailBackButton;
-        private LikeButton likeButton;
+        private final TextView titleText,descText,priceText;
+        private final ImageSlider imageSlider;
+        private final ListView detailList;
+        private final RecyclerView recyclerView;
+        private final LikeButton likeButton;
 
         public ViewHolder(){
             titleText = findViewById(R.id.carTitle);
             descText = findViewById(R.id.carDescription);
             priceText = findViewById(R.id.carPrice);
             imageSlider = findViewById(R.id.image_slider);
-            bottomNavigationView = findViewById(R.id.nav_bar);
+            BottomNavigationView bottomNavigationView = findViewById(R.id.navBar);
             detailList = findViewById(R.id.detailList);
-            recyclerView = findViewById(R.id.related_view);
-            detailBackButton = findViewById(R.id.detailBackButton);
-            likeButton = findViewById(R.id.heart_button);
+            recyclerView = findViewById(R.id.relatedView);
+            ImageButton detailBackButton = findViewById(R.id.detailBackButton);
+            likeButton = findViewById(R.id.heartBtn);
 
             //Initialise the back button
-            detailBackButton.setOnClickListener(view -> GoBack());
+            detailBackButton.setOnClickListener(view -> goBack());
 
             // Initialise the navigation buttons
             Menu menu = bottomNavigationView.getMenu();
             MenuItem menuItem = menu.getItem(0);
             menuItem.setChecked(true);
             bottomNavigationView.setOnItemSelectedListener((item) -> {
-                switch (item.getItemId()) {
-                    case R.id.homeIcon:
-                        Intent i1 = new Intent(DetailsActivity.this, MainActivity.class);
-                        i1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(i1);
-                        overridePendingTransition(0, R.anim.slide_to_right);
-                        break;
-                    case R.id.searchIcon:
-                        Intent searchIntent = new Intent(DetailsActivity.this, SearchActivity.class);
-                        searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(searchIntent);
-                        overridePendingTransition(0, R.anim.slide_to_right);
-                        break;
-                    case R.id.favourtiesIcon:
-                        Intent favIntent = new Intent(DetailsActivity.this, FavouritesActivity.class);
-                        favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                        startActivity(favIntent);
-                        overridePendingTransition(0, R.anim.slide_to_right);
-                        break;
+                int id = item.getItemId();
+                if ( id == R.id.homeIcon ) {
+                    Intent i1 = new Intent(DetailsActivity.this, MainActivity.class);
+                    i1.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(i1);
+                    overridePendingTransition(0, R.anim.slide_to_right);
+                }else if ( id == R.id.searchIcon) {
+                    Intent searchIntent = new Intent(DetailsActivity.this, SearchActivity.class);
+                    searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(searchIntent);
+                    overridePendingTransition(0, R.anim.slide_to_right);
+                } else if ( id == R.id.favourtiesIcon ) {
+                    Intent favIntent = new Intent(DetailsActivity.this, FavouritesActivity.class);
+                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                    startActivity(favIntent);
+                    overridePendingTransition(0, R.anim.slide_to_right);
                 }
                 return false;
             });
@@ -121,8 +113,8 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     Vehicle vehicle;
     IVehicleDataAccess vda;
     ViewHolder vh;
-    List<DetailModel> details = new ArrayList();
-    ArrayList<VehicleModel> vModels = new ArrayList<>();
+    List<DetailModel> details = new ArrayList<>();
+    ArrayList<Vehicle> vModels = new ArrayList<>();
     String relatedVehicleType = "Electric";
     User userDetail;
 
@@ -132,13 +124,14 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         setContentView(R.layout.activity_details);
         initLoading();
         vh = new ViewHolder();
-        VehicleService.getInstance().InjectService(this);
+        VehicleService.getInstance();
+        VehicleService.InjectService(this);
         getData();
         overridePendingTransition(R.anim.slide_from_right, R.anim.no_movement);
     }
 
     private void initLoading() {
-        CardView cardView = findViewById(R.id.ProgressCard);
+        CardView cardView = findViewById(R.id.progressCard);
         cardView.postDelayed(new Runnable() {
             public void run() {
                 cardView.animate()
@@ -163,34 +156,27 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         //get vehicle object from database depend on the name of the vehicle
         if(getIntent().hasExtra("title")){
             carTitle = getIntent().getStringExtra("title");
-            vda.getVehicleByName(carTitle, new OnGetVehicleListener() {
-
-                @Override
-                public void onCallBack(List<Vehicle> vehicleList) {
-                    for (Vehicle v: vehicleList){
-                        vehicle = v;
-                    }
-                    carDesc = vehicle.getDescription();
-
-                    // Convert price to display as the conventional format for pricing with commas and 2dp
-                    String priceStr = Float.toString(vehicle.getPrice());
-                    double amount = Double.parseDouble(priceStr);
-                    DecimalFormat formatter = new DecimalFormat("#,###.00");
-                    carPrice = "$"+formatter.format(amount);
-                    //set up data once the vehicle is retrieved
-                    getDetails(vehicle);
-                    setDetails();
-                    setData();
-                    setTags();
-                    addRelatedView();
-                    vda.getFavourites(new OnGetUserListener() {
-                        @Override
-                        public void onCallBack(User user) {
-                            userDetail = user;
-                            checkFavourite(userDetail);
-                        }
-                    });
+            vda.getVehicleByName(carTitle, vehicleList -> {
+                for (Vehicle v: vehicleList){
+                    vehicle = v;
                 }
+                carDesc = vehicle.getDescription();
+
+                // Convert price to display as the conventional format for pricing with commas and 2dp
+                String priceStr = Float.toString(vehicle.getPrice());
+                double amount = Double.parseDouble(priceStr);
+                DecimalFormat formatter = new DecimalFormat("#,###.00");
+                carPrice = "$"+formatter.format(amount);
+                //set up data once the vehicle is retrieved
+                getDetails(vehicle);
+                setDetails();
+                setData();
+                setTags();
+                addRelatedView();
+                vda.getFavourites(user -> {
+                    userDetail = user;
+                    checkFavourite(userDetail);
+                });
             });
         }else{
             Toast.makeText(this, "No data.", Toast.LENGTH_LONG).show();
@@ -200,7 +186,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
 
     /**
      * A helper method that convert name of car to image name
-     * @param carTitle
+     * @param carTitle string name of the vehicle
      * @return string in the format of image file name
      */
     private String convertNameToFileName(String carTitle){
@@ -208,9 +194,9 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     }
 
     /**
-     * method for the back button
+     * Method for the back button to return to previous activity
      */
-    public void GoBack() {
+    public void goBack() {
         finish();
         overridePendingTransition(R.anim.no_movement, R.anim.slide_to_right);
     }
@@ -218,7 +204,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
     /**
      * On activity initialization, check if the vehicle is in the list of favourite
      * vehicle for the user. Initialize the like button based on the information.
-     * @param user
+     * @param user an object of the User model
      */
     private void checkFavourite(User user){
         List<Integer> favouriteList = user.getFavourites();
@@ -269,7 +255,7 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
 
     /**
      * display content of vehicle in a list view based on the vehicle type retrieved
-     * @param v
+     * @param v an object of Vehicle model
      */
     private void getDetails(Vehicle v){
         details.add(new DetailModel("Dimension",v.getDimension()));
@@ -309,52 +295,43 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
         //show child vehicle object information
         if(vehicle instanceof Electric){
             relatedVehicleType = "Electric";
-            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
-
-                @Override
-                public void onCallBack(List<Vehicle> vehicleList) {
-                    for(Vehicle v : vehicleList){
-                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
-                        }
+            vda.getCategoryVehicles(relatedVehicleType, vehicleList -> {
+                for(Vehicle v : vehicleList){
+                    if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                        vModels.add(new Vehicle(v.getVehicleName(),v.getPrice()));
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
-                    vh.recyclerView.setAdapter(topAdapter);
                 }
+                TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
+                vh.recyclerView.setAdapter(topAdapter);
             });
         }else if(vehicle instanceof Petrol){
             relatedVehicleType = "Petrol";
-            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
-
-                @Override
-                public void onCallBack(List<Vehicle> vehicleList) {
-                    for(Vehicle v : vehicleList){
-                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
-                        }
+            vda.getCategoryVehicles(relatedVehicleType, vehicleList -> {
+                for(Vehicle v : vehicleList){
+                    if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                        vModels.add(new Vehicle(v.getVehicleName(),v.getPrice()));
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
-                    vh.recyclerView.setAdapter(topAdapter);
                 }
+                TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
+                vh.recyclerView.setAdapter(topAdapter);
             });
         }else if(vehicle instanceof Hybrid){
             relatedVehicleType = "Hybrid";
-            vda.getCategoryVehicles(relatedVehicleType, new OnGetVehicleListener(){
-
-                @Override
-                public void onCallBack(List<Vehicle> vehicleList) {
-                    for(Vehicle v : vehicleList){
-                        if(!v.getVehicleName().equals(vehicle.getVehicleName())){
-                            vModels.add(new VehicleModel(v.getVehicleName(),v.getPrice()));
-                        }
+            vda.getCategoryVehicles(relatedVehicleType, vehicleList -> {
+                for(Vehicle v : vehicleList){
+                    if(!v.getVehicleName().equals(vehicle.getVehicleName())){
+                        vModels.add(new Vehicle(v.getVehicleName(),v.getPrice()));
                     }
-                    TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
-                    vh.recyclerView.setAdapter(topAdapter);
                 }
+                TopAdapter topAdapter = new TopAdapter(DetailsActivity.this,vModels);
+                vh.recyclerView.setAdapter(topAdapter);
             });
         }
     }
 
+    /**
+     * Display the set of tags associated to the vehicle in a recyclerview
+     */
     private void setTags(){
         LinearLayout tagsContainer = findViewById(R.id.detailTagContainer);
         tagsContainer.setVisibility(View.VISIBLE);
@@ -364,28 +341,31 @@ public class DetailsActivity extends AppCompatActivity implements CoreActivity {
 
         if(tagNames.isEmpty()) {
             TextView title = findViewById(R.id.featuresTitle);
+            View divider = findViewById(R.id.divider3);
             title.setVisibility(View.GONE);
             tagsContainer.setVisibility(View.GONE);
+            divider.setVisibility(View.GONE);
         } else {
             // Initialize arraylist
-            ArrayList<TagModel> tagModels = new ArrayList<>();
+            ArrayList<Tag> tagModels = new ArrayList<>();
             for (String tag : tagNames) {
-                TagModel model = new TagModel(tag);
+                Tag model = new Tag(tag);
                 tagModels.add(model);
             }
 
             RecyclerView tagRecyclerView = new RecyclerView(DetailsActivity.this);
             int id = View.generateViewId();
             tagRecyclerView.setId(id);
-            TagAdapter tagAdapter;
 
             // Design horizontal layout
-            tagRecyclerView.setLayoutManager(new LinearLayoutManager(this, GridLayoutManager.HORIZONTAL, false));
+            tagRecyclerView.setLayoutManager(new LinearLayoutManager(
+                    this, GridLayoutManager.HORIZONTAL, false));
             tagRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
             // Initialize adapter
             ColorStateList colour = ColorStateList.valueOf(getResources().getColor(R.color.yellow));
-            tagAdapter = new TagAdapter(DetailsActivity.this, tagModels, colour);
+            TagAdapter tagAdapter = new TagAdapter(
+                    DetailsActivity.this, tagModels, colour, true);
             tagRecyclerView.setAdapter(tagAdapter);
 
             tagsContainer.addView(tagRecyclerView);

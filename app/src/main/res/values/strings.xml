@@ -20,4 +20,11 @@
     <string name="no_result_found">No result found</string>
     <string name="no_vehicle_match">We can\'t find any vehicles matching your search</string>
     <string name="reset">Reset</string>
+    <string name="no_favourites_found">No favourites found</string>
+    <string name="no_favourties_subtitle">You can add vehicles to your favourites list by clicking the heart icon on their listing</string>
+    <string name="details">Details</string>
+    <string name="features">Features</string>
+    <string name="recommendations">Recommendations</string>
+    <string name="placeholder">placeholder</string>
+    <string name="retail_price">Retail Price</string>
 </resources>

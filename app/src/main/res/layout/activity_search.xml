@@ -31,7 +31,7 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    style="@style/Headline1"
+                    style="@style/searchTitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -49,7 +49,7 @@
 
             <!-- Search Bar -->
             <SearchView
-                android:id="@+id/SearchBar"
+                android:id="@+id/searchBar"
                 style="@style/RoundedBackground"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,7 +65,7 @@
                 app:theme="@style/AppSearchView" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/search_load"
+                android:id="@+id/searchLoad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardElevation="0dp"
@@ -80,7 +80,7 @@
 
             <!-- Tags -->
             <LinearLayout
-                android:id="@+id/SearchTagContainer"
+                android:id="@+id/searchTagContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -89,7 +89,7 @@
                 android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/SearchBar"/>
+                app:layout_constraintTop_toBottomOf="@id/searchBar"/>
 
         </LinearLayout>
 
@@ -97,7 +97,7 @@
 
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"

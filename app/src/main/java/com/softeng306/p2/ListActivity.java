@@ -1,19 +1,15 @@
 package com.softeng306.p2;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -25,7 +21,6 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -41,13 +36,10 @@ import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
 import com.softeng306.p2.Helpers.SortTagsByType;
-import com.softeng306.p2.ViewModel.TagModel;
-import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Tag;
 import com.softeng306.p2.DataModel.Vehicle;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,8 +56,8 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
     private View bottomSheetView;
     private List<TagAdapter> adapters;
     private BottomSheetDialog dialog;
-    private int CatColourInt;
-    private ColorStateList CatColourState;
+    private int catColourInt;
+    private ColorStateList catColourState;
     private VehicleAdapter vehicleAdapter;
     private LinearLayout noResults, tagsContainer;
     RecyclerView recyclerView;
@@ -84,7 +76,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
         VehicleService.InjectService(this);
 
         // Find id references to elements in the layout
-        recyclerView = findViewById(R.id.list_recycler);
+        recyclerView = findViewById(R.id.listRecycler);
         searchButton = findViewById(R.id.listSearchButton);
         searchBar = findViewById(R.id.listSearchBar);
         closeSearch = findViewById(R.id.closeSearchArea);
@@ -111,8 +103,8 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
         Bundle extras = intent.getExtras();
         categoryName = extras.getString("category");
         categorySubtitle = extras.getString("categorySubtitle");
-        CatColourState = extras.getParcelable("categoryColour");
-        CatColourInt = CatColourState.getDefaultColor(); 
+        catColourState = extras.getParcelable("categoryColour");
+        catColourInt = catColourState.getDefaultColor();
     }
 
     /**
@@ -121,7 +113,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
     private void setUpRefineBtn() {
         // Set the refine colour
         RelativeLayout refineBtn = findViewById(R.id.refineBtn);
-        refineBtn.setBackgroundTintList(CatColourState);
+        refineBtn.setBackgroundTintList(catColourState);
 
         // Initialise refine button
         refineBtn.setOnClickListener(v -> dialog.show());
@@ -132,24 +124,24 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
      */
     private void initHeaderStyling() {
         // Set the list title
-        TextView catTitle = findViewById(R.id.ListTitle);
+        TextView catTitle = findViewById(R.id.listTitle);
         catTitle.setText(categoryName);
 
         // Set the list subtitle
-        TextView catSubtitle = findViewById(R.id.ListSubtitle);
+        TextView catSubtitle = findViewById(R.id.listSubtitle);
         catSubtitle.setText(categorySubtitle);
 
         // Set the list image
-        ImageView catImg = findViewById(R.id.ListHeaderImage);
+        ImageView catImg = findViewById(R.id.listHeaderImage);
         int resId = getResources().getIdentifier(categoryName.toLowerCase(Locale.ROOT), "drawable", ListActivity.this.getPackageName());
         Drawable d = ResourcesCompat.getDrawable(getResources(), resId, null);
         catImg.setImageDrawable(d);
 
         // Set the heading colour
-        RelativeLayout listHeading = findViewById(R.id.ListHeader);
-        RelativeLayout listActionBar = findViewById(R.id.ListActionBar);
-        listHeading.setBackgroundColor(CatColourInt);
-        listActionBar.setBackgroundColor(CatColourInt);
+        RelativeLayout listHeading = findViewById(R.id.listHeader);
+        RelativeLayout listActionBar = findViewById(R.id.listActionBar);
+        listHeading.setBackgroundColor(catColourInt);
+        listActionBar.setBackgroundColor(catColourInt);
 
         // Initialize back button
         ImageButton listBackButton = findViewById(R.id.listBackButton);
@@ -164,7 +156,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
      */
     public void initNav() {
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar); // Find the nav view
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navBar); // Find the nav view
 
         // Makes the search icon in the second position highlighted yellow
         Menu menu = bottomNavigationView.getMenu();
@@ -252,7 +244,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
     private void setUpNoResults() {
         // Change colour of reset button to match category theme colour
         Button listResetBtn = findViewById(R.id.listResetBtn);
-        listResetBtn.setBackgroundTintList(CatColourState);
+        listResetBtn.setBackgroundTintList(catColourState);
 
         // Clicking on the reset button to redisplay the original vehicle list and refine dialog
         listResetBtn.setOnClickListener(view -> {
@@ -291,9 +283,9 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
         }
 
         // Develop an arraylist of vehicles in their model form to be used in the adapter
-        ArrayList<VehicleModel> vehicleModels = new ArrayList<>();
+        ArrayList<Vehicle> vehicleModels = new ArrayList<>();
         for (int i = 0; i < vehicleList.size(); i++) {
-            VehicleModel model = new VehicleModel(vehicleName.get(i), vehiclePrice.get(i));
+            Vehicle model = new Vehicle(vehicleName.get(i), vehiclePrice.get(i));
             vehicleModels.add(model);
         }
 
@@ -370,7 +362,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
     private void refineSubmit() {
         // Finds the button and matched the styling to the categories colour
         Button submitRefineBtn = bottomSheetView.findViewById(R.id.submitRefineBtn);
-        submitRefineBtn.setBackgroundTintList(CatColourState);
+        submitRefineBtn.setBackgroundTintList(catColourState);
 
         // Clicking on 'apply filters' will refine the current vehicle list in the listActivity
         submitRefineBtn.setOnClickListener(view -> {
@@ -407,9 +399,9 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
         tagRecyclerView.setId(id);
 
         // Develop an arraylist of tags in their model form to be used in the adapter
-        ArrayList<TagModel> tagModels = new ArrayList<>();
+        ArrayList<Tag> tagModels = new ArrayList<>();
         for (int i = 1; i < tagNames.size(); i++) {
-            TagModel model = new TagModel(tagNames.get(i));
+            Tag model = new Tag(tagNames.get(i));
             tagModels.add(model);
         }
 
@@ -418,7 +410,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
                 this, GridLayoutManager.HORIZONTAL, false));
 
         // Set up the tag adapter to finally display the vehicles in the recyclerview
-        TagAdapter tagAdapter = new TagAdapter(ListActivity.this, tagModels, CatColourState);
+        TagAdapter tagAdapter = new TagAdapter(ListActivity.this, tagModels, catColourState, false);
         adapters.add(tagAdapter);
         tagRecyclerView.setAdapter(tagAdapter);
 
@@ -431,7 +423,7 @@ public class ListActivity extends AppCompatActivity implements CoreActivity {
      * @param vehicleDataAccess Interface that provides access to the database
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         _vda = vehicleDataAccess;
     }
 }

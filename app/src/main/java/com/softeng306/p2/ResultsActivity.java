@@ -24,7 +24,6 @@ import com.softeng306.p2.DataModel.Vehicle;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.ViewModel.VehicleModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +39,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
     private VehicleAdapter vehicleAdapter;
     private RecyclerView recyclerView;
     private LinearLayout noResultsContainer;
-    private CardView cardView;
+    private CardView loadingAnimation;
 
     /**
      * Called when the activity is starting.
@@ -61,7 +60,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
         // Find id references to elements in the layout
         recyclerView = findViewById(R.id.results_recycler);
         noResultsContainer = findViewById(R.id.resultsNoResults);
-        cardView = findViewById(R.id.results_load);
+        loadingAnimation = findViewById(R.id.results_load);
 
         fetchIntent();
         fetchVehicleData();
@@ -110,7 +109,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
      */
     private void initNav(){
         // Initialise the navigation buttons
-        BottomNavigationView bottomNavigationView = findViewById(R.id.nav_bar);
+        BottomNavigationView bottomNavigationView = findViewById(R.id.navBar);
         Menu menu = bottomNavigationView.getMenu();
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
@@ -158,7 +157,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
     private void propagateListAdaptor(List<Vehicle> vehicleList) {
         // Check if the list is empty, if so, display the no results message
         if(vehicleList.isEmpty()){
-            cardView.setVisibility(View.GONE); // Ensures it displays no results without loading
+            loadingAnimation.setVisibility(View.GONE); // Ensures it displays no results without loading
             noResultsContainer.setVisibility(View.VISIBLE);
         } else {
             initLoading();
@@ -174,9 +173,9 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
         }
 
         // Develop an arraylist of vehicles in their model form to be used in the adapter
-        ArrayList<VehicleModel> vehicleModels = new ArrayList<>();
+        ArrayList<Vehicle> vehicleModels = new ArrayList<>();
         for(int i = 0; i<vehicleList.size();i++){
-            VehicleModel model = new VehicleModel(vehicleName.get(i), vehiclePrice.get(i));
+            Vehicle model = new Vehicle(vehicleName.get(i), vehiclePrice.get(i));
             vehicleModels.add(model);
         }
 
@@ -202,11 +201,11 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
     private void initLoading() {
         recyclerView.setVisibility(View.INVISIBLE);
         // Delays the removal of the loading animation
-        cardView.postDelayed(new Runnable() {
+        loadingAnimation.postDelayed(new Runnable() {
             public void run() {
-                cardView.animate()
+                loadingAnimation.animate()
                         // Progress circle is animated to fade down
-                        .translationY(cardView.getHeight())
+                        .translationY(loadingAnimation.getHeight())
                         .alpha(0.0f)
                         .setDuration(200)
                         .setListener(new AnimatorListenerAdapter() {
@@ -214,7 +213,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
                             public void onAnimationEnd(Animator animation) {
                                 // Removes the progress circle and shows the results recyclerview
                                 super.onAnimationEnd(animation);
-                                cardView.setVisibility(View.GONE);
+                                loadingAnimation.setVisibility(View.GONE);
                                 recyclerView.setVisibility(View.VISIBLE);
                             }
                         });
@@ -227,7 +226,7 @@ public class ResultsActivity extends AppCompatActivity implements CoreActivity {
      * @param vehicleDataAccess Interface that provides access to the database
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         _vda = vehicleDataAccess;
     }
 }

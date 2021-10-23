@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/topLayout"
+    android:id="@+id/vehicleLayout"
     android:layout_width="130dp"
     android:layout_height="wrap_content"
     android:layout_margin="15dp"
@@ -14,14 +14,14 @@
         app:cardElevation="5dp"
         app:cardMaxElevation="10dp">
         <ImageView
-            android:id="@+id/listItemImage"
+            android:id="@+id/vehicleItemImage"
             android:layout_width="130dp"
             android:layout_height="130dp"
             android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
     <TextView
-        android:id="@+id/listItemTitle"
+        android:id="@+id/vehicleItemTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -32,7 +32,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/listItemPrice"
+        android:id="@+id/vehicleItemPrice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"

@@ -17,7 +17,6 @@
         android:background="@drawable/background">
         <!-- Tab -->
         <View
-            android:id="@+id/view"
             android:layout_width="100dp"
             android:layout_height="8dp"
             android:layout_marginTop="10dp"

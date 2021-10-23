@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 
@@ -23,8 +22,6 @@ import com.softeng306.p2.Adapter.TopAdapter;
 import com.softeng306.p2.Database.CoreActivity;
 import com.softeng306.p2.Database.IVehicleDataAccess;
 import com.softeng306.p2.Database.VehicleService;
-import com.softeng306.p2.Listeners.OnGetVehicleListener;
-import com.softeng306.p2.ViewModel.VehicleModel;
 import com.softeng306.p2.DataModel.Vehicle;
 
 
@@ -35,30 +32,31 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements CoreActivity {
 
      class ViewHolder {
-        private CardView catElectric, catHybrid, catPetrol, loadingView;
-        private SearchView searchBar;
-        private RecyclerView recyclerView;
-        private BottomNavigationView bottomNavigationView;
+        private final CardView catElectric, catHybrid, catPetrol;
+        private CardView loadingView;
+        private final SearchView searchBar;
+        private final RecyclerView recyclerView;
+        private final BottomNavigationView bottomNavigationView;
         private LinearLayout topPickContainer, catContainer;
 
         public ViewHolder(){
-            searchBar = findViewById(R.id.SearchBar);
+            searchBar = findViewById(R.id.mainSearchBar);
             catElectric = findViewById(R.id.Electric);
             catHybrid = findViewById(R.id.Hybrid);
             catPetrol = findViewById(R.id.Petrol);
-            recyclerView = findViewById(R.id.recycler_view);
-            bottomNavigationView = findViewById(R.id.nav_bar);
+            recyclerView = findViewById(R.id.mainRecyclerView);
+            bottomNavigationView = findViewById(R.id.navBar);
 
             //elements for loading
-            loadingView = findViewById(R.id.main_load);
-            topPickContainer = findViewById(R.id.TopPicksContainer);
+            loadingView = findViewById(R.id.mainLoad);
+            topPickContainer = findViewById(R.id.topPicksContainer);
             catContainer = findViewById(R.id.catContainer);
         }
 
     }
 
     //Initialize fields used in multiple methods
-    ArrayList<VehicleModel> topModels;
+    ArrayList<Vehicle> topModels;
     TopAdapter topAdapter;
     ViewHolder vh;
     IVehicleDataAccess vda;
@@ -69,7 +67,8 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         setContentView(R.layout.activity_main);
 
         //injection database service
-        VehicleService.getInstance().InjectService(this);
+        VehicleService.getInstance();
+        VehicleService.InjectService(this);
 
         // Initialise views for future references
         vh = new ViewHolder();
@@ -100,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         vh.searchBar.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchInput) {
-                SearchEventHandler(searchInput);
+                searchEventHandler(searchInput);
                 vh.searchBar.clearFocus();
                 return false;
             }
@@ -112,9 +111,7 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         });
 
         View bg = findViewById(R.id.mainBodyContainer);
-        bg.setOnClickListener(view -> {
-            vh.searchBar.clearFocus();
-        });
+        bg.setOnClickListener(view -> vh.searchBar.clearFocus());
     }
 
     /**
@@ -126,19 +123,15 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
         MenuItem menuItem = menu.getItem(0);
         menuItem.setChecked(true);
         vh.bottomNavigationView.setOnItemSelectedListener((item) -> {
-            switch (item.getItemId()) {
-                case R.id.homeIcon:
-                    break;
-                case R.id.searchIcon:
-                    Intent searchIntent = new Intent(this, SearchActivity.class);
-                    searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(searchIntent);
-                    break;
-                case R.id.favourtiesIcon:
-                    Intent favIntent = new Intent(this, FavouritesActivity.class);
-                    favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                    startActivity(favIntent);
-                    break;
+            int id = item.getItemId();
+            if ( id == R.id.searchIcon ) {
+                Intent searchIntent = new Intent(this, SearchActivity.class);
+                searchIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(searchIntent);
+            } else if ( id == R.id.favourtiesIcon) {
+                Intent favIntent = new Intent(this, FavouritesActivity.class);
+                favIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(favIntent);
             }
             return false;
         });
@@ -148,8 +141,8 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
      * initialize main activity with loading animation
      */
     private void initLoading() {
-        vh.loadingView = findViewById(R.id.main_load);
-        vh.topPickContainer = findViewById(R.id.TopPicksContainer);
+        vh.loadingView = findViewById(R.id.mainLoad);
+        vh.topPickContainer = findViewById(R.id.topPicksContainer);
         vh.catContainer = findViewById(R.id.catContainer);
         vh.topPickContainer.setVisibility(View.INVISIBLE);
         vh.catContainer.setVisibility(View.INVISIBLE);
@@ -177,9 +170,9 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
 
     /**
      * Open search activity with results of the phrase inputted by user
-     * @param phrase
+     * @param phrase search query inputted by user
      */
-    public void SearchEventHandler(String phrase) {
+    public void searchEventHandler(String phrase) {
         Intent listIntent = new Intent(this, ResultsActivity.class);
         listIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         listIntent.putExtra("searchPhrase", phrase);
@@ -204,52 +197,48 @@ public class MainActivity extends AppCompatActivity implements CoreActivity {
     }
 
     /**
-     * initialize the database object
-     * @param vehicleDataAccess
+     * Initialize the database object
+     * @param vehicleDataAccess Interface that provides access to the database
      */
     @Override
-    public void SetDataAccess(IVehicleDataAccess vehicleDataAccess) {
+    public void setDataAccess(IVehicleDataAccess vehicleDataAccess) {
         vda = vehicleDataAccess;
     }
 
     /**
      * using a advanced method to fetch top pick every time main activity loads
      */
-    private void fetchTopPickData(){vda.getAllVehicles(new OnGetVehicleListener() {
-        @Override
-        public void onCallBack(List<Vehicle> vehicleList) {
-            int topPicks = 8;
-            int id;
-            topModels = new ArrayList<>();
-            List<Integer> ids = new ArrayList<>();
-            Random rand = new Random();
-            while (ids.size() != topPicks) {
-                id = rand.nextInt(vehicleList.size());
-                if (!ids.contains(id)) {
-                    ids.add(id);
-                }
+    private void fetchTopPickData(){vda.getAllVehicles(vehicleList -> {
+        int topPicks = 8;
+        int id;
+        topModels = new ArrayList<>();
+        List<Integer> ids = new ArrayList<>();
+        Random rand = new Random();
+        while (ids.size() != topPicks) {
+            id = rand.nextInt(vehicleList.size());
+            if (!ids.contains(id)) {
+                ids.add(id);
             }
-
-            List<Vehicle> vehicles = new ArrayList<>();
-            for (int i : ids) {
-                vehicles.add(vehicleList.get(i));
-            }
-
-            for (Vehicle vehicle : vehicles) {
-                VehicleModel model = new VehicleModel(vehicle.getVehicleName(),vehicle.getPrice());
-                topModels.add(model);
-            }
-
-            // Design Horizontal Layout
-            LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
-
-            vh.recyclerView.setLayoutManager(layoutManager);
-            vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-            // Initialize top adapter
-            topAdapter = new TopAdapter(MainActivity.this, topModels);
-            vh.recyclerView.setAdapter(topAdapter);
         }
 
+        List<Vehicle> vehicles = new ArrayList<>();
+        for (int i : ids) {
+            vehicles.add(vehicleList.get(i));
+        }
+
+        for (Vehicle vehicle : vehicles) {
+            Vehicle model = new Vehicle(vehicle.getVehicleName(),vehicle.getPrice());
+            topModels.add(model);
+        }
+
+        // Design Horizontal Layout
+        LinearLayoutManager layoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.HORIZONTAL, false);
+
+        vh.recyclerView.setLayoutManager(layoutManager);
+        vh.recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // Initialize top adapter
+        topAdapter = new TopAdapter(MainActivity.this, topModels);
+        vh.recyclerView.setAdapter(topAdapter);
     });}
 }

@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * The class used to represent a vehicle, needs to be extended by other classes
  */
-public abstract class Vehicle {
+public class Vehicle {
     private final int IMAGE_COUNT = 3;
 
     private int id;
@@ -31,7 +31,15 @@ public abstract class Vehicle {
     }
 
     /**
-     * empty constructor for firebase
+     * Constructor to display vehicle preview as a item listing
+     */
+    public Vehicle(String vName, Float vPrice){
+        this.vehicleName = vName;
+        this.price = vPrice;
+    }
+
+    /**
+     * Empty constructor for firebase
      */
     public Vehicle(){}
 

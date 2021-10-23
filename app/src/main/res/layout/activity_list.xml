@@ -17,14 +17,14 @@
         android:layout_marginTop="70dp"
         android:visibility="visible"
         android:contentDescription="@string/search"
-        app:layout_constraintTop_toBottomOf="@id/ListActionBar"
+        app:layout_constraintTop_toBottomOf="@id/listActionBar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"/>
 
     <!-- Action bar -->
     <RelativeLayout
-        android:id="@+id/ListActionBar"
+        android:id="@+id/listActionBar"
         android:layout_height="70dp"
         android:background="@color/blue"
         android:orientation="horizontal"
@@ -76,7 +76,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="70dp"
-        app:layout_constraintTop_toBottomOf="@+id/ListActionBar">
+        app:layout_constraintTop_toBottomOf="@+id/listActionBar">
         <!-- Wraps all content for vertical scrolling -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -84,7 +84,7 @@
             android:orientation="vertical">
             <!-- List Header -->
             <RelativeLayout
-                android:id="@+id/ListHeader"
+                android:id="@+id/listHeader"
                 style="@style/Container"
                 android:layout_height="160dp"
                 android:background="@color/blue"
@@ -93,8 +93,8 @@
                 app:layout_constraintTop_toTopOf="parent">
                 <!-- Category Title -->
                 <TextView
-                    android:id="@+id/ListTitle"
-                    style="@style/Headline1"
+                    android:id="@+id/listTitle"
+                    style="@style/searchTitle"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="40dp"
@@ -102,16 +102,16 @@
                     android:text="@string/categories" />
                 <!-- Category Subtitle -->
                 <TextView
-                    android:id="@+id/ListSubtitle"
+                    android:id="@+id/listSubtitle"
                     style="@style/Subtitle1"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/ListTitle"
+                    android:layout_below="@+id/listTitle"
                     android:layout_marginStart="40dp"
                     android:text="@string/slogan" />
                 <!-- Car illustration related to category -->
                 <ImageView
-                    android:id="@+id/ListHeaderImage"
+                    android:id="@+id/listHeaderImage"
                     android:layout_width="200dp"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
@@ -128,7 +128,7 @@
                 android:layout_marginTop="-15dp"
                 android:backgroundTint="@color/white"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/ListHeader">
+                app:layout_constraintTop_toBottomOf="@id/listHeader">
 
                 <!-- Refine Button -->
                 <RelativeLayout
@@ -208,7 +208,7 @@
 
                 <!-- Display Vehicle List -->
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/list_recycler"
+                    android:id="@+id/listRecycler"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
@@ -226,7 +226,7 @@
 
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"

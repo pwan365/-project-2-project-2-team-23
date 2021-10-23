@@ -31,6 +31,6 @@ public class VehicleService {
      * @param activity activity to be injected
      */
     public static void InjectService(CoreActivity activity){
-        activity.SetDataAccess(_vda);
+        activity.setDataAccess(_vda);
     }
 }

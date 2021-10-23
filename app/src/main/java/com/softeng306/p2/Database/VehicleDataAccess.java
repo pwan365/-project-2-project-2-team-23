@@ -1,12 +1,7 @@
 package com.softeng306.p2.Database;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.softeng306.p2.Helpers.VehicleComparator;
 import com.softeng306.p2.Listeners.OnGetTagListener;
 import com.softeng306.p2.Listeners.OnGetUserListener;
@@ -21,6 +16,7 @@ import com.softeng306.p2.DataModel.Vehicle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * This is the class that implements the methods in IVehicleDataAccess, used for retrieving data from
@@ -28,7 +24,7 @@ import java.util.Locale;
  * This is to be injected by VehicleService
  */
 public class VehicleDataAccess implements IVehicleDataAccess{
-    private FirebaseFirestore _db;
+    private final FirebaseFirestore _db;
 
     /**
      * Constructor, initializes connection to database.
@@ -47,9 +43,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
 
         _db.collection("tags").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                for (Tag tag: task.getResult().toObjects(Tag.class)){
-                    tagList.add(tag);
-                }
+                tagList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Tag.class));
                 listener.onCallBack(tagList);
             }
             else{
@@ -86,33 +80,24 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     public void getCategoryVehicles(String category, OnGetVehicleListener listener) {
         List<Vehicle> vehicleList = new ArrayList<>();
 
-        _db.collection(category.toLowerCase(Locale.ROOT)).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    switch (category) {
-                    case "Electric":
-                        for (Vehicle vehicle: task.getResult().toObjects(Electric.class)){
-                            vehicleList.add(vehicle);
-                        }
-                        break;
-                    case "Hybrid":
-                        for (Vehicle vehicle: task.getResult().toObjects(Hybrid.class)){
-                            vehicleList.add(vehicle);
-                        }
-                        break;
-                    case "Petrol":
-                        for (Vehicle vehicle: task.getResult().toObjects(Petrol.class)){
-                            vehicleList.add(vehicle);
-                        }
-                        break;
-                    }
-                    listener.onCallBack(vehicleList);
+        _db.collection(category.toLowerCase(Locale.ROOT)).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                switch (category) {
+                case "Electric":
+                    vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Electric.class));
+                    break;
+                case "Hybrid":
+                    vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Hybrid.class));
+                    break;
+                case "Petrol":
+                    vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Petrol.class));
+                    break;
+                }
+                listener.onCallBack(vehicleList);
 
-                }
-                else{
-                    System.out.println("Error retrieving vehicles");
-                }
+            }
+            else{
+                System.out.println("Error retrieving vehicles");
             }
         });
     }
@@ -127,9 +112,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
 
         _db.collection("electric").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                for (Vehicle vehicle: task.getResult().toObjects(Electric.class)){
-                    vehicleList.add(vehicle);
-                }
+                vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Electric.class));
                 listener.onCallBack(vehicleList);
             }
             else{
@@ -147,9 +130,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
         List<Vehicle> vehicleList = new ArrayList<>();
         _db.collection("petrol").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                for (Vehicle vehicle: task.getResult().toObjects(Petrol.class)){
-                    vehicleList.add(vehicle);
-                }
+                vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Petrol.class));
                 listener.onCallBack(vehicleList);
             }
             else{
@@ -168,9 +149,7 @@ public class VehicleDataAccess implements IVehicleDataAccess{
 
         _db.collection("hybrid").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()){
-                for (Vehicle vehicle: task.getResult().toObjects(Hybrid.class)){
-                    vehicleList.add(vehicle);
-                }
+                vehicleList.addAll(Objects.requireNonNull(task.getResult()).toObjects(Hybrid.class));
                 listener.onCallBack(vehicleList);
             }
             else{
@@ -268,16 +247,13 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getVehicleByName(String str, OnGetVehicleListener listener) {
         List<Vehicle> vList = new ArrayList<>();
-        getAllVehicles(new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    if (v.containsString(str)){
-                        vList.add(v);
-                    }
+        getAllVehicles(vehicleList -> {
+            for (Vehicle v: vehicleList){
+                if (v.containsString(str)){
+                    vList.add(v);
                 }
-                listener.onCallBack(vList);
             }
+            listener.onCallBack(vList);
         });
     }
 
@@ -289,16 +265,13 @@ public class VehicleDataAccess implements IVehicleDataAccess{
     @Override
     public void getVehicleById(List<Integer> ids, OnGetVehicleListener listener) {
         List<Vehicle> vList = new ArrayList<>();
-        getAllVehicles(new OnGetVehicleListener() {
-            @Override
-            public void onCallBack(List<Vehicle> vehicleList) {
-                for (Vehicle v: vehicleList){
-                    if (ids.contains(v.getId())){
-                        vList.add(v);
-                    }
+        getAllVehicles(vehicleList -> {
+            for (Vehicle v: vehicleList){
+                if (ids.contains(v.getId())){
+                    vList.add(v);
                 }
-                listener.onCallBack(vList);
             }
+            listener.onCallBack(vList);
         });
     }
 
@@ -308,17 +281,14 @@ public class VehicleDataAccess implements IVehicleDataAccess{
      */
     @Override
     public void getFavourites(OnGetUserListener listener) {
-        _db.collection("user").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (User user: task.getResult().toObjects(User.class)){
-                        listener.onCallBack(user);
-                    }
+        _db.collection("user").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (User user: Objects.requireNonNull(task.getResult()).toObjects(User.class)){
+                    listener.onCallBack(user);
                 }
-                else{
-                    System.out.println("Error retrieving user");
-                }
+            }
+            else{
+                System.out.println("Error retrieving user");
             }
         });
     }

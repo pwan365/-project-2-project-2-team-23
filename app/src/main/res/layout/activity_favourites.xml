@@ -6,13 +6,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".FavouritesActivity">
 
-    <!-- Header -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="51dp"
         style="@style/Container">
 
+        <!-- Header -->
         <LinearLayout
             android:id="@+id/FavouritesHeader"
             android:layout_width="match_parent"
@@ -31,7 +31,7 @@
                 android:src="@drawable/favourites_image" />
 
             <TextView
-                style="@style/Headline1"
+                style="@style/searchTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -39,6 +39,7 @@
                 android:text="@string/favourites"
                 android:gravity="center"/>
 
+            <!-- Favourites List Content -->
             <LinearLayout
                 style="@style/RoundedBackground"
                 android:layout_width="match_parent"
@@ -91,14 +92,14 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
                             android:layout_marginTop="-150dp"
-                            android:text="No favourites found" />
+                            android:text="@string/no_favourites_found" />
 
                         <TextView
                             style="@style/Body1"
                             android:layout_width="300dp"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_horizontal"
-                            android:text="You can add vehicles to your favourites list by clicking the heart icon on their listing"
+                            android:text="@string/no_favourties_subtitle"
                             android:textAlignment="center" />
 
                     </LinearLayout>
@@ -107,23 +108,21 @@
                         android:id="@+id/favourites_recycler"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
-                        android:layout_marginTop="30dp"
-                        android:nestedScrollingEnabled="true"
-                        android:overScrollMode="never"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginBottom="100dp"
+                        android:nestedScrollingEnabled="false"
+                        android:overScrollMode="never" />
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-
-
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"

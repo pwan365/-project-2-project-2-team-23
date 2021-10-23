@@ -21,7 +21,15 @@ public class Tag {
     }
 
     /**
-     * empty constructor for firebase
+     * Constructor for a tag view item
+     * @param newTagName
+     */
+    public Tag(String newTagName){
+        tagName = newTagName;
+    }
+
+    /**
+     * Tmpty constructor for firebase
      */
     public Tag(){}
 

@@ -37,15 +37,15 @@
                     android:src="@drawable/home_image" />
 
                 <TextView
-                    android:id="@+id/AppTitle"
-                    style="@style/Headline1"
+                    android:id="@+id/appTitle"
+                    style="@style/searchTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/app_name"
                     android:textAlignment="center" />
 
                 <TextView
-                    android:id="@+id/Slogan"
+                    android:id="@+id/slogan"
                     style="@style/Subtitle1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
 
             <!-- Search Bar -->
             <SearchView
-                android:id="@+id/SearchBar"
+                android:id="@+id/mainSearchBar"
                 style="@style/RoundedBackground"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="-20dp"
@@ -67,7 +67,7 @@
                 app:theme="@style/AppSearchView" />
 
             <androidx.cardview.widget.CardView
-                android:id="@+id/main_load"
+                android:id="@+id/mainLoad"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardElevation="0dp"
@@ -86,28 +86,28 @@
 
             <!-- Top Picks-->
             <LinearLayout
-                android:id="@+id/TopPicksContainer"
+                android:id="@+id/topPicksContainer"
                 style="@style/VerticalContentContainer"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginStart="25dp"
+                android:layout_marginStart="20dp"
                 android:layout_marginEnd="0dp"
                 android:background="@color/white">
 
                 <TextView
-                    android:id="@+id/TopPicks"
+                    android:id="@+id/topPicksTitle"
                     style="@style/Headline3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
+                    android:layout_marginStart="10dp"
                     android:text="@string/top_picks"
                     android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recycler_view"
+                    android:id="@+id/mainRecyclerView"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="10dp" />
+                    android:layout_marginTop="5dp" />
             </LinearLayout>
 
             <!-- Category Section -->
@@ -116,12 +116,12 @@
                 style="@style/VerticalContentContainer"
                 android:layout_width="match_parent"
                 android:layout_marginStart="40dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="40dp"
                 android:layout_marginBottom="80dp">
 
                 <TextView
-                    android:id="@+id/CatTitle"
+                    android:id="@+id/catTitle"
                     style="@style/Headline3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -140,7 +140,7 @@
                         android:backgroundTint="@color/blue">
 
                         <TextView
-                            android:id="@+id/CatElectricText"
+                            android:id="@+id/catElectricText"
                             style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -149,7 +149,7 @@
                             android:text="@string/electric_cars" />
 
                         <ImageView
-                            android:id="@+id/CatElectricImg"
+                            android:id="@+id/catElectricImg"
                             style="@style/CategoryImage"
                             android:contentDescription="@string/electric_cars"
                             android:src="@drawable/electric" />
@@ -168,7 +168,7 @@
                         android:backgroundTint="@color/orange">
 
                         <TextView
-                            android:id="@+id/CatHybridText"
+                            android:id="@+id/catHybridText"
                             style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -177,7 +177,7 @@
                             android:text="@string/hybrid_cars" />
 
                         <ImageView
-                            android:id="@+id/CatHybridImage"
+                            android:id="@+id/catHybridImage"
                             style="@style/CategoryImage"
                             android:contentDescription="@string/hybrid_cars"
                             android:src="@drawable/hybrid" />
@@ -196,7 +196,7 @@
                         android:backgroundTint="@color/green">
 
                         <TextView
-                            android:id="@+id/CatPetrolTitle"
+                            android:id="@+id/catPetrolTitle"
                             style="@style/Headline2"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -205,7 +205,7 @@
                             android:text="@string/petrol_cars" />
 
                         <ImageView
-                            android:id="@+id/CatPetrolImage"
+                            android:id="@+id/catPetrolImage"
                             style="@style/CategoryImage"
                             android:contentDescription="@string/petrol_cars"
                             android:src="@drawable/petrol" />
@@ -218,7 +218,7 @@
     </ScrollView>
     <!-- Navigation -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/nav_bar"
+        android:id="@+id/navBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
